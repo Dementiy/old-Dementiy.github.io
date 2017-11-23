@@ -1,0 +1,7 @@
+---
+layout: post
+title: Судоку
+categories: python golang base практики
+---
+
+В этой работе требуется написать решатель Судоку.
