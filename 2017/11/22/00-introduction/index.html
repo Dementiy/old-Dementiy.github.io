@@ -131,7 +131,7 @@
 
 <h3 id="установка-интерпретатора-python">Установка интерпретатора Python</h3>
 
-<p>В первую очередь вам будет нужен интерпретатор языка Python (о том, что такое “интерпретатор” можно почитать <a href="">тут</a>). Где его взять? На юникс-подобных операционных системах (Linux, MacOS и др.) интерпретатор Python, скорее всего, уже установлен. Проверить это вы можете набрав в терминале (командной строке) команду <code class="highlighter-rouge">python</code>, например:</p>
+<p>В первую очередь вам будет нужен интерпретатор языка Python (о том, что такое “интерпретатор” можно почитать <a href="">тут</a>), а также компилятор языка Golang, если вы захотите выполнить практики на двух языках. Установка компилятора Golang останется в качестве самостоятельного задания (официальное руководство по установке можно найти <a href="https://golang.org/doc/install">тут</a>). Где взять интерпретатор Python? На юникс-подобных операционных системах (Linux, MacOS и др.) интерпретатор Python, скорее всего, уже установлен. Проверить это вы можете набрав в терминале (командной строке) команду <code class="highlighter-rouge">python</code>, например:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python
 Python 2.7.10 <span class="o">(</span>default, Jul 30 2016, 18:31:42<span class="o">)</span>
@@ -165,12 +165,12 @@ Hello, World!
 <p>Это интерактивный режим работы с интерпретатором языка Python (<a href="https://ru.wikipedia.org/wiki/REPL">REPL</a>). Три символа “<em>больше</em>” <code class="highlighter-rouge">&gt;&gt;&gt;</code> являются приглашением к вводу команд. Для завершения работы с интерпретатором нужно набрать команду <code class="highlighter-rouge">quit()</code>.</p>
 
 <blockquote>
-  <p><em>Замечание</em>: Если вы устанавливаете Python на Windows, то есть вероятность, что, набрав команду <code class="highlighter-rouge">python</code> или <code class="highlighter-rouge">python3</code> после установки, вы получите сообщение об ошибке. Если так, то попробуйте набрать <code class="highlighter-rouge">py</code> или <code class="highlighter-rouge">py3</code>, вместо <code class="highlighter-rouge">python</code> и <code class="highlighter-rouge">python3</code>, соответственно. Если вы по-прежнему получаете сообщение об ошибке, то возможно, что путь к интерпретатору не указан в переменной окружения <code class="highlighter-rouge">PATH</code>. “У меня все равно ничего не работает!” - прочитайте как правильно все <a href="https://docs.python.org/3/using/windows.html#configuring-python">настроить</a>.</p>
+  <p><strong>Замечание</strong>: Если вы устанавливаете Python на Windows, то есть вероятность, что, набрав команду <code class="highlighter-rouge">python</code> или <code class="highlighter-rouge">python3</code> после установки, вы получите сообщение об ошибке. Если так, то попробуйте набрать <code class="highlighter-rouge">py</code> или <code class="highlighter-rouge">py3</code>, вместо <code class="highlighter-rouge">python</code> и <code class="highlighter-rouge">python3</code>, соответственно. Если вы по-прежнему получаете сообщение об ошибке, то возможно, что путь к интерпретатору не указан в переменной окружения <code class="highlighter-rouge">PATH</code>. “У меня все равно ничего не работает!” - прочитайте как правильно все <a href="https://docs.python.org/3/using/windows.html#configuring-python">настроить</a>.</p>
 </blockquote>
 
 <h3 id="выбор-редактора-кода">Выбор редактора кода</h3>
 
-<p>Вам будет нужен редактор кода. Это может быть “простой” текстовый редактор с подсветкой синтаксиса <a href="http://sublimetext.com/3">SublimeText</a> или же полноценная среда разработки <a href="https://www.jetbrains.com/pycharm/download/">PyCharm</a> (подходящим для меня решением оказалась связка из редактора <a href="http://www.vim.org/">Vim</a> и интересного, на мой взгляд, проекта <a href="https://kite.com/">Kite</a>). Я вам рекомендую попробовать оба варианта, но средой разработки пользоваться только после того, как научитесь работать с интерпретатором и системой контроля версий, что будет обязательным для нашего курса.</p>
+<p>Вам будет нужен редактор кода. Это может быть “простой” текстовый редактор с подсветкой синтаксиса <a href="http://sublimetext.com/3">SublimeText</a> или же полноценная среда разработки <a href="https://www.jetbrains.com/pycharm/download/">PyCharm</a> (подходящим для меня решением оказалась связка из редактора <a href="http://www.vim.org/">Vim</a> с разными плагинами и интересного, на мой взгляд, проекта <a href="https://kite.com/">Kite</a>). Я вам рекомендую попробовать оба варианта, но средой разработки пользоваться после того, как научитесь работать с интерпретатором и системой контроля версий.</p>
 
 <p>Для ваших работ заведите себе отдельную папку, назовите ее <code class="highlighter-rouge">cs102</code> (можете назвать иначе). В этой папке создайте новый файл с именем <code class="highlighter-rouge">hello.py</code>, откройте его с помощью редактора <code class="highlighter-rouge">SublimeText</code> (или любого <a href="https://wiki.python.org/moin/PythonEditors">другого</a>, который вам больше понравился):</p>
 
@@ -180,7 +180,7 @@ Hello, World!
 
 <p><img src="/assets/images/00-introduction/bash.png" alt="" /></p>
 
-<p>Таким образом, мы написали и запустили простейшую программу (скрипт). Запомните эти шаги.</p>
+<p>Таким образом, вы написали и запустили простейшую программу (скрипт). Запомните эти шаги.</p>
 
 <h3 id="работа-с-виртуальными-окружениями">Работа с виртуальными окружениями</h3>
 
@@ -197,7 +197,7 @@ Hello, World!
 </code></pre></div></div>
 
 <blockquote>
-  <p>Замечание: Для пользователей Windows следует установить модуль <code class="highlighter-rouge">virtualenvwrapper-win</code> вместо <code class="highlighter-rouge">virtualenvwrapper</code>. Также рекомендуется установить <a href="https://git-for-windows.github.io/">Git SCM</a>.</p>
+  <p><strong>Замечание</strong>: Для пользователей Windows следует установить модуль <code class="highlighter-rouge">virtualenvwrapper-win</code> вместо <code class="highlighter-rouge">virtualenvwrapper</code>. Также рекомендуется установить <a href="https://git-for-windows.github.io/">Git SCM</a>.</p>
 </blockquote>
 
 <p>Создать новое виртуальное окружение можно с помощью команды <code class="highlighter-rouge">mkvirtualenv</code> (обратите внимание на то, как меняется путь к интерпретатору python):</p>
@@ -213,7 +213,7 @@ Hello, World!
 </code></pre></div></div>
 
 <blockquote>
-  <p>Замечание: Если у вас не получается настроить <code class="highlighter-rouge">virtualenvwrapper</code> на ОС Windows, то можете ограничиться <code class="highlighter-rouge">virtualenv</code>:</p>
+  <p><strong>Замечание</strong>: Если у вас не получается настроить <code class="highlighter-rouge">virtualenvwrapper</code> на ОС Windows, то можете ограничиться <code class="highlighter-rouge">virtualenv</code>:</p>
   <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>virtualenv cs102-env
 <span class="nv">$ </span>cs102-env<span class="se">\S</span>cripts<span class="se">\a</span>ctivate.bat
 <span class="o">(</span>cs102-env<span class="o">)</span> <span class="nv">$ </span><span class="c"># Окружение активировано</span>
@@ -234,20 +234,20 @@ Hello, World!
 </code></pre></div></div>
 
 <blockquote>
-  <p><code class="highlighter-rouge">bpython</code> на Windows может <a href="https://docs.bpython-interpreter.org/windows.html">не работать</a>.</p>
+  <p><strong>Замечание</strong>: <code class="highlighter-rouge">bpython</code> на Windows может <a href="https://docs.bpython-interpreter.org/windows.html">не работать</a>.</p>
 </blockquote>
 
-<blockquote>
-  <p>В этом примере мы использовали <a href="https://docs.python.org/3.5/installing/index.html">pip</a> для установки новых пакетов. Иногда устанавливаемый пакет требует наличие других пакетов для своей работы, которые пакеты устанавливаются автоматически (говорят “по зависимостям”). Но может возникнуть ситуация, когда вам придется вручную установить нужную библиотеку. Если вы не знаете как это сделать, то поищите ответ на <a href="http://stackoverflow.com">stackoverflow.com</a>, скорее всего кто-то уже столкнулся с той же проблемой, что и вы.</p>
-</blockquote>
+<p>В этом примере мы использовали <a href="https://docs.python.org/3.5/installing/index.html">pip</a> для установки новых пакетов. Иногда устанавливаемый пакет требует наличие других пакетов для своей работы, обычно эти пакеты устанавливаются автоматически (говорят “по зависимостям”). Но может возникнуть ситуация, когда вам придется вручную установить нужную библиотеку. Если вы не знаете как это сделать, то поищите ответ на <a href="http://stackoverflow.com">stackoverflow.com</a>, скорее всего кто-то уже столкнулся с той же проблемой, что и вы.</p>
 
 <p>Теперь всякий раз приступая к работе, активируйте созданное виртуальное окружение с помощью команды <code class="highlighter-rouge">workon cs102</code>. Полный список команд по работе с <code class="highlighter-rouge">virtualenvwrapper</code> можно найти <a href="https://virtualenvwrapper.readthedocs.io/en/latest/command_ref.html">тут</a>.</p>
 
 <h3 id="система-контроля-версий">Система контроля версий</h3>
 
-<p>Мы будем пользоваться системой контроля версий (на занятии разберем зачем это нужно, но можете начать читать вот <a href="https://git-scm.com/book/ru/v1/Введение-О-контроле-версий">это</a> руководство). Вам нужно зарегистрироваться либо на https://github.com, либо на https://bitbucket.org/. Все изменения, которые будут происходить с вашими работами, могут храниться локально (у вас на компьютере), а могут и удаленно. Таким образом, вы всегда сможете продолжить работу над своим проектом. На bitbucket есть возможность создания бесплатного приватного (закрытого) репозитория (хранилища) для вашего проекта. Далее приведен пример с использованием <strong>bitbucket</strong> (рекомендую проделать эти шаги и на github).</p>
+<p>Мы будем пользоваться системой контроля версий (что такое контроль версий и зачем он вам нужен можно почитать <a href="https://git-scm.com/book/ru/v1/Введение-О-контроле-версий">тут</a>). Все изменения, которые будут происходить с вашими работами, могут храниться локально (у вас на компьютере), а могут и удаленно, так, что вы всегда сможете продолжить работу над своим проектом. Поэтому вам нужно зарегистрироваться либо на <a href="https://github.com">https://github.com</a>, либо на <a href="https://bitbucket.org/">https://bitbucket.org</a> (а можно и там и там). На случай, если вы хотите ограничить доступ к вашей кодовой базе, то на bitbucket есть возможность создания бесплатного приватного репозитория.</p>
 
-<p>Зарегистрируйтесь на сайте https://bitbucket.org/. По завершении регистрации вам будет предложено создать новый репозиторий (либо вкладка <code class="highlighter-rouge">Repository -&gt; Crete new repository</code>). Укажите следующие параметры для вашего проекта (в дальнейшем их можно будет изменить):</p>
+<p>Рассмотрим пример создания приватного репозитория на bitbucket (рекомендую проделать эти шаги и на github).</p>
+
+<p>Зарегистрируйтесь на сайте <a href="https://bitbucket.org/">https://bitbucket.org</a>. По завершении регистрации вам будет предложено создать новый репозиторий (либо вкладка <code class="highlighter-rouge">Repository -&gt; Crete new repository</code>). Укажите следующие параметры для вашего проекта (в дальнейшем их можно будет изменить):</p>
 
 <p><img src="/assets/images/00-introduction/bitbucket.png" alt="" /></p>
 
@@ -258,7 +258,7 @@ Hello, World!
 <p>Достаточно повторить указанные шаги, но вместо файла <code class="highlighter-rouge">contributors.txt</code> мы сделаем коммит (загрузим изменения на сервер) нашей программы <code class="highlighter-rouge">hello.py</code>:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git init
-Initialized empty Git repository <span class="k">in</span> /Users/user/cs102/.git/
+Initialized empty Git repository <span class="k">in</span> /Users/dementiy/Projects/cs102/.git/
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git remote add origin https://Dementiy@bitbucket.org/Dementiy/cs102.git
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git add hello.py
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s1">'Initial commit with my first program on Python'</span>
@@ -274,7 +274,11 @@ to <span class="nb">set </span>your account<span class="sb">`</span>s default id
 Omit <span class="nt">--global</span> to <span class="nb">set </span>the identity only <span class="k">in </span>this repository.
 
 fatal: unable to auto-detect email address <span class="o">(</span>got <span class="s1">'user@Air-user.(none)'</span><span class="o">)</span>
-<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git config <span class="nt">--global</span> user.email <span class="s2">"Dementiy@yandex.ru"</span>
+</code></pre></div></div>
+
+<p>Система контроля версий подсказывает нам, что нужно выполнить предварительную настройку репозитория, указав <code class="highlighter-rouge">user.email</code> и <code class="highlighter-rouge">user.name</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git config <span class="nt">--global</span> user.email <span class="s2">"Dementiy@yandex.ru"</span>
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git config <span class="nt">--global</span> user.name <span class="s2">"Dmitriy"</span>
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s1">'Initial commit with my first program on Python'</span>
 <span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> b9c8e00] Initial commit with my first program on Python
@@ -291,14 +295,14 @@ Branch master <span class="nb">set </span>up to track remote branch master from 
 </code></pre></div></div>
 
 <blockquote>
-  <p>Важно: если после выполнения команды <code class="highlighter-rouge">git init</code> вы получили сообщение об ошибке о том, что команда <code class="highlighter-rouge">git</code> не найдена, то, скорее всего, вы работаете под Windows и <code class="highlighter-rouge">git</code> нужно <a href="https://git-scm.com/download/win">установить</a>. Обратите внимание на выполнение простейшей настройки <code class="highlighter-rouge">git</code> с помощью команды <code class="highlighter-rouge">git config</code>.</p>
+  <p><strong>Замечание</strong>: если после выполнения команды <code class="highlighter-rouge">git init</code> вы получили сообщение об ошибке о том, что команда <code class="highlighter-rouge">git</code> не найдена, то, скорее всего, вы работаете под Windows и <code class="highlighter-rouge">git</code> нужно <a href="https://git-scm.com/download/win">установить</a>.</p>
 </blockquote>
 
-<p>Теперь убедитесь, что новый файл появился на https://bitbucket.org/. Для этого зайдите в раздел <code class="highlighter-rouge">Source</code>:</p>
+<p>Теперь убедитесь, что новый файл появился на bitbucket.org. Для этого зайдите в раздел <code class="highlighter-rouge">Source</code>:</p>
 
 <p><img src="/assets/images/00-introduction/source.png" alt="" /></p>
 
-<p>Давайте немного изменим нашу программу <code class="highlighter-rouge">hello.py</code>, добавив в нее функцию (на занятиях мы обязательно поговорим о функциях, но пока функцию можно воспринимать как контейнер со списком действий) и проверку на то, выполняется ли наша программа как скрипт или она используется как модуль (библиотека, подключаемая в других скриптах):</p>
+<p>Давайте немного изменим нашу программу <code class="highlighter-rouge">hello.py</code>, добавив в нее функцию и проверку на то, выполняется ли наша программа как скрипт или она используется как модуль (библиотека, подключаемая в других скриптах):</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">message</span><span class="p">():</span>
     <span class="k">print</span><span class="p">(</span><span class="s">"Hello, World!"</span><span class="p">)</span>
@@ -332,20 +336,18 @@ modified: hello.py
 no changes added to commit <span class="o">(</span>use <span class="s2">"git add"</span> and/or <span class="s2">"git commit -a"</span><span class="o">)</span>
 </code></pre></div></div>
 
-<p>Теперь нам нужно сделать коммит, чтобы зафиксировать изменения в истории проекта:</p>
+<p>Один из файлов был изменен: <code class="highlighter-rouge">modified: hello.py</code>. Теперь нам нужно сделать коммит, чтобы зафиксировать изменения в истории проекта:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git add hello.py
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s2">"Add function message()"</span>
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git push
 </code></pre></div></div>
 
-<p>На первое время нам этого будет достаточно.</p>
+<p>Пока нам этого будет достаточно.</p>
 
-<p><strong>Задание</strong>: Добавьте в репозиторий файл с именем <code class="highlighter-rouge">README.md</code>, который должен содержать информацию о вас (имя, фамилия, электронная почта для связи и номер группы) и небольшое описание вашего репозитория (например, “Решения лабораторных работ к курсу…”). <code class="highlighter-rouge">README.md</code> должен быть в формате Markdown , про который можно почитать <a href="https://github.com/OlgaVlasova/markdown-doc/blob/master/README.md">тут</a>. Также можете воспользоваться онлайн редактором <a href="http://dillinger.io/">Dillinger</a>.</p>
+<p><strong>Задание</strong>: Добавьте в репозиторий файл с именем <code class="highlighter-rouge">README.md</code>, который должен содержать информацию о вас как о разработчике и небольшое описание вашего репозитория (например, “Решения практических работ с сайта https://dementiy.github.io”). <code class="highlighter-rouge">README.md</code> должен быть в формате Markdown, про который можно почитать <a href="https://github.com/OlgaVlasova/markdown-doc/blob/master/README.md">тут</a>. Также можете воспользоваться онлайн редактором <a href="http://dillinger.io/">Dillinger</a>.</p>
 
-<blockquote>
-  <p>Напомню, что вы можете задавать вопросы в комментариях или в Slack’е (<a href="https://get.slack.help/hc/en-us/articles/115004071768-What-is-Slack-">что такое Slack?</a>).</p>
-</blockquote>
+<p>Все вопросы и замечания пишите в комментариях или в Slack’е (<a href="https://get.slack.help/hc/en-us/articles/115004071768-What-is-Slack-">что такое Slack?</a>).</p>
 
 
   </div>
