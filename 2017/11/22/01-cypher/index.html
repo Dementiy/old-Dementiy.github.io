@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Алгоритмы шифрования</title>
+  <meta name="description" content="Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/01-cypher/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Алгоритмы шифрования">
+  <meta name="twitter:description" content="Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Алгоритмы шифрования</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/golang/">golang</a>,
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/base/">base</a>,
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.</p>
+
+<p>Каждое задание оценивается в отдельности, таким образом, оценку вы получаете по совокупности выполненных заданий (в лабораторной работе №1 таких заданий - три). В оценку включается балл за стиль выполнения задания, поэтому прочитайте официальное руководство по стилю https://www.python.org/dev/peps/pep-0008/ (также некоторые пояснения по оформлению кода можно найти <a href="https://github.com/Dementiy/pydonts">здесь</a>). Соответствие вашей работы PEP8 можно узнать “прогнав” исходный код вашей программы через утилиту <code class="highlighter-rouge">pep8</code>.</p>
+
+<p>Все исходники к работам вы можете найти в <a href="https://github.com/Dementiy/pybook-assignments">репозитории курса</a> (следите за его обновлениями). Чтобы получить список всех работ достаточно выполнить следующую команду:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone https://Dementiy@bitbucket.org/Dementiy/cs102_2016.git
+</code></pre></div></div>
+
+<blockquote>
+  <p>Описание работы с командой <code class="highlighter-rouge">git</code> читай в разделе <a href="href=&quot;https://dementiy.gitbooks.io/-python/content/lab0.html">Настройка рабочего окружения</a>.</p>
+</blockquote>
+
+<p>Все дальнейшие изменения в репозитории можно получать с помощью команды <code class="highlighter-rouge">git pull</code> (её рекомендуется использовать каждый раз, когда вы приступаете к выполнению новой лабораторной работы):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git pull
+</code></pre></div></div>
+
+<h3 id="прежде-чем-приступить-к-выполнению-работы">Прежде чем приступить к выполнению работы</h3>
+
+<p>Перед тем как начать выполнять лабораторную работу не забудьте перейти в рабочую директорию и активировать ваше виртуальное окружение:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>путь/к/рабочей_директории
+<span class="nv">$ </span>workon cs102
+</code></pre></div></div>
+
+<p>Также создадим ветку разработки (подробнее про git workflow можно прочитать <a href="https://habrahabr.ru/post/106912/">тут</a>):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout <span class="nt">-b</span> develop master
+Switched to a new branch <span class="s1">'develop'</span>
+</code></pre></div></div>
+
+<p>Теперь создадим ветку новой функциональности:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout <span class="nt">-b</span> feature/caesar develop
+Switched to a new branch <span class="s1">'feature/caesar'</span>
+</code></pre></div></div>
+
+<p>И, наконец, создадим папку, в которой будем хранить все файлы, относящиеся к первой лабораторной работе:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(cs102) $ mkdir homework01
+</code></pre></div></div>
+
+<h3 id="шифр-цезаря">Шифр Цезаря</h3>
+
+<p><a href="https://ru.wikipedia.org/wiki/Шифр_Цезаря">Шифр Цезаря</a> является одним из самых простых методов шифрования. Для кодирования сообщения все буквы алфавита сдвигают на три символа вперед:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A -&gt; D, B -&gt; E, C -&gt; F, и так далее
+</code></pre></div></div>
+
+<p>Сдвиг трёх последних букв алфавита:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>X -&gt; A, Y -&gt; B, Z -&gt; C
+</code></pre></div></div>
+
+<p>Используя шифр Цезаря, слово <code class="highlighter-rouge">PYTHON</code> будет закодировано следующим образом:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PYTHON
+||||||
+SBWKRQ
+</code></pre></div></div>
+
+<p>Вам необходимо написать тело для следующих двух функций:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encrypt_caesar</span><span class="p">(</span><span class="n">plaintext</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; encrypt_caesar("PYTHON")
+    'SBWKRQ'
+    &gt;&gt;&gt; encrypt_caesar("python")
+    'sbwkrq'
+    &gt;&gt;&gt; encrypt_caesar("Python3.6")
+    'Sbwkrq3.6'
+    &gt;&gt;&gt; encrypt_caesar("")
+    ''
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">return</span> <span class="n">ciphertext</span>
+
+
+<span class="k">def</span> <span class="nf">decrypt_caesar</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; decrypt_caesar("SBWKRQ")
+    'PYTHON'
+    &gt;&gt;&gt; decrypt_caesar("sbwkrq")
+    'python'
+    &gt;&gt;&gt; decrypt_caesar("Sbwkrq3.6")
+    'Python3.6'
+    &gt;&gt;&gt; decrypt_caesar("")
+    ''
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">return</span> <span class="n">plaintext</span>
+</code></pre></div></div>
+
+<p>В результате переменные <code class="highlighter-rouge">ciphertext</code> и <code class="highlighter-rouge">plaintext</code> должны содержать зашифрованное и расшифрованное сообщения соответственно.</p>
+
+<blockquote>
+  <p><a href="https://mail.python.org/pipermail/python-win32/2005-April/003100.html">Hint</a>: Воспользуйтесь встроенными функциями <code class="highlighter-rouge">ord()</code> и <code class="highlighter-rouge">chr()</code>. Функция <code class="highlighter-rouge">ord()</code> позволяет получить код указанного символа, например:</p>
+  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; ord('A')
+65
+&gt;&gt; chr(65) # работает наоборот - возвращает символ по его коду
+'A'
+</code></pre></div>  </div>
+</blockquote>
+
+<blockquote>
+  <p>О кодировках можно почитать <a href="http://kunststube.net/encoding/">тут</a> и <a href="http://farmdev.com/talks/unicode/">тут</a>.</p>
+</blockquote>
+
+<p>В папке <code class="highlighter-rouge">homework01</code> создайте файл с именем <code class="highlighter-rouge">caesar.py</code> и шаблоном приведенным выше. Сделайте коммит с первоначальным шаблоном:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git add homework01/caesar.py
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s2">"Добавлен шаблон для шифра Цезаря"</span>
+</code></pre></div></div>
+
+<p>По завершении работы над каждой функцией не забудьте также сделать коммит, например:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-am</span> <span class="s2">"Реализована функция encrypt_caesar()"</span>
+</code></pre></div></div>
+
+<p>и аналогично:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-am</span> <span class="s2">"Реализована функция decrypt_caesar()"</span>
+</code></pre></div></div>
+
+<p>Проверить работу функций можно с помощью примеров, приведенных в <a href="https://docs.python.org/3.5/library/doctest.html">доктестах</a> (текст внутри функции, который заключен в тройные кавычки и похож на работу с интерпретатором в интерактивном режиме). Запустить доктесты можно с помощью следующей команды (при условии, что файл с программой называется <code class="highlighter-rouge">caesar.py</code>):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3 <span class="nt">-m</span> doctest <span class="nt">-v</span> caesar.py
+</code></pre></div></div>
+
+<p>Если все тесты были пройдены успешно, то объедините (merge) ваши изменения с веткой <code class="highlighter-rouge">develop</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout develop
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git merge <span class="nt">--no-ff</span> feature/caesar
+</code></pre></div></div>
+
+<blockquote>
+  <p>Замечание: Вы можете воспользоваться приложением <a href="https://www.sourcetreeapp.com/">Source Tree</a> для наглядного отслеживания вносимых изменений.</p>
+</blockquote>
+
+<blockquote>
+  <p>Практика: Измените ваши функции так, чтобы размер сдвига был произвольным:</p>
+  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>encrypt_caesar(plaintext, shift)
+decrypt_caesar(plaintext, shift)
+</code></pre></div>  </div>
+</blockquote>
+
+<h3 id="шифр-виженера">Шифр Виженера</h3>
+
+<p><a href="https://ru.wikipedia.org/wiki/Шифр_Виженера">Шифр Виженера</a> очень похож на шифр Цезаря, за тем исключением, что каждый символ сообщения сдвигается на определяемое ключом значение. Ключ - это слово, каждый символ которого указывает на сколько позиций должен быть сдвинут соответствующий символ в шифруемом сообщении. Так, <code class="highlighter-rouge">A</code> означает сдвиг на <code class="highlighter-rouge">0</code> символов, <code class="highlighter-rouge">B</code> на <code class="highlighter-rouge">1</code> и т.д.</p>
+
+<p>Если длина ключа меньше длины слова, подлежащего шифрованию, то ключ повторяется необходимое число раз, например:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Простой текст: ATTACKATDAWN
+Ключ: LEMONLEMONLE
+Зашифрованный текст: LXFOPVEFRNHR
+</code></pre></div></div>
+
+<p>Ваша задача написать тело для следующих двух функций так, чтобы переменные <code class="highlighter-rouge">ciphertext</code> и <code class="highlighter-rouge">plaintext</code> содержали зашифрованное и расшифрованное сообщения соответственно.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encrypt_vigenere</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; encrypt_vigenere("PYTHON", "A")
+    'PYTHON'
+    &gt;&gt;&gt; encrypt_vigenere("python", "a")
+    'python'
+    &gt;&gt;&gt; encrypt_vigenere("ATTACKATDAWN", "LEMON")
+    'LXFOPVEFRNHR'
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">return</span> <span class="n">ciphertext</span>
+
+
+<span class="k">def</span> <span class="nf">decrypt_vigenere</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; decrypt_vigenere("PYTHON", "A")
+    'PYTHON'
+    &gt;&gt;&gt; decrypt_vigenere("python", "a")
+    'python'
+    &gt;&gt;&gt; decrypt_vigenere("LXFOPVEFRNHR", "LEMON")
+    'ATTACKATDAWN'
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">return</span> <span class="n">plaintext</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Обратите внимание, что символы <code class="highlighter-rouge">A</code> и <code class="highlighter-rouge">a</code> в ключе не оказывают никакого влияния на шифруемое сообщение. Если же в качестве ключа мы будем использовать <code class="highlighter-rouge">C</code> или <code class="highlighter-rouge">c</code>, то получим шифр Цезаря.</p>
+</blockquote>
+
+<p>Перед выполнением задания не забудьте создать новую ветвь функциональности <code class="highlighter-rouge">feature/vigenere</code> и сделать коммит с шаблоном (файл с шаблоном должен быть размещен в каталоге <code class="highlighter-rouge">homework01</code> под именем <code class="highlighter-rouge">vigener.py</code>):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout <span class="nt">-b</span> feature/vigener develop
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git add homework01/vigener.py
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s2">"Добавлен шаблон для шифра Виженера"</span>
+</code></pre></div></div>
+
+<p>По окончании работы над каждой функцией не забудьте сделать соответствующие коммиты, как в примере с шифром Цезаря, а также объединенить изменения с веткой <code class="highlighter-rouge">develop</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout develop
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git merge <span class="nt">--no-ff</span> feature/vigener
+</code></pre></div></div>
+
+<h3 id="rsa-шифрование">RSA шифрование</h3>
+
+<p>Одним из современных методов шифрования является алгоритм шифрования RSA, названный так по первым буквам фамилий его авторов.</p>
+
+<p>Мы не будем здесь вдаваться в <a href="http://kpfu.ru/docs/F366166681/mzi.pdf">подробности работы</a> этого алгоритма (хотя и рассмотрим техническую часть), но <a href="https://www.quora.com/How-do-you-explain-how-an-RSA-public-key-works-to-a-child">следующего объяснения</a> должно быть достаточно для понимания принципов шифрования с открытым ключом:</p>
+
+<blockquote>
+  <p><img src="https://qph.ec.quoracdn.net/main-qimg-8ad399b007bf86350675e8cbf5be6e34-c?convert_to_webp=true" alt="" /></p>
+
+  <p>Show your kid a padlock. This is a kind of lock that locks when you click it (i.e it doesn’t require a key) but requires the key to open the lock.</p>
+
+  <p>So, I can send these padlocks to all my friends who want to communicate with me. I will send them only the lock but will keep the key with me.</p>
+
+  <p>My friends can write me messages, put it in a box, lock it with my padlock (by clicking it) and send it to me, even over high risk networks. If the box is intercepted, it’s contents will not be compromised since I still have the key with me.</p>
+
+  <p>When the box reaches me, I can open my padlock with my key and read the contents. This way, I can send padlocks (public keys) to people outside which they can use to lock boxes (encrypt messages) without being in danger of the contents being compromised as the padlock key (the private key) is always with me and never exchanged over the network.</p>
+</blockquote>
+
+<p>Работу алгоритма можно разбить на три шага:</p>
+<ol>
+  <li>Генерация ключей</li>
+  <li>Шифрование</li>
+  <li>Расшифровка</li>
+</ol>
+
+<blockquote>
+  <p>От вас в этом задании требуется выполнить только шаг генерации ключей, остальные два шага уже даны (см. исходники к работе).</p>
+</blockquote>
+
+<p>На этапе генерации создаётся два ключа: открытый (public key, с помощью которого каждый сможет зашифровать сообщение и отправить его нам) и закрытый (private key, которым мы можем расшифровать полученные сообщения). Для этого выбирается два <a href="https://ru.wikipedia.org/wiki/Простое_число">простых числа</a> <code class="highlighter-rouge">p</code> и <code class="highlighter-rouge">q</code>. Позволим пользователю вводить эти числа, но их необходимо проверять на простоту. Для этого напишем функцию, но предварительно создадим новую ветку функциональности и сделаем коммит с шаблоном для этого задания:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout <span class="nt">-b</span> feature/rsa develop
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git add homework01/rsa.py
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s2">"Добавлен шаблон для RSA шифрования"</span>
+</code></pre></div></div>
+
+<p>Теперь можно начать работать над функцией <code class="highlighter-rouge">is_prime(n)</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; is_prime(2)
+    True
+    &gt;&gt;&gt; is_prime(11)
+    True
+    &gt;&gt;&gt; is_prime(8)
+    False
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Если вы не понимаете, как работают функции, то напишите небольшую программу выводящую <code class="highlighter-rouge">True</code> или <code class="highlighter-rouge">False</code> в зависимости от того, является число простым или нет. Затем полученный код скопируйте в приведенную выше функцию (вместо ключевого слова <code class="highlighter-rouge">pass</code>) и замените <code class="highlighter-rouge">print(True)</code> на <code class="highlighter-rouge">return True</code>, а <code class="highlighter-rouge">print(False)</code> на <code class="highlighter-rouge">return False</code>.</p>
+</blockquote>
+
+<p>Если вы закончили работу над функцией <code class="highlighter-rouge">is_prime(n)</code> - сделайте коммит:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-am</span> <span class="s2">"Реализована функция is_prime(n)"</span>
+</code></pre></div></div>
+
+<p>После того как были выбраны два простых числа находится их произведение <code class="highlighter-rouge">n = p * q</code> (по ходу объяснения заменяйте комментарий со словами <code class="highlighter-rouge">PUT YOUR CODE HERE</code> в приведенной ниже функции на соответствующее решение).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">generate_keypair</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">is_prime</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_prime</span><span class="p">(</span><span class="n">q</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">'Both numbers must be prime.'</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="n">q</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">'p and q cannot be equal'</span><span class="p">)</span>
+
+    <span class="c"># n = pq</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+
+    <span class="c"># phi = (p-1)(q-1)</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+
+    <span class="c"># Choose an integer e such that e and phi(n) are coprime</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+    <span class="c"># Use Euclid's Algorithm to verify that e and phi(n) are comprime</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">g</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+    <span class="c"># Use Extended Euclid's Algorithm to generate the private key</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">multiplicative_inverse</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="c"># Return public and private keypair</span>
+    <span class="c"># Public key is (e, n) and private key is (d, n)</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Затем вычисляется функция Эйлера по формуе <code class="highlighter-rouge">phi=(p-1)(q-1)</code>.</p>
+
+<p>Далее выбирается число <code class="highlighter-rouge">e</code>, отвечающее следующим критериям:</p>
+<ul>
+  <li><code class="highlighter-rouge">e</code> — простое;</li>
+  <li><code class="highlighter-rouge">e &lt; phi</code>;</li>
+  <li><code class="highlighter-rouge">e</code> <a href="https://ru.wikipedia.org/wiki/Взаимно_простые_числа">взаимно простое</a> с <code class="highlighter-rouge">phi</code>.</li>
+</ul>
+
+<p>Определить, являются ли числа взаимно простыми можно с помощью алгоритма Евклида. Для этого необходимо вычислить наибольший общий делитель (НОД) и проверить, <strong>равен ли он единице</strong>. На этом этапе вашей задачей является реализация данного алгоритма:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; gcd(12, 15)
+    3
+    &gt;&gt;&gt; gcd(3, 7)
+    1
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Не забудьте закоммитить реализацию функции <code class="highlighter-rouge">gcd(a, b)</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-am</span> <span class="s2">"Реализована функция поиска НОД"</span>
+</code></pre></div></div>
+
+<p>Заключительным этапом на шаге генерации ключей является вычисление <code class="highlighter-rouge">d</code> такого что <code class="highlighter-rouge">d * e mod phi = 1</code>. Для его вычисления используется расширенный (обобщенный) алгоритм Евклида (см. стр. 23 <a href="http://kpfu.ru/docs/F366166681/mzi.pdf">этого учебного пособия</a> с подробными объяснениями).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">multiplicative_inverse</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; multiplicative_inverse(7, 40)
+    23
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Таким образом, полученные пары <code class="highlighter-rouge">(e,n)</code> и <code class="highlighter-rouge">(d,n)</code> являются открытым и закрытым ключами соответственно.</p>
+
+<p>Снова закоммитьте изменения:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> git commit <span class="nt">-am</span> <span class="s2">"Реализованы функции multiplicative_inverse() и generate_keypair()"</span>
+</code></pre></div></div>
+
+<p>Не забудьте сделать коммит для объединения изменений с веткой <code class="highlighter-rouge">develop</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout develop
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git merge <span class="nt">--no-ff</span> feature/rsa
+</code></pre></div></div>
+
+<h3 id="после-выполнения-всех-заданий">После выполнения всех заданий</h3>
+
+<p>После выполнения всех задач лабораторной работы создайте новый релиз:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout <span class="nt">-b</span> release-1.0 develop
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s2">"Релиз 1.0"</span>
+</code></pre></div></div>
+
+<p>Если ваша работа была <strong>зачтена</strong>, то закройте ветвь релиза:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout master
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git merge <span class="nt">--no-ff</span> release-1.0
+<span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git tag <span class="nt">-a</span> 1.0
+</code></pre></div></div>
+
+<p>Соответствующие ветви функциональности можно удалить, например:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git branch <span class="nt">-d</span> feature/caesar
+</code></pre></div></div>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

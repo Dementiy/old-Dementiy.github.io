@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <generator uri="http://jekyllrb.com" version="3.6.2">Jekyll</generator>
+  
+  
+  <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
+  <updated>2017-11-23T05:14:14+03:00</updated>
+  <id>https://dementiy.github.io//</id>
+
+  
+    <title type="html">Ein Blog für freie Geister</title>
+  
+
+  
+    <subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle>
+  
+
+  
+
+  
+  
+    <entry>
+      
+      <title type="html">Алгоритмы шифрования</title>
+      
+      <link href="https://dementiy.github.io/2017/11/22/01-cypher/" rel="alternate" type="text/html" title="Алгоритмы шифрования" />
+      <published>2017-11-22T00:00:00+03:00</published>
+      <updated>2017-11-22T00:00:00+03:00</updated>
+      <id>https://dementiy.github.io/2017/11/22/01-cypher</id>
+      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/01-cypher/">&lt;p&gt;Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.&lt;/p&gt;
+
+&lt;p&gt;Каждое задание оценивается в отдельности, таким образом, оценку вы получаете по совокупности выполненных заданий (в лабораторной работе №1 таких заданий - три). В оценку включается балл за стиль выполнения задания, поэтому прочитайте официальное руководство по стилю https://www.python.org/dev/peps/pep-0008/ (также некоторые пояснения по оформлению кода можно найти &lt;a href=&quot;https://github.com/Dementiy/pydonts&quot;&gt;здесь&lt;/a&gt;). Соответствие вашей работы PEP8 можно узнать “прогнав” исходный код вашей программы через утилиту &lt;code class=&quot;highlighter-rouge&quot;&gt;pep8&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Все исходники к работам вы можете найти в &lt;a href=&quot;https://github.com/Dementiy/pybook-assignments&quot;&gt;репозитории курса&lt;/a&gt; (следите за его обновлениями). Чтобы получить список всех работ достаточно выполнить следующую команду:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://Dementiy@bitbucket.org/Dementiy/cs102_2016.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Описание работы с командой &lt;code class=&quot;highlighter-rouge&quot;&gt;git&lt;/code&gt; читай в разделе &lt;a href=&quot;href=&amp;quot;https://dementiy.gitbooks.io/-python/content/lab0.html&quot;&gt;Настройка рабочего окружения&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Все дальнейшие изменения в репозитории можно получать с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;git pull&lt;/code&gt; (её рекомендуется использовать каждый раз, когда вы приступаете к выполнению новой лабораторной работы):&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git pull
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;прежде-чем-приступить-к-выполнению-работы&quot;&gt;Прежде чем приступить к выполнению работы&lt;/h3&gt;
+
+&lt;p&gt;Перед тем как начать выполнять лабораторную работу не забудьте перейти в рабочую директорию и активировать ваше виртуальное окружение:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;путь/к/рабочей_директории
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;workon cs102
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Также создадим ветку разработки (подробнее про git workflow можно прочитать &lt;a href=&quot;https://habrahabr.ru/post/106912/&quot;&gt;тут&lt;/a&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; develop master
+Switched to a new branch &lt;span class=&quot;s1&quot;&gt;'develop'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Теперь создадим ветку новой функциональности:&lt;/p&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; feature/caesar develop
+Switched to a new branch &lt;span class=&quot;s1&quot;&gt;'feature/caesar'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;И, наконец, создадим папку, в которой будем хранить все файлы, относящиеся к первой лабораторной работе:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(cs102) $ mkdir homework01
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;шифр-цезаря&quot;&gt;Шифр Цезаря&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://ru.wikipedia.org/wiki/Шифр_Цезаря&quot;&gt;Шифр Цезаря&lt;/a&gt; является одним из самых простых методов шифрования. Для кодирования сообщения все буквы алфавита сдвигают на три символа вперед:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;A -&amp;gt; D, B -&amp;gt; E, C -&amp;gt; F, и так далее
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Сдвиг трёх последних букв алфавита:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;X -&amp;gt; A, Y -&amp;gt; B, Z -&amp;gt; C
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Используя шифр Цезаря, слово &lt;code class=&quot;highlighter-rouge&quot;&gt;PYTHON&lt;/code&gt; будет закодировано следующим образом:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PYTHON
+||||||
+SBWKRQ
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Вам необходимо написать тело для следующих двух функций:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;encrypt_caesar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; encrypt_caesar(&quot;PYTHON&quot;)
+    'SBWKRQ'
+    &amp;gt;&amp;gt;&amp;gt; encrypt_caesar(&quot;python&quot;)
+    'sbwkrq'
+    &amp;gt;&amp;gt;&amp;gt; encrypt_caesar(&quot;Python3.6&quot;)
+    'Sbwkrq3.6'
+    &amp;gt;&amp;gt;&amp;gt; encrypt_caesar(&quot;&quot;)
+    ''
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ciphertext&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;decrypt_caesar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ciphertext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; decrypt_caesar(&quot;SBWKRQ&quot;)
+    'PYTHON'
+    &amp;gt;&amp;gt;&amp;gt; decrypt_caesar(&quot;sbwkrq&quot;)
+    'python'
+    &amp;gt;&amp;gt;&amp;gt; decrypt_caesar(&quot;Sbwkrq3.6&quot;)
+    'Python3.6'
+    &amp;gt;&amp;gt;&amp;gt; decrypt_caesar(&quot;&quot;)
+    ''
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;В результате переменные &lt;code class=&quot;highlighter-rouge&quot;&gt;ciphertext&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;plaintext&lt;/code&gt; должны содержать зашифрованное и расшифрованное сообщения соответственно.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href=&quot;https://mail.python.org/pipermail/python-win32/2005-April/003100.html&quot;&gt;Hint&lt;/a&gt;: Воспользуйтесь встроенными функциями &lt;code class=&quot;highlighter-rouge&quot;&gt;ord()&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;chr()&lt;/code&gt;. Функция &lt;code class=&quot;highlighter-rouge&quot;&gt;ord()&lt;/code&gt; позволяет получить код указанного символа, например:&lt;/p&gt;
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt; ord('A')
+65
+&amp;gt;&amp;gt; chr(65) # работает наоборот - возвращает символ по его коду
+'A'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;О кодировках можно почитать &lt;a href=&quot;http://kunststube.net/encoding/&quot;&gt;тут&lt;/a&gt; и &lt;a href=&quot;http://farmdev.com/talks/unicode/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;В папке &lt;code class=&quot;highlighter-rouge&quot;&gt;homework01&lt;/code&gt; создайте файл с именем &lt;code class=&quot;highlighter-rouge&quot;&gt;caesar.py&lt;/code&gt; и шаблоном приведенным выше. Сделайте коммит с первоначальным шаблоном:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add homework01/caesar.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Добавлен шаблон для шифра Цезаря&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;По завершении работы над каждой функцией не забудьте также сделать коммит, например:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-am&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Реализована функция encrypt_caesar()&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;и аналогично:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-am&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Реализована функция decrypt_caesar()&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Проверить работу функций можно с помощью примеров, приведенных в &lt;a href=&quot;https://docs.python.org/3.5/library/doctest.html&quot;&gt;доктестах&lt;/a&gt; (текст внутри функции, который заключен в тройные кавычки и похож на работу с интерпретатором в интерактивном режиме). Запустить доктесты можно с помощью следующей команды (при условии, что файл с программой называется &lt;code class=&quot;highlighter-rouge&quot;&gt;caesar.py&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3 &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; doctest &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; caesar.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Если все тесты были пройдены успешно, то объедините (merge) ваши изменения с веткой &lt;code class=&quot;highlighter-rouge&quot;&gt;develop&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout develop
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git merge &lt;span class=&quot;nt&quot;&gt;--no-ff&lt;/span&gt; feature/caesar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Замечание: Вы можете воспользоваться приложением &lt;a href=&quot;https://www.sourcetreeapp.com/&quot;&gt;Source Tree&lt;/a&gt; для наглядного отслеживания вносимых изменений.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Практика: Измените ваши функции так, чтобы размер сдвига был произвольным:&lt;/p&gt;
+  &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;encrypt_caesar(plaintext, shift)
+decrypt_caesar(plaintext, shift)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;шифр-виженера&quot;&gt;Шифр Виженера&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://ru.wikipedia.org/wiki/Шифр_Виженера&quot;&gt;Шифр Виженера&lt;/a&gt; очень похож на шифр Цезаря, за тем исключением, что каждый символ сообщения сдвигается на определяемое ключом значение. Ключ - это слово, каждый символ которого указывает на сколько позиций должен быть сдвинут соответствующий символ в шифруемом сообщении. Так, &lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt; означает сдвиг на &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt; символов, &lt;code class=&quot;highlighter-rouge&quot;&gt;B&lt;/code&gt; на &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; и т.д.&lt;/p&gt;
+
+&lt;p&gt;Если длина ключа меньше длины слова, подлежащего шифрованию, то ключ повторяется необходимое число раз, например:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Простой текст: ATTACKATDAWN
+Ключ: LEMONLEMONLE
+Зашифрованный текст: LXFOPVEFRNHR
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Ваша задача написать тело для следующих двух функций так, чтобы переменные &lt;code class=&quot;highlighter-rouge&quot;&gt;ciphertext&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;plaintext&lt;/code&gt; содержали зашифрованное и расшифрованное сообщения соответственно.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;encrypt_vigenere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keyword&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; encrypt_vigenere(&quot;PYTHON&quot;, &quot;A&quot;)
+    'PYTHON'
+    &amp;gt;&amp;gt;&amp;gt; encrypt_vigenere(&quot;python&quot;, &quot;a&quot;)
+    'python'
+    &amp;gt;&amp;gt;&amp;gt; encrypt_vigenere(&quot;ATTACKATDAWN&quot;, &quot;LEMON&quot;)
+    'LXFOPVEFRNHR'
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ciphertext&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;decrypt_vigenere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ciphertext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keyword&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; decrypt_vigenere(&quot;PYTHON&quot;, &quot;A&quot;)
+    'PYTHON'
+    &amp;gt;&amp;gt;&amp;gt; decrypt_vigenere(&quot;python&quot;, &quot;a&quot;)
+    'python'
+    &amp;gt;&amp;gt;&amp;gt; decrypt_vigenere(&quot;LXFOPVEFRNHR&quot;, &quot;LEMON&quot;)
+    'ATTACKATDAWN'
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plaintext&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Обратите внимание, что символы &lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; в ключе не оказывают никакого влияния на шифруемое сообщение. Если же в качестве ключа мы будем использовать &lt;code class=&quot;highlighter-rouge&quot;&gt;C&lt;/code&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;c&lt;/code&gt;, то получим шифр Цезаря.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Перед выполнением задания не забудьте создать новую ветвь функциональности &lt;code class=&quot;highlighter-rouge&quot;&gt;feature/vigenere&lt;/code&gt; и сделать коммит с шаблоном (файл с шаблоном должен быть размещен в каталоге &lt;code class=&quot;highlighter-rouge&quot;&gt;homework01&lt;/code&gt; под именем &lt;code class=&quot;highlighter-rouge&quot;&gt;vigener.py&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; feature/vigener develop
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add homework01/vigener.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Добавлен шаблон для шифра Виженера&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;По окончании работы над каждой функцией не забудьте сделать соответствующие коммиты, как в примере с шифром Цезаря, а также объединенить изменения с веткой &lt;code class=&quot;highlighter-rouge&quot;&gt;develop&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout develop
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git merge &lt;span class=&quot;nt&quot;&gt;--no-ff&lt;/span&gt; feature/vigener
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;rsa-шифрование&quot;&gt;RSA шифрование&lt;/h3&gt;
+
+&lt;p&gt;Одним из современных методов шифрования является алгоритм шифрования RSA, названный так по первым буквам фамилий его авторов.&lt;/p&gt;
+
+&lt;p&gt;Мы не будем здесь вдаваться в &lt;a href=&quot;http://kpfu.ru/docs/F366166681/mzi.pdf&quot;&gt;подробности работы&lt;/a&gt; этого алгоритма (хотя и рассмотрим техническую часть), но &lt;a href=&quot;https://www.quora.com/How-do-you-explain-how-an-RSA-public-key-works-to-a-child&quot;&gt;следующего объяснения&lt;/a&gt; должно быть достаточно для понимания принципов шифрования с открытым ключом:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;img src=&quot;https://qph.ec.quoracdn.net/main-qimg-8ad399b007bf86350675e8cbf5be6e34-c?convert_to_webp=true&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+  &lt;p&gt;Show your kid a padlock. This is a kind of lock that locks when you click it (i.e it doesn’t require a key) but requires the key to open the lock.&lt;/p&gt;
+
+  &lt;p&gt;So, I can send these padlocks to all my friends who want to communicate with me. I will send them only the lock but will keep the key with me.&lt;/p&gt;
+
+  &lt;p&gt;My friends can write me messages, put it in a box, lock it with my padlock (by clicking it) and send it to me, even over high risk networks. If the box is intercepted, it’s contents will not be compromised since I still have the key with me.&lt;/p&gt;
+
+  &lt;p&gt;When the box reaches me, I can open my padlock with my key and read the contents. This way, I can send padlocks (public keys) to people outside which they can use to lock boxes (encrypt messages) without being in danger of the contents being compromised as the padlock key (the private key) is always with me and never exchanged over the network.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Работу алгоритма можно разбить на три шага:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Генерация ключей&lt;/li&gt;
+  &lt;li&gt;Шифрование&lt;/li&gt;
+  &lt;li&gt;Расшифровка&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;От вас в этом задании требуется выполнить только шаг генерации ключей, остальные два шага уже даны (см. исходники к работе).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;На этапе генерации создаётся два ключа: открытый (public key, с помощью которого каждый сможет зашифровать сообщение и отправить его нам) и закрытый (private key, которым мы можем расшифровать полученные сообщения). Для этого выбирается два &lt;a href=&quot;https://ru.wikipedia.org/wiki/Простое_число&quot;&gt;простых числа&lt;/a&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;p&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt;. Позволим пользователю вводить эти числа, но их необходимо проверять на простоту. Для этого напишем функцию, но предварительно создадим новую ветку функциональности и сделаем коммит с шаблоном для этого задания:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; feature/rsa develop
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add homework01/rsa.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Добавлен шаблон для RSA шифрования&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Теперь можно начать работать над функцией &lt;code class=&quot;highlighter-rouge&quot;&gt;is_prime(n)&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;is_prime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; is_prime(2)
+    True
+    &amp;gt;&amp;gt;&amp;gt; is_prime(11)
+    True
+    &amp;gt;&amp;gt;&amp;gt; is_prime(8)
+    False
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Если вы не понимаете, как работают функции, то напишите небольшую программу выводящую &lt;code class=&quot;highlighter-rouge&quot;&gt;True&lt;/code&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;False&lt;/code&gt; в зависимости от того, является число простым или нет. Затем полученный код скопируйте в приведенную выше функцию (вместо ключевого слова &lt;code class=&quot;highlighter-rouge&quot;&gt;pass&lt;/code&gt;) и замените &lt;code class=&quot;highlighter-rouge&quot;&gt;print(True)&lt;/code&gt; на &lt;code class=&quot;highlighter-rouge&quot;&gt;return True&lt;/code&gt;, а &lt;code class=&quot;highlighter-rouge&quot;&gt;print(False)&lt;/code&gt; на &lt;code class=&quot;highlighter-rouge&quot;&gt;return False&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Если вы закончили работу над функцией &lt;code class=&quot;highlighter-rouge&quot;&gt;is_prime(n)&lt;/code&gt; - сделайте коммит:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-am&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Реализована функция is_prime(n)&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;После того как были выбраны два простых числа находится их произведение &lt;code class=&quot;highlighter-rouge&quot;&gt;n = p * q&lt;/code&gt; (по ходу объяснения заменяйте комментарий со словами &lt;code class=&quot;highlighter-rouge&quot;&gt;PUT YOUR CODE HERE&lt;/code&gt; в приведенной ниже функции на соответствующее решение).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;generate_keypair&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_prime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_prime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ValueError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Both numbers must be prime.'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ValueError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'p and q cannot be equal'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# n = pq&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# phi = (p-1)(q-1)&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# Choose an integer e such that e and phi(n) are coprime&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randrange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# Use Euclid's Algorithm to verify that e and phi(n) are comprime&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gcd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randrange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gcd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;# Use Extended Euclid's Algorithm to generate the private key&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplicative_inverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# Return public and private keypair&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# Public key is (e, n) and private key is (d, n)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Затем вычисляется функция Эйлера по формуе &lt;code class=&quot;highlighter-rouge&quot;&gt;phi=(p-1)(q-1)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Далее выбирается число &lt;code class=&quot;highlighter-rouge&quot;&gt;e&lt;/code&gt;, отвечающее следующим критериям:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;e&lt;/code&gt; — простое;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;e &amp;lt; phi&lt;/code&gt;;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;e&lt;/code&gt; &lt;a href=&quot;https://ru.wikipedia.org/wiki/Взаимно_простые_числа&quot;&gt;взаимно простое&lt;/a&gt; с &lt;code class=&quot;highlighter-rouge&quot;&gt;phi&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Определить, являются ли числа взаимно простыми можно с помощью алгоритма Евклида. Для этого необходимо вычислить наибольший общий делитель (НОД) и проверить, &lt;strong&gt;равен ли он единице&lt;/strong&gt;. На этом этапе вашей задачей является реализация данного алгоритма:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;gcd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; gcd(12, 15)
+    3
+    &amp;gt;&amp;gt;&amp;gt; gcd(3, 7)
+    1
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Не забудьте закоммитить реализацию функции &lt;code class=&quot;highlighter-rouge&quot;&gt;gcd(a, b)&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-am&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Реализована функция поиска НОД&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Заключительным этапом на шаге генерации ключей является вычисление &lt;code class=&quot;highlighter-rouge&quot;&gt;d&lt;/code&gt; такого что &lt;code class=&quot;highlighter-rouge&quot;&gt;d * e mod phi = 1&lt;/code&gt;. Для его вычисления используется расширенный (обобщенный) алгоритм Евклида (см. стр. 23 &lt;a href=&quot;http://kpfu.ru/docs/F366166681/mzi.pdf&quot;&gt;этого учебного пособия&lt;/a&gt; с подробными объяснениями).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;multiplicative_inverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    &amp;gt;&amp;gt;&amp;gt; multiplicative_inverse(7, 40)
+    23
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Таким образом, полученные пары &lt;code class=&quot;highlighter-rouge&quot;&gt;(e,n)&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;(d,n)&lt;/code&gt; являются открытым и закрытым ключами соответственно.&lt;/p&gt;
+
+&lt;p&gt;Снова закоммитьте изменения:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; git commit &lt;span class=&quot;nt&quot;&gt;-am&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Реализованы функции multiplicative_inverse() и generate_keypair()&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Не забудьте сделать коммит для объединения изменений с веткой &lt;code class=&quot;highlighter-rouge&quot;&gt;develop&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout develop
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git merge &lt;span class=&quot;nt&quot;&gt;--no-ff&lt;/span&gt; feature/rsa
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;после-выполнения-всех-заданий&quot;&gt;После выполнения всех заданий&lt;/h3&gt;
+
+&lt;p&gt;После выполнения всех задач лабораторной работы создайте новый релиз:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; release-1.0 develop
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Релиз 1.0&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Если ваша работа была &lt;strong&gt;зачтена&lt;/strong&gt;, то закройте ветвь релиза:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout master
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git merge &lt;span class=&quot;nt&quot;&gt;--no-ff&lt;/span&gt; release-1.0
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git tag &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; 1.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Соответствующие ветви функциональности можно удалить, например:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git branch &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; feature/caesar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+
+      
+        <category term="python" />
+      
+        <category term="golang" />
+      
+        <category term="base" />
+      
+        <category term="практики" />
+      
+
+      
+
+      
+        <summary type="html">Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+    <entry>
+      
+      <title type="html">Настройка рабочего окружения</title>
+      
+      <link href="https://dementiy.github.io/2017/11/22/00-introduction/" rel="alternate" type="text/html" title="Настройка рабочего окружения" />
+      <published>2017-11-22T00:00:00+03:00</published>
+      <updated>2017-11-22T00:00:00+03:00</updated>
+      <id>https://dementiy.github.io/2017/11/22/00-introduction</id>
+      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/00-introduction/">&lt;p&gt;В этом посте я постараюсь описать все, что понадобится для выполнения практик. Скорее всего этот пост будет время от времени обновляться, так что следите за изменениями и задавайте вопросы, если что-то непонятно.&lt;/p&gt;
+
+&lt;h3 id=&quot;установка-интерпретатора-python&quot;&gt;Установка интерпретатора Python&lt;/h3&gt;
+
+&lt;p&gt;В первую очередь вам будет нужен интерпретатор языка Python (о том, что такое “интерпретатор” можно почитать &lt;a href=&quot;&quot;&gt;тут&lt;/a&gt;). Где его взять? На юникс-подобных операционных системах (Linux, MacOS и др.) интерпретатор Python, скорее всего, уже установлен. Проверить это вы можете набрав в терминале (командной строке) команду &lt;code class=&quot;highlighter-rouge&quot;&gt;python&lt;/code&gt;, например:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python
+Python 2.7.10 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default, Jul 30 2016, 18:31:42&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;GCC 4.2.1 Compatible Apple LLVM 8.0.0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;clang-800.0.34&lt;span class=&quot;o&quot;&gt;)]&lt;/span&gt; on darwin
+Type &lt;span class=&quot;s2&quot;&gt;&quot;help&quot;&lt;/span&gt;, &lt;span class=&quot;s2&quot;&gt;&quot;copyright&quot;&lt;/span&gt;, &lt;span class=&quot;s2&quot;&gt;&quot;credits&quot;&lt;/span&gt; or &lt;span class=&quot;s2&quot;&gt;&quot;license&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;more information.
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Знак доллара &lt;code class=&quot;highlighter-rouge&quot;&gt;$&lt;/code&gt; обозначает приглашение к вводу команд. В Windows такое приглашение обычно выглядит как символ больше &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Обратите внимание на версию, в моем случае это 2.7.10. Нам она не подходит (“&lt;em&gt;Why not?&lt;/em&gt;” - можно почитать &lt;a href=&quot;https://wiki.python.org/moin/Python2orPython3&quot;&gt;тут&lt;/a&gt; и &lt;a href=&quot;http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html&quot;&gt;тут&lt;/a&gt;). Нам нужен интерпретатор третьей версии. Если вы видите, что версия вторая, то попробуйте набрать команду &lt;code class=&quot;highlighter-rouge&quot;&gt;python3&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3
+Python 3.6.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;v3.6.1:69c0db5050, Mar 21 2017, 01:21:04&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;GCC 4.2.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Apple Inc. build 5666&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dot 3&lt;span class=&quot;o&quot;&gt;)]&lt;/span&gt; on darwin
+Type &lt;span class=&quot;s2&quot;&gt;&quot;help&quot;&lt;/span&gt;, &lt;span class=&quot;s2&quot;&gt;&quot;copyright&quot;&lt;/span&gt;, &lt;span class=&quot;s2&quot;&gt;&quot;credits&quot;&lt;/span&gt; or &lt;span class=&quot;s2&quot;&gt;&quot;license&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;more information.
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Если же появляется сообщение об ошибке, то интерпретатор нужно установить. Скачать интерпретатор под нужную операционную систему вы можете с официального &lt;a href=&quot;https://www.python.org/downloads/&quot;&gt;сайта&lt;/a&gt; (если вы пользователь Linux-системы, то установить интерпретатор можете из репозитория).
+После установки обязательно проверьте, что интерпретатор запускается:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; print&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Hello, World!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Hello, World!
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; quit&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Это интерактивный режим работы с интерпретатором языка Python (&lt;a href=&quot;https://ru.wikipedia.org/wiki/REPL&quot;&gt;REPL&lt;/a&gt;). Три символа “&lt;em&gt;больше&lt;/em&gt;” &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/code&gt; являются приглашением к вводу команд. Для завершения работы с интерпретатором нужно набрать команду &lt;code class=&quot;highlighter-rouge&quot;&gt;quit()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;Замечание&lt;/em&gt;: Если вы устанавливаете Python на Windows, то есть вероятность, что, набрав команду &lt;code class=&quot;highlighter-rouge&quot;&gt;python&lt;/code&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;python3&lt;/code&gt; после установки, вы получите сообщение об ошибке. Если так, то попробуйте набрать &lt;code class=&quot;highlighter-rouge&quot;&gt;py&lt;/code&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;py3&lt;/code&gt;, вместо &lt;code class=&quot;highlighter-rouge&quot;&gt;python&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;python3&lt;/code&gt;, соответственно. Если вы по-прежнему получаете сообщение об ошибке, то возможно, что путь к интерпретатору не указан в переменной окружения &lt;code class=&quot;highlighter-rouge&quot;&gt;PATH&lt;/code&gt;. “У меня все равно ничего не работает!” - прочитайте как правильно все &lt;a href=&quot;https://docs.python.org/3/using/windows.html#configuring-python&quot;&gt;настроить&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;выбор-редактора-кода&quot;&gt;Выбор редактора кода&lt;/h3&gt;
+
+&lt;p&gt;Вам будет нужен редактор кода. Это может быть “простой” текстовый редактор с подсветкой синтаксиса &lt;a href=&quot;http://sublimetext.com/3&quot;&gt;SublimeText&lt;/a&gt; или же полноценная среда разработки &lt;a href=&quot;https://www.jetbrains.com/pycharm/download/&quot;&gt;PyCharm&lt;/a&gt; (подходящим для меня решением оказалась связка из редактора &lt;a href=&quot;http://www.vim.org/&quot;&gt;Vim&lt;/a&gt; и интересного, на мой взгляд, проекта &lt;a href=&quot;https://kite.com/&quot;&gt;Kite&lt;/a&gt;). Я вам рекомендую попробовать оба варианта, но средой разработки пользоваться только после того, как научитесь работать с интерпретатором и системой контроля версий, что будет обязательным для нашего курса.&lt;/p&gt;
+
+&lt;p&gt;Для ваших работ заведите себе отдельную папку, назовите ее &lt;code class=&quot;highlighter-rouge&quot;&gt;cs102&lt;/code&gt; (можете назвать иначе). В этой папке создайте новый файл с именем &lt;code class=&quot;highlighter-rouge&quot;&gt;hello.py&lt;/code&gt;, откройте его с помощью редактора &lt;code class=&quot;highlighter-rouge&quot;&gt;SublimeText&lt;/code&gt; (или любого &lt;a href=&quot;https://wiki.python.org/moin/PythonEditors&quot;&gt;другого&lt;/a&gt;, который вам больше понравился):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/00-introduction/sublimetext.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Откройте терминал (командную строку), перейдите в папку с созданным файлом с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;cd путь_к_cs102&lt;/code&gt; (рекомендую вам создать &lt;code class=&quot;highlighter-rouge&quot;&gt;alias&lt;/code&gt;, т.е. короткое имя для пути, чтобы в будущем вы всегда могли быстро перейти в эту папку) и запустите скрипт с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;python hello.py&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/00-introduction/bash.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Таким образом, мы написали и запустили простейшую программу (скрипт). Запомните эти шаги.&lt;/p&gt;
+
+&lt;h3 id=&quot;работа-с-виртуальными-окружениями&quot;&gt;Работа с виртуальными окружениями&lt;/h3&gt;
+
+&lt;p&gt;Для выполнения работ рекомендуется использовать модуль &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenv&lt;/code&gt;, предназначенный для создания и управления изолированными (виртуальными) окружениями. &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenv&lt;/code&gt; позволяет заключить в отдельный каталог необходимые версии python-пакетов и использовать только их. Используя &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenv&lt;/code&gt;, вы можете устанавливать свежие версии пакетов из &lt;a href=&quot;https://pypi.python.org/pypi&quot;&gt;Python Package Index&lt;/a&gt;, при этом не получая проблем с совместимостью версий загруженных пакетов и тех, что уже имеются в системе.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip install virtualenv
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Для более комфортной работы с &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenv&lt;/code&gt; мы будем использовать расширение &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenvwrapper&lt;/code&gt; (ниже приведены команды для Unix-like систем, см. замечание):&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip install virtualenvwrapper
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;source virtualenvwrapper.sh&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; ~/.bashrc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Замечание: Для пользователей Windows следует установить модуль &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenvwrapper-win&lt;/code&gt; вместо &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenvwrapper&lt;/code&gt;. Также рекомендуется установить &lt;a href=&quot;https://git-for-windows.github.io/&quot;&gt;Git SCM&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Создать новое виртуальное окружение можно с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;mkvirtualenv&lt;/code&gt; (обратите внимание на то, как меняется путь к интерпретатору python):&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;which python3
+/Library/Frameworks/Python.framework/Versions/3.6/bin/python3
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;mkvirtualenv cs102
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;workon cs102
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;which python
+/Users/dementiy/.virtualenvs/cs102/bin/python
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;deactivate
+&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Замечание: Если у вас не получается настроить &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenvwrapper&lt;/code&gt; на ОС Windows, то можете ограничиться &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenv&lt;/code&gt;:&lt;/p&gt;
+  &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;virtualenv cs102-env
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cs102-env&lt;span class=&quot;se&quot;&gt;\S&lt;/span&gt;cripts&lt;span class=&quot;se&quot;&gt;\a&lt;/span&gt;ctivate.bat
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102-env&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# Окружение активировано&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;deactivate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Давайте в созданном виртуальном окружении установим два новых пакета: &lt;a href=&quot;http://www.bpython-interpreter.org&quot;&gt;bpython&lt;/a&gt; и &lt;a href=&quot;https://ipython.org/&quot;&gt;ipython&lt;/a&gt;. Это тоже интерпретаторы языка Python, но с дополнительными функциями (подсветка синтаксиса, подсказки и др):&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Не забудем перейти в наше виртуальное окружение&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;workon cs102
+&lt;span class=&quot;c&quot;&gt;# Установим необходимые пакеты&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip install bpython jupyter
+&lt;span class=&quot;c&quot;&gt;# Запуск bpython&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; bpython
+&lt;span class=&quot;c&quot;&gt;# Запуск ipython&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ipython
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bpython&lt;/code&gt; на Windows может &lt;a href=&quot;https://docs.bpython-interpreter.org/windows.html&quot;&gt;не работать&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;В этом примере мы использовали &lt;a href=&quot;https://docs.python.org/3.5/installing/index.html&quot;&gt;pip&lt;/a&gt; для установки новых пакетов. Иногда устанавливаемый пакет требует наличие других пакетов для своей работы, которые пакеты устанавливаются автоматически (говорят “по зависимостям”). Но может возникнуть ситуация, когда вам придется вручную установить нужную библиотеку. Если вы не знаете как это сделать, то поищите ответ на &lt;a href=&quot;http://stackoverflow.com&quot;&gt;stackoverflow.com&lt;/a&gt;, скорее всего кто-то уже столкнулся с той же проблемой, что и вы.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Теперь всякий раз приступая к работе, активируйте созданное виртуальное окружение с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;workon cs102&lt;/code&gt;. Полный список команд по работе с &lt;code class=&quot;highlighter-rouge&quot;&gt;virtualenvwrapper&lt;/code&gt; можно найти &lt;a href=&quot;https://virtualenvwrapper.readthedocs.io/en/latest/command_ref.html&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;система-контроля-версий&quot;&gt;Система контроля версий&lt;/h3&gt;
+
+&lt;p&gt;Мы будем пользоваться системой контроля версий (на занятии разберем зачем это нужно, но можете начать читать вот &lt;a href=&quot;https://git-scm.com/book/ru/v1/Введение-О-контроле-версий&quot;&gt;это&lt;/a&gt; руководство). Вам нужно зарегистрироваться либо на https://github.com, либо на https://bitbucket.org/. Все изменения, которые будут происходить с вашими работами, могут храниться локально (у вас на компьютере), а могут и удаленно. Таким образом, вы всегда сможете продолжить работу над своим проектом. На bitbucket есть возможность создания бесплатного приватного (закрытого) репозитория (хранилища) для вашего проекта. Далее приведен пример с использованием &lt;strong&gt;bitbucket&lt;/strong&gt; (рекомендую проделать эти шаги и на github).&lt;/p&gt;
+
+&lt;p&gt;Зарегистрируйтесь на сайте https://bitbucket.org/. По завершении регистрации вам будет предложено создать новый репозиторий (либо вкладка &lt;code class=&quot;highlighter-rouge&quot;&gt;Repository -&amp;gt; Crete new repository&lt;/code&gt;). Укажите следующие параметры для вашего проекта (в дальнейшем их можно будет изменить):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/00-introduction/bitbucket.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Далее раскройте список со словами &lt;code class=&quot;highlighter-rouge&quot;&gt;I'm starting from scratch&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/00-introduction/scratch.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Достаточно повторить указанные шаги, но вместо файла &lt;code class=&quot;highlighter-rouge&quot;&gt;contributors.txt&lt;/code&gt; мы сделаем коммит (загрузим изменения на сервер) нашей программы &lt;code class=&quot;highlighter-rouge&quot;&gt;hello.py&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git init
+Initialized empty Git repository &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; /Users/user/cs102/.git/
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git remote add origin https://Dementiy@bitbucket.org/Dementiy/cs102.git
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add hello.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Initial commit with my first program on Python'&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;***&lt;/span&gt; Please tell me who you are.
+
+Run
+
+git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; user.email &lt;span class=&quot;s2&quot;&gt;&quot;you@example.com&quot;&lt;/span&gt;
+git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; user.name &lt;span class=&quot;s2&quot;&gt;&quot;Your Name&quot;&lt;/span&gt;
+
+to &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;your account&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;s default identity.
+Omit &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; to &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;the identity only &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;this repository.
+
+fatal: unable to auto-detect email address &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;got &lt;span class=&quot;s1&quot;&gt;'user@Air-user.(none)'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; user.email &lt;span class=&quot;s2&quot;&gt;&quot;Dementiy@yandex.ru&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; user.name &lt;span class=&quot;s2&quot;&gt;&quot;Dmitriy&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Initial commit with my first program on Python'&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;master &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root-commit&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; b9c8e00] Initial commit with my first program on Python
+1 file changed, 1 insertion&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;+&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+create mode 100644 hello.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git push &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; origin master
+Password &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'https://Dementiy@bitbucket.org'&lt;/span&gt;:
+Counting objects: 3, &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+Writing objects: 100% &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3/3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, 258 bytes | 0 bytes/s, &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+Total 3 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;delta 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, reused 0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;delta 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+To https://Dementiy@bitbucket.org/Dementiy/cs102.git
+&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;new branch] master -&amp;gt; master
+Branch master &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;up to track remote branch master from origin.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Важно: если после выполнения команды &lt;code class=&quot;highlighter-rouge&quot;&gt;git init&lt;/code&gt; вы получили сообщение об ошибке о том, что команда &lt;code class=&quot;highlighter-rouge&quot;&gt;git&lt;/code&gt; не найдена, то, скорее всего, вы работаете под Windows и &lt;code class=&quot;highlighter-rouge&quot;&gt;git&lt;/code&gt; нужно &lt;a href=&quot;https://git-scm.com/download/win&quot;&gt;установить&lt;/a&gt;. Обратите внимание на выполнение простейшей настройки &lt;code class=&quot;highlighter-rouge&quot;&gt;git&lt;/code&gt; с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;git config&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Теперь убедитесь, что новый файл появился на https://bitbucket.org/. Для этого зайдите в раздел &lt;code class=&quot;highlighter-rouge&quot;&gt;Source&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/00-introduction/source.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Давайте немного изменим нашу программу &lt;code class=&quot;highlighter-rouge&quot;&gt;hello.py&lt;/code&gt;, добавив в нее функцию (на занятиях мы обязательно поговорим о функциях, но пока функцию можно воспринимать как контейнер со списком действий) и проверку на то, выполняется ли наша программа как скрипт или она используется как модуль (библиотека, подключаемая в других скриптах):&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello, World!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;__main__&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Запуск программы как скрипта&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3 hello.py
+Hello, World!
+
+&lt;span class=&quot;c&quot;&gt;# Использование программы как модуля&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python3
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; import hello
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; hello.message&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+Hello, World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Итак, мы внесли нужные изменения в программу, &lt;code class=&quot;highlighter-rouge&quot;&gt;git&lt;/code&gt; эти изменения также заметил. Проверить это можно с помощью команды &lt;code class=&quot;highlighter-rouge&quot;&gt;git status&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git status
+On branch master
+Your branch is up-to-date with &lt;span class=&quot;s1&quot;&gt;'origin/master'&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+Changes not staged &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;commit:
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;use &lt;span class=&quot;s2&quot;&gt;&quot;git add &amp;lt;file&amp;gt;...&quot;&lt;/span&gt; to update what will be committed&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;use &lt;span class=&quot;s2&quot;&gt;&quot;git checkout -- &amp;lt;file&amp;gt;...&quot;&lt;/span&gt; to discard changes &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;working directory&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+modified: hello.py
+
+no changes added to commit &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;use &lt;span class=&quot;s2&quot;&gt;&quot;git add&quot;&lt;/span&gt; and/or &lt;span class=&quot;s2&quot;&gt;&quot;git commit -a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Теперь нам нужно сделать коммит, чтобы зафиксировать изменения в истории проекта:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add hello.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Add function message()&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cs102&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git push
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;На первое время нам этого будет достаточно.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Добавьте в репозиторий файл с именем &lt;code class=&quot;highlighter-rouge&quot;&gt;README.md&lt;/code&gt;, который должен содержать информацию о вас (имя, фамилия, электронная почта для связи и номер группы) и небольшое описание вашего репозитория (например, “Решения лабораторных работ к курсу…”). &lt;code class=&quot;highlighter-rouge&quot;&gt;README.md&lt;/code&gt; должен быть в формате Markdown , про который можно почитать &lt;a href=&quot;https://github.com/OlgaVlasova/markdown-doc/blob/master/README.md&quot;&gt;тут&lt;/a&gt;. Также можете воспользоваться онлайн редактором &lt;a href=&quot;http://dillinger.io/&quot;&gt;Dillinger&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Напомню, что вы можете задавать вопросы в комментариях или в Slack’е (&lt;a href=&quot;https://get.slack.help/hc/en-us/articles/115004071768-What-is-Slack-&quot;&gt;что такое Slack?&lt;/a&gt;).&lt;/p&gt;
+&lt;/blockquote&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+
+      
+        <category term="python" />
+      
+        <category term="golang" />
+      
+        <category term="практики" />
+      
+
+      
+
+      
+        <summary type="html">В этом посте я постараюсь описать все, что понадобится для выполнения практик. Скорее всего этот пост будет время от времени обновляться, так что следите за изменениями и задавайте вопросы, если что-то непонятно.</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+</feed>
