@@ -10,7 +10,7 @@
   
   
   <title>Судоку</title>
-  <meta name="description" content="В этой работе требуется написать решатель Судоку.">
+  <meta name="description" content="В этой лабораторной работе требуется написать решатель Судоку. Правила игры в Судоку достаточно простые, вот пояснения с Википедии:">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -25,7 +25,7 @@
   <meta name="twitter:card" content="summary">
   
   <meta name="twitter:title" content="Судоку">
-  <meta name="twitter:description" content="В этой работе требуется написать решатель Судоку.">
+  <meta name="twitter:description" content="В этой лабораторной работе требуется написать решатель Судоку. Правила игры в Судоку достаточно простые, вот пояснения с Википедии:">
   
   
 
@@ -119,7 +119,7 @@
     
   
     
-      <a href="/categories/base/">base</a>,
+      <a href="/categories/beginner/">beginner</a>,
     
   
 
@@ -140,7 +140,485 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>В этой работе требуется написать решатель Судоку.</p>
+    <p>В этой лабораторной работе требуется написать решатель Судоку. Правила игры в Судоку достаточно простые, вот пояснения с <a href="https://ru.wikipedia.org/wiki/Судоку">Википедии</a>:</p>
+
+<blockquote>
+  <p>Игровое поле представляет собой квадрат размером 9×9, разделённый на меньшие квадраты со стороной в 3 клетки. Таким образом, всё игровое поле состоит из 81 клетки. В них уже в начале игры стоят некоторые числа (от 1 до 9), называемые подсказками. От игрока требуется заполнить свободные клетки цифрами от 1 до 9 так, чтобы в каждой строке, в каждом столбце и в каждом малом квадрате 3×3 каждая цифра встречалась бы <strong>только один раз</strong>.</p>
+</blockquote>
+
+<p>Далее приведен пример Судоку и его решения:</p>
+
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Sudoku-by-L2G-20050714.svg/250px-Sudoku-by-L2G-20050714.svg.png" alt="Пример решения Судоку" />
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Sudoku-by-L2G-20050714_solution.svg/250px-Sudoku-by-L2G-20050714_solution.svg.png" alt="Пример решения Судоку" /></p>
+
+<p>Нам нужно каким-то образом хранить сам пазл. Для этого можно использовать обычные текстовые файлы, например, представленный выше пазл может выглядеть следующим образом:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>53..7....
+6..195...
+.98....6.
+8...6...3
+4..8.3..1
+7...2...6
+.6....28.
+...419..5
+....8..79
+</code></pre></div></div>
+
+<p>где каждая точка соответствует пустой клетке, которую требуется заполнить числом.</p>
+
+<p>Теперь нужно написать функцию для чтения пазла из файла (шаблон работы можно найти в репозитории). Назовем ее <code class="highlighter-rouge">read_sudoku()</code> и в качестве параметра будем передавать ей имя файла, в котором хранится пазл:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">read_sudoku</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="s">""" Прочитать Судоку из указанного файла """</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="s">'123456789.'</span><span class="p">]</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">group</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grid</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Процесс выполнения лабораторной работы такой же как и предыдущей, поэтому не забудьте активировать виртуальное окружение, создавать ветви функциональности и делать коммиты.</p>
+</blockquote>
+
+<p><strong>Задание №1</strong>: На текущий момент вашей задачей является написать функцию <code class="highlighter-rouge">group()</code>, которая принимает пазл и размер доски <code class="highlighter-rouge">n</code>, а в качестве результата работы возвращает матрицу размера <code class="highlighter-rouge">n*n</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="s">"""
+    Сгруппировать значения values в список, состоящий из списков по n элементов
+
+    &gt;&gt;&gt; group([1,2,3,4], 2)
+    [[1, 2], [3, 4]]
+    &gt;&gt;&gt; group([1,2,3,4,5,6,7,8,9], 3)
+    [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Подсказка</strong>: Для решения ряда задач используйте списковые включения (list comprehensions, в русскоязычной литературе их часто называют генераторами списков). Простой пример, чтобы создать список из четных элементов в диапазоне от 0 до 10 можно использовать такую конструкцию: <code class="highlighter-rouge">L = [i for i in range(10) if i % 2 == 0]</code></p>
+</blockquote>
+
+<p>Чтобы убедиться в том, что вы верно написали функцию <code class="highlighter-rouge">group()</code> воспользуйтесь доктестом:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python <span class="nt">-m</span> doctest sudoku.py
+</code></pre></div></div>
+
+<p>Результат выполнения этой команды может быть следующим:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>File <span class="s2">"/Users/dementiy/Projects/cs102/sudoku.py"</span>, line 13, <span class="k">in </span>sudoku.group
+Failed example:
+    group<span class="o">([</span>1,2,3,4], 2<span class="o">)</span>
+Expected:
+    <span class="o">[[</span>1, 2], <span class="o">[</span>3, 4]]
+Got nothing
+<span class="k">**********************************************************************</span>
+File <span class="s2">"/Users/dementiy/Projects/cs102/sudoku.py"</span>, line 15, <span class="k">in </span>sudoku.group
+Failed example:
+    group<span class="o">([</span>1,2,3,4,5,6,7,8,9], 3<span class="o">)</span>
+Expected:
+    <span class="o">[[</span>1, 2, 3], <span class="o">[</span>4, 5, 6], <span class="o">[</span>7, 8, 9]]
+Got nothing
+<span class="k">**********************************************************************</span>
+4 items had failures:
+    3 of 3 <span class="k">in </span>sudoku.find_empty_positions
+    3 of 3 <span class="k">in </span>sudoku.get_col
+    3 of 3 <span class="k">in </span>sudoku.get_row
+    2 of 2 <span class="k">in </span>sudoku.group
+<span class="k">***</span>Test Failed<span class="k">***</span> 11 failures
+</code></pre></div></div>
+
+<p>На текущий момент нас интересует только функция <code class="highlighter-rouge">group()</code> и из двух тестов она не прошла ни один. В начале вывода показано, какой результат ожидался <code class="highlighter-rouge">Expected</code>, а какой получили <code class="highlighter-rouge">Got</code>. Если вы написали функцию верно, то эти сообщения исчезнут, но останутся сообщения для пока еще не написанных функций.</p>
+
+<p>Если вы перестали видеть сообщения с ошибками для функции <code class="highlighter-rouge">group()</code>, то давайте посмотрим как работает функция <code class="highlighter-rouge">read_sudoku()</code>. Запустите программу следующим образом (все пазлы также в репозитории):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">$</span> <span class="n">python</span> <span class="o">-</span><span class="n">i</span> <span class="n">sudoku</span><span class="o">.</span><span class="n">py</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">read_sudoku</span><span class="p">(</span><span class="s">'puzzle1.txt'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span> <span class="k">as</span> <span class="n">pp</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pp</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="p">[[</span><span class="s">'5'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'7'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'6'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'9'</span><span class="p">,</span> <span class="s">'5'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'.'</span><span class="p">,</span> <span class="s">'9'</span><span class="p">,</span> <span class="s">'8'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'6'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'8'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'6'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'4'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'8'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'7'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'6'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'.'</span><span class="p">,</span> <span class="s">'6'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'8'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'4'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'9'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'5'</span><span class="p">],</span>
+<span class="p">[</span><span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'8'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'.'</span><span class="p">,</span> <span class="s">'7'</span><span class="p">,</span> <span class="s">'9'</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<p>Как видите вывод содержимого пазла <code class="highlighter-rouge">grid</code> не очень нагляден, поэтому для вас написана функция <code class="highlighter-rouge">display()</code>, которая выводит пазл в более человеко-наглядной форме.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">display</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="mi">5</span> <span class="mi">3</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">7</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="mi">6</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">1</span> <span class="mi">9</span> <span class="mi">5</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="o">.</span> <span class="mi">9</span> <span class="mi">8</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">6</span> <span class="o">.</span>
+<span class="o">------+------+------</span>
+<span class="mi">8</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">6</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">3</span>
+<span class="mi">4</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">8</span> <span class="o">.</span> <span class="mi">3</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">1</span>
+<span class="mi">7</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">2</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">6</span>
+<span class="o">------+------+------</span>
+<span class="o">.</span> <span class="mi">6</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">2</span> <span class="mi">8</span> <span class="o">.</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">4</span> <span class="mi">1</span> <span class="mi">9</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">5</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">8</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">7</span> <span class="mi">9</span>
+</code></pre></div></div>
+
+<p><strong>Задание №2</strong>: Так как при решении Судоку ставятся условия, что значения не могут повторяться ни в строке, ни в столбце, ни в квадрате, то следовательно нам эти значения нужно получить. Для этого от вас требуется написать три функции <code class="highlighter-rouge">get_row()</code>, <code class="highlighter-rouge">get_col()</code> и <code class="highlighter-rouge">get_block()</code>, каждая из которых принимает два аргумента: пазл (<code class="highlighter-rouge">values</code>) и позицию (<code class="highlighter-rouge">pos</code>), для которой мы пытаемся найти верное число.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_row</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="s">""" Возвращает все значения для номера строки, указанной в pos
+
+    &gt;&gt;&gt; get_row([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
+    ['1', '2', '.']
+    &gt;&gt;&gt; get_row([['1', '2', '3'], ['4', '.', '6'], ['7', '8', '9']], (1, 0))
+    ['4', '.', '6']
+    &gt;&gt;&gt; get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
+    ['.', '8', '9']
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">get_col</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="s">""" Возвращает все значения для номера столбца, указанного в pos
+    
+    &gt;&gt;&gt; get_col([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']], (0, 0))
+    ['1', '4', '7']
+    &gt;&gt;&gt; get_col([['1', '2', '3'], ['4', '.', '6'], ['7', '8', '9']], (0, 1))
+    ['2', '.', '8']
+    &gt;&gt;&gt; get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
+    ['3', '6', '9']
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">get_block</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="s">""" Возвращает все значения из квадрата, в который попадает позиция pos
+    &gt;&gt;&gt; grid = read_sudoku('puzzle1.txt')
+    &gt;&gt;&gt; get_block(grid, (0, 1))
+    ['5', '3', '.', '6', '.', '.', '.', '9', '8']
+    &gt;&gt;&gt; get_block(grid, (4, 7))
+    ['.', '.', '3', '.', '.', '1', '.', '.', '6']
+    &gt;&gt;&gt; get_block(grid, (8, 8))
+    ['2', '8', '.', '.', '.', '5', '.', '7', '9']
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Разберемся с тем, как представлена позиция в программе. Каждая позиция однозначно определяется номером строки и номером столбца, поэтому для ее представления удобно использовать кортеж. Напомним, что кортеж это неизменяемый список. Позиция создается следующим образом:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">pos</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">row</span>
+<span class="mi">0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">col</span>
+<span class="mi">0</span>
+</code></pre></div></div>
+
+<p>Для функций <code class="highlighter-rouge">get_row()</code> и <code class="highlighter-rouge">get_col()</code> приведены доктесты, но они предназначены для доски размером <code class="highlighter-rouge">3*3</code>. У нас же доска <code class="highlighter-rouge">9*9</code>. Вы можете написать эти функции так, чтобы их можно было использовать для доски любого размера, а можете написать только для доски размером <code class="highlighter-rouge">9*9</code>, но тогда вы всегда будете получать ошибку в доктестах. Функция <code class="highlighter-rouge">get_block()</code> возвращает все значения из квадрата, в который попадает позиция <code class="highlighter-rouge">pos</code> (всего <code class="highlighter-rouge">9</code> квадратов размером <code class="highlighter-rouge">3*3</code>).</p>
+
+<p><strong>Задание №3.1</strong>: Давайте наконец перейдем к решению самого Судоку. В шаблоне вы найдете функцию <code class="highlighter-rouge">solve()</code>, которая принимает один аргумент - пазл, а возвращает заполненную значениями доску:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="s">""" Решение пазла, заданного в grid
+    Как решать Судоку?
+    1. Найти свободную позицию
+    2. Найти все возможные значения, которые могут находиться на этой позиции
+    3. Для каждого возможного значения:
+        3.1. Поместить это значение на эту позицию
+        3.2. Продолжить решать оставшуюся часть пазла
+    &gt;&gt;&gt; grid = read_sudoku('puzzle1.txt')
+    &gt;&gt;&gt; solve(grid)
+    [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>В комментарии приведен алгоритм решения Судоку. Обратите внимание, что он рекурсивный. Решение Судоку очень похоже на задачу о возможных комбинациях:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def permutations(L, result):
+    if len(L) == 0:
+        print(result)
+    else:
+        for i in range(len(L)):
+            permutations(L[0:i] + L[i+1:], result + [L[i]])
+
+&gt;&gt;&gt; permutations([1,2,3], [])
+</code></pre></div></div>
+
+<p>Каждый раз мы удерживаем один элемент и перебираем все остальные. В Судоку все происходит точно также, сначала мы подставляем одно из возможных значений (пункт 2) для свободной позиции (пункт 1) и перебираем все остальные (пункт 3.2), то есть решаем более простую задачу. Например, вот простейшее “Судоку” (это не совсем Судоку конечно), которое мы можем заполнять значениями 1 или 2:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.
+.1
+</code></pre></div></div>
+
+<p>Находим первую свободную позицию (это окажется <code class="highlighter-rouge">(0, 1)</code>), затем значения которые можем на нее поставить (в данном случае только 2), вставляем это значение на указанную позицию и продолжаем решать уже более простое Судоку:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>12
+.1
+</code></pre></div></div>
+
+<p>И так продолжаем, пока не заполним все пустые клетки. В конце мы должны получить решение Судоку.</p>
+
+<p>Не забудьте про базовые случаи для выхода из рекурсии, подумайте над вопросами:</p>
+
+<ul>
+  <li>Всегда ли есть свободная позиция?</li>
+  <li>Всегда ли есть возможные значения?</li>
+</ul>
+
+<p><strong>Задание №3.2</strong>: Нам нужно находить свободные позиции (то есть те, на которых стоит <code class="highlighter-rouge">.</code> - точка). Для этого требуется написать функцию <code class="highlighter-rouge">find_empty_positons()</code>, которая принимает один аргумент - пазл и возвращает первую попавшуюся свободную позицию:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">find_empty_positions</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="s">""" Найти первую свободную позицию в пазле
+    
+    &gt;&gt;&gt; find_empty_positions([['1', '2', '.'], ['4', '5', '6'], ['7', '8', '9']])
+    (0, 2)
+    &gt;&gt;&gt; find_empty_positions([['1', '2', '3'], ['4', '.', '6'], ['7', '8', '9']])
+    (1, 1)
+    &gt;&gt;&gt; find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
+    (2, 0)
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p><strong>Задание №3.3</strong>: Кроме поиска свободных позиций, также необходимо искать значения, которые на эту позицию можно поставить:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">find_possible_values</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="s">""" Вернуть множество всех возможных значения для указанной позиции
+    &gt;&gt;&gt; grid = read_sudoku('puzzles/puzzle1.txt')
+    &gt;&gt;&gt; values = find_possible_values(grid, (0,2))
+    &gt;&gt;&gt; set(values) == {'1', '2', '4'}
+    True
+    &gt;&gt;&gt; values = find_possible_values(grid, (4,7))
+    &gt;&gt;&gt; set(values) == {'2', '5', '9'}
+    True
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Подсказка</strong>: Для решения этого задания используйте множества <code class="highlighter-rouge">set</code>.</p>
+</blockquote>
+
+<p>Помните, что всего значений, которые мы можем поставить на указанную позицию, ровно <code class="highlighter-rouge">9</code>, это числа <code class="highlighter-rouge">1,2,3,4,5,6,7,8,9</code>. Но не каждое из этих чисел мы можем использовать (см. правила Судоку). В этой функции вы можете пользоваться написанными ранее функциями <code class="highlighter-rouge">get_row()</code>, <code class="highlighter-rouge">get_col()</code>, <code class="highlighter-rouge">get_block()</code>.</p>
+
+<p>Когда вы закончите работать над функциями, то выполните следующие команды:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">$</span> <span class="n">python</span> <span class="o">-</span><span class="n">i</span> <span class="n">sudoku</span><span class="o">.</span><span class="n">py</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">read_sudoku</span><span class="p">(</span><span class="s">'puzzle1.txt'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">display</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="mi">5</span> <span class="mi">3</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">7</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="mi">6</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">1</span> <span class="mi">9</span> <span class="mi">5</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="o">.</span> <span class="mi">9</span> <span class="mi">8</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">6</span> <span class="o">.</span>
+<span class="o">------+------+------</span>
+<span class="mi">8</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">6</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">3</span>
+<span class="mi">4</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">8</span> <span class="o">.</span> <span class="mi">3</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">1</span>
+<span class="mi">7</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">2</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">6</span>
+<span class="o">------+------+------</span>
+<span class="o">.</span> <span class="mi">6</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">2</span> <span class="mi">8</span> <span class="o">.</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">4</span> <span class="mi">1</span> <span class="mi">9</span> <span class="o">|.</span> <span class="o">.</span> <span class="mi">5</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">8</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">7</span> <span class="mi">9</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">display</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+<span class="mi">5</span> <span class="mi">3</span> <span class="mi">4</span> <span class="o">|</span><span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="o">|</span><span class="mi">9</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="mi">6</span> <span class="mi">7</span> <span class="mi">2</span> <span class="o">|</span><span class="mi">1</span> <span class="mi">9</span> <span class="mi">5</span> <span class="o">|</span><span class="mi">3</span> <span class="mi">4</span> <span class="mi">8</span>
+<span class="mi">1</span> <span class="mi">9</span> <span class="mi">8</span> <span class="o">|</span><span class="mi">3</span> <span class="mi">4</span> <span class="mi">2</span> <span class="o">|</span><span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span>
+<span class="o">------+------+------</span>
+<span class="mi">8</span> <span class="mi">5</span> <span class="mi">9</span> <span class="o">|</span><span class="mi">7</span> <span class="mi">6</span> <span class="mi">1</span> <span class="o">|</span><span class="mi">4</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="mi">4</span> <span class="mi">2</span> <span class="mi">6</span> <span class="o">|</span><span class="mi">8</span> <span class="mi">5</span> <span class="mi">3</span> <span class="o">|</span><span class="mi">7</span> <span class="mi">9</span> <span class="mi">1</span>
+<span class="mi">7</span> <span class="mi">1</span> <span class="mi">3</span> <span class="o">|</span><span class="mi">9</span> <span class="mi">2</span> <span class="mi">4</span> <span class="o">|</span><span class="mi">8</span> <span class="mi">5</span> <span class="mi">6</span>
+<span class="o">------+------+------</span>
+<span class="mi">9</span> <span class="mi">6</span> <span class="mi">1</span> <span class="o">|</span><span class="mi">5</span> <span class="mi">3</span> <span class="mi">7</span> <span class="o">|</span><span class="mi">2</span> <span class="mi">8</span> <span class="mi">4</span>
+<span class="mi">2</span> <span class="mi">8</span> <span class="mi">7</span> <span class="o">|</span><span class="mi">4</span> <span class="mi">1</span> <span class="mi">9</span> <span class="o">|</span><span class="mi">6</span> <span class="mi">3</span> <span class="mi">5</span>
+<span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="o">|</span><span class="mi">2</span> <span class="mi">8</span> <span class="mi">6</span> <span class="o">|</span><span class="mi">1</span> <span class="mi">7</span> <span class="mi">9</span>
+</code></pre></div></div>
+
+<p><strong>Задание №4</strong>: Мы получили решение, но является ли оно верным? Давайте напишем функцию <code class="highlighter-rouge">check_solution()</code>, которая проверяет наше решение:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">check_solution</span><span class="p">(</span><span class="n">solution</span><span class="p">):</span>
+    <span class="s">""" Если решение solution верно, то вернуть True, в противном случае False """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Решение оказывается верным, если ни в одной строке, ни в одном столбце, ни в квадрате не повторяются значения:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">check_solution</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+<span class="bp">True</span>
+</code></pre></div></div>
+
+<p>Когда вы закончите работать над этой функцией, то запустите программу следующим образом:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python sudoku.py
+...
+Solution is correct
+...
+Solution is correct
+...
+Solution is correct
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Примечание</strong>: Вывод пазлов и их решений опущен.</p>
+</blockquote>
+
+<p>Если вы встретили сообщение <code class="highlighter-rouge">Ooops</code>, то значит, что одно или все ваши решения оказались не верны. Если же вы уверены в своем решении, то проверьте корректность функции <code class="highlighter-rouge">check_solution()</code>.</p>
+
+<p><strong>Задание 4</strong>: Напишите функцию <code class="highlighter-rouge">generate_sudoku(N)</code>, которая создает новый судоку, заполненный на <code class="highlighter-rouge">N</code> элементов:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">generate_sudoku</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="s">""" Генерация судоку заполненного на N элементов
+    &gt;&gt;&gt; grid = generate_sudoku(40)
+    &gt;&gt;&gt; sum(1 for row in grid for e in row if e == '.')
+    41
+    &gt;&gt;&gt; solution = solve(grid)
+    &gt;&gt;&gt; check_solution(solution)
+    True
+    &gt;&gt;&gt; grid = generate_sudoku(1000)
+    &gt;&gt;&gt; sum(1 for row in grid for e in row if e == '.')
+    0
+    &gt;&gt;&gt; solution = solve(grid)
+    &gt;&gt;&gt; check_solution(solution)
+    True
+    &gt;&gt;&gt; grid = generate_sudoku(0)
+    &gt;&gt;&gt; sum(1 for row in grid for e in row if e == '.')
+    81
+    &gt;&gt;&gt; solution = solve(grid)
+    &gt;&gt;&gt; check_solution(solution)
+    True
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+
+
+<span class="c"># Пример использования функции</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sudoku</span> <span class="o">=</span> <span class="n">generate_sudoku</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">display</span><span class="p">(</span><span class="n">sudoku</span><span class="p">)</span>
+<span class="o">.</span> <span class="mi">3</span> <span class="o">.</span> <span class="o">|</span><span class="mi">6</span> <span class="o">.</span> <span class="mi">8</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="mi">6</span> <span class="o">.</span> <span class="mi">2</span> <span class="o">|.</span> <span class="mi">9</span> <span class="o">.</span> <span class="o">|</span><span class="mi">3</span> <span class="mi">4</span> <span class="o">.</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">3</span> <span class="mi">4</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">6</span> <span class="mi">7</span>
+<span class="o">------+------+------</span>
+<span class="o">.</span> <span class="mi">5</span> <span class="o">.</span> <span class="o">|</span><span class="mi">7</span> <span class="o">.</span> <span class="mi">1</span> <span class="o">|.</span> <span class="mi">2</span> <span class="o">.</span>
+<span class="o">.</span> <span class="o">.</span> <span class="mi">6</span> <span class="o">|</span><span class="mi">8</span> <span class="o">.</span> <span class="mi">3</span> <span class="o">|.</span> <span class="mi">9</span> <span class="mi">1</span>
+<span class="mi">7</span> <span class="o">.</span> <span class="mi">3</span> <span class="o">|.</span> <span class="mi">2</span> <span class="o">.</span> <span class="o">|</span><span class="mi">8</span> <span class="o">.</span> <span class="mi">6</span>
+<span class="o">------+------+------</span>
+<span class="mi">9</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|</span><span class="mi">5</span> <span class="o">.</span> <span class="mi">7</span> <span class="o">|</span><span class="mi">2</span> <span class="o">.</span> <span class="mi">4</span>
+<span class="o">.</span> <span class="o">.</span> <span class="mi">7</span> <span class="o">|</span><span class="mi">4</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="o">|.</span> <span class="mi">8</span> <span class="mi">6</span> <span class="o">|</span><span class="mi">1</span> <span class="mi">7</span> <span class="o">.</span>
+</code></pre></div></div>
+
+<h3 id="приложение">Приложение</h3>
+
+<p>Вы заметили, что второй пазл решается дольше остальных?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="p">(</span><span class="s">'puzzle1.txt'</span><span class="p">,</span> <span class="s">'puzzle2.txt'</span><span class="p">,</span> <span class="s">'puzzle3.txt'</span><span class="p">):</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">read_sudoku</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'{fname}: {end-start}'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>На моей машине результат получился таким (от запуска к запуску вы будете получать разные результаты):</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>puzzle1.txt: 0.05907106399536133
+puzzle2.txt: 7.427937984466553
+puzzle3.txt: 0.43831491470336914
+</code></pre></div></div>
+
+<p>Очевидно, что пазлы решаются в линейной манере, т.е. пока не будет <strong>полностью</strong> решен первый пазл мы не сможем приступить к решению второго и т.д.</p>
+
+<p>Давайте попробуем воспользоватся модулем <a href="https://docs.python.org/3.6/library/threading.html">threading</a>, чтобы каждый пазл решался в отдельном потоке:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="k">def</span> <span class="nf">run_solve</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">read_sudoku</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'{fname}: {end-start}'</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="p">(</span><span class="s">'puzzle1.txt'</span><span class="p">,</span> <span class="s">'puzzle2.txt'</span><span class="p">,</span> <span class="s">'puzzle3.txt'</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_solve</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">fname</span><span class="p">,))</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>puzzle1.txt required 0.013156652450561523
+puzzle3.txt required 0.7069487571716309
+puzzle2.txt required 7.912024021148682
+</code></pre></div></div>
+
+<p>Из результатов видно, что решение для <code class="highlighter-rouge">puzzle3</code> мы получили раньше чем для <code class="highlighter-rouge">puzzle2</code>, но тем не менее они не были решены параллельно, как можно было бы подумать, и связано это с таким понятием как <a href="http://asvetlov.blogspot.ru/2011/07/gil.html">GIL</a>.</p>
+
+<p>Чтобы решать пазлы параллельно (за исключением разных <em>если</em>) мы можем воспользоваться модулем <a href="https://docs.python.org/3.6/library/multiprocessing.html">multiprocessing</a>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="p">(</span><span class="s">'puzzle1.txt'</span><span class="p">,</span> <span class="s">'puzzle2.txt'</span><span class="p">,</span> <span class="s">'puzzle3.txt'</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_solve</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">fname</span><span class="p">,))</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>puzzle1.txt: 0.043260812759399414
+puzzle3.txt: 0.10617399215698242
+puzzle2.txt: 6.155700922012329
+</code></pre></div></div>
+
+<p>Мы получили примерно тот же результат. В чем тогда преимущество <code class="highlighter-rouge">multiprocessing</code> перед <code class="highlighter-rouge">threading</code>? Чтобы лучше ощутить разницу в работе этих двух модулей попробуйте поэкспериментировать с числом решаемых пазлов и их сложностью, например:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_solve</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s">'puzzle2.txt'</span><span class="p">,))</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_solve</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s">'puzzle2.txt'</span><span class="p">,))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Еще один пример сравнения модулей можно найти по <a href="https://nathangrigg.com/2015/04/python-threading-vs-processes">этой</a> ссылке.</p>
+
+<p>Для полноты картины приведу пример решения с использованием модуля <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">))</span>
+    <span class="o">...</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">run_solve</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">read_sudoku</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">await</span> <span class="n">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'{fname}: {end-start}'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">[</span><span class="n">run_solve</span><span class="p">(</span><span class="n">f</span><span class="s">'{fname}'</span><span class="p">)</span> <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="p">(</span><span class="s">'puzzle1.txt'</span><span class="p">,</span> <span class="s">'puzzle2.txt'</span><span class="p">,</span> <span class="s">'puzzle3.txt'</span><span class="p">)]</span>
+    <span class="p">))</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>puzzle1.txt: 0.08073115348815918
+puzzle3.txt: 0.3908212184906006
+puzzle2.txt: 5.103452205657959
+</code></pre></div></div>
+
 
   </div>
 
