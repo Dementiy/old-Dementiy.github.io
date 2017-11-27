@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Работа с API Вконтакте</title>
+  <meta name="description" content="Эта работа посвящена взаимодействию с API ВКонтакте.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/04-vk-api/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Работа с API Вконтакте">
+  <meta name="twitter:description" content="Эта работа посвящена взаимодействию с API ВКонтакте.">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Работа с API Вконтакте</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/golang/">golang</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/web/">web</a>,
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Эта работа посвящена взаимодействию с <a href="https://vk.com/dev/manuals">API ВКонтакте</a>.</p>
+
+<blockquote>
+  <p>Замечание: Если вы не знакомы с термином “API”, то рекомендую прочитать статью: <a href="https://medium.freecodecamp.org/what-is-an-api-in-english-please-b880a3214a82">What is an API? In English, please</a>.</p>
+</blockquote>
+
+<p>Чтобы начать работать с API от вас требуется зарегистрировать новое приложение. Для этого зайдите на форму создания нового Standalone приложения <a href="https://vk.com/editapp?act=create">https://vk.com/editapp?act=create</a> и следуйте инструкциям. Вашему приложению будет назначен идентификатор, который потребуется для выполнения работы.</p>
+
+<p>Запросы к API ВКонтакте имеют следующий формат (<a href="https://vk.com/dev/api_requests">из документации</a>):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://api.vk.com/method/METHOD_NAME?PARAMETERS&amp;access_token=ACCESS_TOKEN&amp;v=V
+</code></pre></div></div>
+
+<p>где:</p>
+<ul>
+  <li><code class="highlighter-rouge">METHOD_NAME</code> - это название метода API, к которому Вы хотите обратиться.</li>
+  <li><code class="highlighter-rouge">PARAMETERS</code> - входные параметры соответствующего метода API, последовательность пар <code class="highlighter-rouge">name=value</code>, объединенных амперсандом <code class="highlighter-rouge">&amp;</code>.</li>
+  <li><code class="highlighter-rouge">ACCESSS_TOKEN</code> - ключ доступа.</li>
+  <li><code class="highlighter-rouge">V</code> - используемая версия API (в настоящий момент 5.53).</li>
+</ul>
+
+<p>Например, чтобы получить список друзей, с указанием их пола, нужно выполнить следующий запрос:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://api.vk.com/method/friends.get?fields=sex&amp;access_token=0394a2ede332c9a13eb82e9b24631604c31df978b4e2f0fbd2c549944f9d79a5bc866455623bd560732ab&amp;v=5.53
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Внимание</strong>: Токен доступа ненастоящий, поэтому этот запрос работать не будет.</p>
+</blockquote>
+
+<p>Чтобы получить токен доступа вы можете воспользоваться написанным для вас скриптом <code class="highlighter-rouge">access_token.py</code> следующим образом:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python access_token.py YOUR_CLIENT_ID <span class="nt">-s</span> friends,messages
+</code></pre></div></div>
+
+<p>где вместо <code class="highlighter-rouge">YOUR_CLIENT_ID</code> необходимо подставить идентификатор вашего приложения.</p>
+
+<p>После выполнения команды откроется новая вкладка браузера, из адресной строки которого вам необходимо скопировать токен доступа.</p>
+
+<p><img src="/assets/images/04-vkapi/access_token.png" alt="" /></p>
+
+<blockquote>
+  <p><strong>Внимание</strong>: На этом этапе вы можете повторить ранее представленный пример запроса, чтобы убедиться, что вы делаете все верно.</p>
+</blockquote>
+
+<p>Далее приведено содержимое файла <code class="highlighter-rouge">access_token.py</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+
+<span class="k">def</span> <span class="nf">get_access_token</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s">'clinet_id must be positive integer'</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s">'scope must be string'</span>
+    <span class="k">assert</span> <span class="n">client_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'clinet_id must be positive integer'</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"""</span><span class="se">\
+</span><span class="s">    https://oauth.vk.com/authorize?client_id={client_id}&amp;</span><span class="se">\
+</span><span class="s">    redirect_uri=https://oauth.vk.com/blank.hmtl&amp;</span><span class="se">\
+</span><span class="s">    scope={scope}&amp;</span><span class="se">\
+</span><span class="s">    &amp;response_type=token&amp;</span><span class="se">\
+</span><span class="s">    display=page</span><span class="se">\
+</span><span class="s">    """</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="n">client_id</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">)</span>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open_new_tab</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"client_id"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Application Id"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"-s"</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s">"scope"</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">"Permissions bit mask"</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s">""</span><span class="p">,</span>
+                        <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">get_access_token</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">scope</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p><strong>Задание №1</strong>. Требуется написать функцию прогнозирования возраста пользователя по возрасту его друзей.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_friends</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+    <span class="s">""" Returns a list of user IDs or detailed information about a user's friends """</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s">"fields must be string"</span>
+    <span class="k">assert</span> <span class="n">user_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Для выполнения этого задания нужно получить список всех друзей для указанного пользователя, отфильтровать тех у кого возраст не указан или указаны только день и месяц рождения.</p>
+
+<p>Для выполнения запросов к API мы будем использовать библиотеку <a href="http://docs.python-requests.org/en/master/"><code class="highlighter-rouge">requests</code></a>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip install requests
+</code></pre></div></div>
+
+<p>Список пользователей можно получить с помощью метода <a href="https://vk.com/dev/friends.get"><code class="highlighter-rouge">friends.get</code></a>. Ниже приведен пример обращения к этому методу для получения списка всех друзей указанного пользователя:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">domain</span> <span class="o">=</span> <span class="s">"https://api.vk.com/method"</span>
+<span class="n">access_token</span> <span class="o">=</span> <span class="c"># PUT YOUR ACCESS TOKEN HERE</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="c"># PUT USER ID HERE</span>
+
+<span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'domain'</span> <span class="p">:</span> <span class="n">domain</span><span class="p">,</span>
+    <span class="s">'access_token'</span><span class="p">:</span> <span class="n">access_token</span><span class="p">,</span>
+    <span class="s">'user_id'</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+    <span class="s">'fields'</span><span class="p">:</span> <span class="s">'sex'</span>
+<span class="p">}</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="s">"{domain}/friends.get?access_token={access_token}&amp;user_id={user_id}&amp;fields={fields}&amp;v=5.53"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">query_params</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Функция <code class="highlighter-rouge">requests.get</code> выполняет <a href="https://ru.wikipedia.org/wiki/HTTP#GET">GET запрос</a> и возвращает объект <code class="highlighter-rouge">Response</code>, который представляет собой ответ сервера на посланный нами запрос.</p>
+
+<p>Объект <code class="highlighter-rouge">Response</code> имеет множество атрибутов:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">response</span><span class="o">.&lt;</span><span class="n">tab</span><span class="o">&gt;</span>
+<span class="n">response</span><span class="o">.</span><span class="n">apparent_encoding</span>      <span class="n">response</span><span class="o">.</span><span class="n">history</span>                <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span>
+<span class="n">response</span><span class="o">.</span><span class="n">close</span>                  <span class="n">response</span><span class="o">.</span><span class="n">is_permanent_redirect</span>  <span class="n">response</span><span class="o">.</span><span class="n">raw</span>
+<span class="n">response</span><span class="o">.</span><span class="n">connection</span>             <span class="n">response</span><span class="o">.</span><span class="n">is_redirect</span>            <span class="n">response</span><span class="o">.</span><span class="n">reason</span>
+<span class="n">response</span><span class="o">.</span><span class="n">content</span>                <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span>           <span class="n">response</span><span class="o">.</span><span class="n">request</span>
+<span class="n">response</span><span class="o">.</span><span class="n">cookies</span>                <span class="n">response</span><span class="o">.</span><span class="n">iter_lines</span>             <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="n">response</span><span class="o">.</span><span class="n">elapsed</span>                <span class="n">response</span><span class="o">.</span><span class="n">json</span>                   <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+<span class="n">response</span><span class="o">.</span><span class="n">encoding</span>               <span class="n">response</span><span class="o">.</span><span class="n">links</span>                  <span class="n">response</span><span class="o">.</span><span class="n">url</span>
+<span class="n">response</span><span class="o">.</span><span class="n">headers</span>                <span class="n">response</span><span class="o">.</span><span class="n">ok</span>
+</code></pre></div></div>
+
+<p>Нас будет интересовать только метод <code class="highlighter-rouge">response.json</code>, который возвращает <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a> объект:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="p">{</span><span class="s">'response'</span><span class="p">:</span> <span class="p">{</span><span class="s">'count'</span><span class="p">:</span> <span class="mi">136</span><span class="p">,</span>
+              <span class="s">'items'</span><span class="p">:</span> <span class="p">[{</span><span class="s">'first_name'</span><span class="p">:</span> <span class="s">'Drake'</span><span class="p">,</span>
+                         <span class="s">'id'</span><span class="p">:</span> <span class="mi">1234567</span><span class="p">,</span>
+                         <span class="s">'last_name'</span><span class="p">:</span> <span class="s">'Wayne'</span><span class="p">,</span>
+                         <span class="s">'online'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="s">'sex'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                        <span class="p">{</span><span class="s">'first_name'</span><span class="p">:</span> <span class="s">'Gracie'</span>
+                         <span class="s">'id'</span><span class="p">:</span> <span class="mi">7654321</span><span class="p">,</span>
+                         <span class="s">'last_name'</span><span class="p">:</span> <span class="s">'Habbard'</span><span class="p">,</span>
+                         <span class="s">'online'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="s">'sex'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+                         <span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">'response'</span><span class="p">][</span><span class="s">'count'</span><span class="p">]</span>
+<span class="mi">136</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">'response'</span><span class="p">][</span><span class="s">'items'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'first_name'</span><span class="p">]</span>
+<span class="s">'Drake'</span>
+</code></pre></div></div>
+
+<p>Поле <code class="highlighter-rouge">count</code> содержит число записей, а <code class="highlighter-rouge">items</code> список словарей с информацией по каждому пользователю.</p>
+
+<p>Выполняя запросы мы не можем быть уверены, что не возникнет ошибок. Возможны различные ситуации, например:</p>
+<ul>
+  <li>есть неполадки в сети;</li>
+  <li>удаленный сервер по какой-то причине не может обработать запрос;</li>
+  <li>мы слишком долго ждем ответ от сервера.</li>
+</ul>
+
+<p>В таких случаях необходимо попробовать повторить запрос. При этом повторные запросы желательно посылать не через константные промежутки времени, а по алгоритму экспоненциальной задержки.</p>
+
+<blockquote>
+  <p>Описание алгоритма с примерами можно найти в статье <a href="https://habrahabr.ru/post/227225/">Exponential Backoff или как «не завалить сервер»</a>. Почитать про обработку исключений при работе с библиотекой <code class="highlighter-rouge">requests</code> можно <a href="https://khashtamov.com/ru/python-requests/">тут</a>.</p>
+</blockquote>
+
+<p>Напишите функцию <code class="highlighter-rouge">get()</code>, которая будет выполнять GET-запрос к указанному адресу, а при необходимости повторять запрос указанное число раз по алгоритму экспоненциальной задержки:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+    <span class="s">""" Выполнить GET-запрос
+    
+    :param url: адрес, на который необходимо выполнить запрос
+    :param params: параметры запроса
+    :param timeout: максимальное время ожидания ответа от сервера
+    :param max_retries: максимальное число повторных запросов
+    :param backoff_factor: коэффициент экспоненциального нарастания задержки
+    """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="o">&lt;</span><span class="n">Response</span> <span class="p">[</span><span class="mi">200</span><span class="p">]</span><span class="o">&gt;</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/delay/2"</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ReadTimeout</span><span class="p">:</span> <span class="n">HTTPSConnectionPool</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'httpbin.org'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">443</span><span class="p">):</span> <span class="n">Read</span> <span class="n">timed</span> <span class="n">out</span><span class="o">.</span> <span class="p">(</span><span class="n">read</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/500"</span><span class="p">)</span>
+<span class="n">HTTPError</span><span class="p">:</span> <span class="mi">500</span> <span class="n">Server</span> <span class="n">Error</span><span class="p">:</span> <span class="n">INTERNAL</span> <span class="n">SERVER</span> <span class="n">ERROR</span> <span class="k">for</span> <span class="n">url</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">httpbin</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">status</span><span class="o">/</span><span class="mi">500</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">get</span><span class="p">(</span><span class="s">"https://noname.com"</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ConnectionError</span><span class="p">:</span> <span class="n">HTTPSConnectionPool</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'noname.com'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">443</span><span class="p">):</span> <span class="n">Max</span> <span class="n">retries</span> <span class="n">exceeded</span> <span class="k">with</span> <span class="n">url</span><span class="p">:</span> <span class="o">/</span>
+</code></pre></div></div>
+
+<p>На текущий момент вы должны заполнить тело функции <code class="highlighter-rouge">get_friends</code> так, чтобы она возвращала список друзей для указанного пользователя. Аргумент <code class="highlighter-rouge">fields</code> представляет из себя строку, в которой через запятую указываются какие поля необходимо получить по каждому пользователю.</p>
+
+<p>Теперь мы можем написать функцию <code class="highlighter-rouge">age_predict</code> для “наивного” прогнозирования возраста пользователя с идентификатором <code class="highlighter-rouge">user_id</code> (под “наивным” прогнозированием подразумевается вычисление среднего арифметического или медианы):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">age_predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+    <span class="s">"""
+    &gt;&gt;&gt; age_predict(???)
+    ???
+    """</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="k">assert</span> <span class="n">user_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Так как дата рождения пользователя может быть не указана или указаны только день и месяц, то для обработки таких ситуаций вы можете использовать конструкцию <code class="highlighter-rouge">try...except</code>, где <code class="highlighter-rouge">except</code> будет содержать только <code class="highlighter-rouge">pass</code>.</p>
+</blockquote>
+
+<p><strong>Задание №2:</strong> Требуется написать функцию, которая бы выводила график частоты переписки с указанным пользователем.</p>
+
+<p>Давайте начнем с того, что получим всю или часть переписки с указанным пользователем. Для этого вам потребуется реализовать метод API <a href="https://vk.com/dev/messages.getHistory">messages.getHistory</a> по аналогии с тем, как вы реализовывали получение списка друзей пользователя:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">messages_get_history</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="k">assert</span> <span class="n">user_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s">"offset must be positive integer"</span>
+    <span class="k">assert</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="k">assert</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"user_id must be positive integer"</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Замечание</strong>: В реализации функции <code class="highlighter-rouge">messages_get_history</code> нужно учитывать, что API ВКонтакте устанавливает ограничение на число запросов в одну секунду (на сегодняшний день это три запроса). Число сообщений, которое вы можете получить за одно запрос - 200.</p>
+</blockquote>
+
+<p>Далее приведен пример использования функции <code class="highlighter-rouge">messages_get_history</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">user_id</span> <span class="o">=</span> <span class="c"># PUT USER ID HERE</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">history</span> <span class="o">=</span> <span class="n">messages_get_history</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span> <span class="k">as</span> <span class="n">pp</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s">'response'</span><span class="p">][</span><span class="s">'items'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pp</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="p">{</span><span class="s">'body'</span><span class="p">:</span> <span class="s">'Это текст сообщения.'</span><span class="p">,</span>
+ <span class="s">'date'</span><span class="p">:</span> <span class="mi">1474811631</span><span class="p">,</span>
+ <span class="s">'from_id'</span><span class="p">:</span> <span class="n">USER_ID_HERE</span><span class="p">,</span>
+ <span class="s">'id'</span><span class="p">:</span> <span class="mi">168989</span><span class="p">,</span>
+ <span class="s">'out'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'read_state'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'user_id'</span><span class="p">:</span> <span class="n">USER_ID_HERE</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>Каждое сообщение содержит следующие поля:</p>
+<ul>
+  <li><code class="highlighter-rouge">body</code> - текст сообщения;</li>
+  <li><code class="highlighter-rouge">date</code> - дата отправки сообщения в формате <a href="https://ru.wikipedia.org/wiki/UNIX-время">unixtime</a>;</li>
+  <li><code class="highlighter-rouge">from_id</code> - идентификатор автора сообщения;</li>
+  <li><code class="highlighter-rouge">id</code> - идентификатор сообщения;</li>
+  <li><code class="highlighter-rouge">out</code> - тип сообщения (0 — полученное, 1 — отправленное, не возвращается для пересланных сообщений);</li>
+  <li><code class="highlighter-rouge">read_state</code> - статус сообщения (0 — не прочитано, 1 — прочитано, не возвращается для пересланных сообщений);</li>
+  <li><code class="highlighter-rouge">user_id</code> - идентификатор пользователя, в диалоге с которым находится сообщение.</li>
+</ul>
+
+<p>Нас интересует поле <code class="highlighter-rouge">date</code>, которое представляет дату отправки сообщения в формате unixtime. Чтобы изменить формат даты представления можно воспользоваться функцией  <code class="highlighter-rouge">strftime</code> из модуля <code class="highlighter-rouge">datetime</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s">'date'</span><span class="p">])</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">Y-</span><span class="si">%</span><span class="s">m-</span><span class="si">%</span><span class="s">d"</span><span class="p">)</span>
+<span class="s">'2016-09-25'</span>
+</code></pre></div></div>
+
+<p>Формат представления указывается в виде <a href="https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior">строки форматирования</a>, например, <code class="highlighter-rouge">%Y-%m-%d</code> - год, месяц и день, соответственно.</p>
+
+<p>На данный момент вашей задачей является написать функцию <code class="highlighter-rouge">count_dates_from_messages</code>, которая возвращает два списка: список дат и список частоты каждой даты, а принимает список сообщений:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">count_dates_from_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">):</span>
+    <span class="c">#PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Замечание</strong>: При большом количестве сообщений вы их можете разбить по неделям или месяцам.</p>
+</blockquote>
+
+<p>Далее мы воспользуемся сервисом <a href="https://plot.ly/">Plot.ly</a>, который предоставляет API для рисования графиков. Запрос содержит информацию о точках, которые нужно отобразить на графике. Вам нужно зарегистрироваться и получить ключ доступа (<code class="highlighter-rouge">API KEY</code>). Для более простого взаимодействия с Plot.ly мы воспользуемся готовым модулем (существуют решения и для других языков):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip3 install plotly
+</code></pre></div></div>
+
+<p>Перед началом его использования нужно провести предварительную <a href="https://plot.ly/python/getting-started/">настройку</a>, указав ключ доступа и имя пользователя:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">plotly</span>
+<span class="n">plotly</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">set_credentials_file</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">'YOUR_USER_NAME'</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s">'YOUR_API_KEY'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Ниже приведен пример построения графика, где переменная <code class="highlighter-rouge">x</code> содержит даты, а <code class="highlighter-rouge">y</code> - количество сообщений в этот день:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">plotly.plotly</span> <span class="k">as</span> <span class="n">py</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objs</span> <span class="k">as</span> <span class="n">go</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2016</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">09</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">23</span><span class="p">),</span>
+     <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2016</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">09</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">24</span><span class="p">),</span>
+     <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2016</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">09</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">25</span><span class="p">)]</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">142</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">8</span><span class="p">])]</span>
+<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Созданный график вы можете найти в своем <a href="https://plot.ly/organize/home">профиле</a>:</p>
+
+<p><img src="/assets/images/04-vkapi/plotly.png" alt="" /></p>
+
+<p><strong>Задание №3</strong>: Требуется написать функцию <code class="highlighter-rouge">get_network()</code>,   которая для указанного списка пользователей <code class="highlighter-rouge">users_ids</code> строит граф и представляет его либо в виде матрицы смежности (<code class="highlighter-rouge">as_edgelist=False</code>), либо в виде списка ребер (<code class="highlighter-rouge">as_edgelist=True</code>). В полученном графе необходимо выделить сообщества и визуализировать результат.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_network</span><span class="p">(</span><span class="n">users_ids</span><span class="p">,</span> <span class="n">as_edgelist</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="s">""" Building a friend graph for an arbitrary list of users """</span>
+    <span class="c"># PUT YOUR CODE HERE</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Поиск сообществ на графе (community detection) является хорошо изученной задачей, а ряд наиболее известных алгоритмов реализован в библиотеке <code class="highlighter-rouge">igraph</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip install python-igraph
+<span class="nv">$ </span>pip install numpy
+<span class="nv">$ </span>pip install cairocffi
+<span class="nv">$ </span>brew install cairo    <span class="c"># Только для MacOS X. Для других ОС см. https://www.cairographics.org/download/</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">igraph</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">plot</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">vertices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">vertex_attrs</span><span class="o">=</span><span class="p">{</span><span class="s">"label"</span><span class="p">:</span><span class="n">vertices</span><span class="p">},</span>
+    <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+<span class="n">visual_style</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">visual_style</span><span class="p">[</span><span class="s">"layout"</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_fruchterman_reingold</span><span class="p">(</span>
+    <span class="n">maxiter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">area</span><span class="o">=</span><span class="n">N</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">repulserad</span><span class="o">=</span><span class="n">N</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">plot</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">visual_style</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/04-vkapi/graph1.png" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">g</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">loops</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/04-vkapi/graph2.png" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">communities</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">community_edge_betweenness</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">clusters</span> <span class="o">=</span> <span class="n">communities</span><span class="o">.</span><span class="n">as_clustering</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Clustering with 7 elements and 2 clusters
+[0] 0, 1, 2, 3
+[1] 4, 5, 6
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pal</span> <span class="o">=</span> <span class="n">igraph</span><span class="o">.</span><span class="n">drawing</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ClusterColoringPalette</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">))</span>
+<span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">'color'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pal</span><span class="o">.</span><span class="n">get_many</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">membership</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/04-vkapi/graph3.png" alt="" /></p>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Бот для мессенджера Telegram</title>
+  <meta name="description" content="Эта работа посвящена созданию бота для социальной сети Telegram. Для ее выполнения вам понадобится зарегистрироваться на сайте https://telegram.org (если вы ранее этого не сделали).">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/05-telegram-bot/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Бот для мессенджера Telegram">
+  <meta name="twitter:description" content="Эта работа посвящена созданию бота для социальной сети Telegram. Для ее выполнения вам понадобится зарегистрироваться на сайте https://telegram.org (если вы ранее этого не сделали).">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Бот для мессенджера Telegram</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/golang/">golang</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/web/">web</a>,
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Эта работа посвящена созданию бота для социальной сети <a href="https://telegram.org">Telegram</a>. Для ее выполнения вам понадобится зарегистрироваться на сайте https://telegram.org (если вы ранее этого не сделали).</p>
+
+<blockquote>
+  <p><strong>Мотивация</strong>: 18 апреля 2016 года появилась <a href="https://telegram.org/blog/botprize">новость</a>, что выделенен призовой фонд в размере одного миллиона долларов для всех желающих поучаствовать в разработке собственного бота для сети Telegram. Гранты выдаваемые участникам начинаются от 25 тысяч долларов. Конкурс продлён до 2017 года включительно.</p>
+</blockquote>
+
+<h3 id="meet-the-botfather">Meet the Botfather</h3>
+
+<p>Предварительно мы рассмотрим простой пример создания так называемого эхо-бота. Чтобы зарегистрировать нового бота в телеграмме, вам нужно выполнить несколько простых шагов, которые подробно описаны в этом <a href="https://core.telegram.org/bots">руководстве</a>. Ниже приведен пример регистрации бота с именем <code class="highlighter-rouge">cs102_bot</code>:</p>
+
+<p><img src="/assets/images/05-telegram/tele_bot.png" alt="" /></p>
+
+<p>Обратите внимание, что последним ответом <code class="highlighter-rouge">BotFather</code> был токен доступа (<code class="highlighter-rouge">access_token</code>), который нам понадобится в дальнейшей работе.</p>
+
+<blockquote>
+  <p><strong>Внимание</strong>: У каждого из вас будет свой токен доступа, которым не следует делиться с другими.</p>
+</blockquote>
+
+<p>На текущем этапе созданный нами бот ничего не умеет делать и не знает ни одной команды. Для “обучения” бота мы будем использовать <a href="https://core.telegram.org/bots/api">API</a>, который предоставляет телеграмм:</p>
+
+<blockquote>
+  <p>The Bot API is an HTTP-based interface created for developers keen on building bots for Telegram</p>
+</blockquote>
+
+<p>Мы не будем напрямую работать с API, как это было в “Лабораторной работе №4”, а воспользуемся модулем <a href="https://github.com/eternnoir/pyTelegramBotAPI">pyTelegramBotAPI</a>. Подробное руководство на русском языке по работе с этим модулем вы можете найти <a href="https://kondra007.gitbooks.io/telegram-bot-lessons/content/chapter1.html">тут</a>.</p>
+
+<p>Теперь нам нужно установить модуль pyTelegramBotAPI:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip3 install pytelegrambotapi
+</code></pre></div></div>
+
+<p>Ниже приведен пример простого эхо бота, который дублирует каждое ваше сообщение:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">telebot</span>
+
+
+<span class="n">access_token</span> <span class="o">=</span> <span class="c"># PUT YOUR ACCESS TOKEN HERE</span>
+<span class="c"># Создание бота с указанным токеном доступа</span>
+<span class="n">bot</span> <span class="o">=</span> <span class="n">telebot</span><span class="o">.</span><span class="n">TeleBot</span><span class="p">(</span><span class="n">access_token</span><span class="p">)</span>
+
+
+<span class="c"># Бот будет отвечать только на текстовые сообщения</span>
+<span class="nd">@bot.message_handler</span><span class="p">(</span><span class="n">content_types</span><span class="o">=</span><span class="p">[</span><span class="s">'text'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">bot</span><span class="o">.</span><span class="n">polling</span><span class="p">(</span><span class="n">none_stop</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Запустить бота можно следующим образом:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3 bot.py
+</code></pre></div></div>
+
+<p>Теперь зайдите в телеграмм и напишите вашему боту любое сообщение:</p>
+
+<p><img src="/assets/images/05-telegram/tele_echo.png" alt="" /></p>
+
+<h3 id="делаем-бота-умнее">Делаем бота умнее</h3>
+
+<p>Теперь обучим нашего бота делать чуть больше и понимать команды. Целью всей работы является написать бота, который бы позволил получить расписание занятий для любой группы. Бот должен понимать следующие команды:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">near_lesson GROUP_NUMBER</code> - ближайшее занятие для указанной группы;</li>
+  <li><code class="highlighter-rouge">DAY WEEK_NUMBER GROUP_NUMBER</code> - расписание занятий в указанный день (<code class="highlighter-rouge">monday, thuesday, ...</code>). Неделя может быть четной (<code class="highlighter-rouge">1</code>), нечетной (<code class="highlighter-rouge">2</code>) или же четная и нечетная (<code class="highlighter-rouge">0</code>);</li>
+  <li><code class="highlighter-rouge">tommorow GROUP_NUMBER</code> - расписание на следующий день (если это воскресенье, то выводится расписание на понедельник, учитывая, что неделя может быть четной или нечетной);</li>
+  <li><code class="highlighter-rouge">all WEEK_NUMBER GROUP_NUMBER</code> - расписание на всю неделю.</li>
+</ul>
+
+<p>Разберем пример с выводом расписания на понедельник. Для этого нам нужно получить код html-страницы для соответствующей группы, а затем из этой страницы выделить интересующую нас информацию.</p>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Чтобы вам было проще ориентироваться в работе -  рекомендуется скачать пример любой страницы с расписанием:
+<img src="/assets/images/05-telegram/html_schedule.png" alt="" /></p>
+</blockquote>
+
+<p>Чтобы получить исходный код страницы достаточно выполнить <code class="highlighter-rouge">GET</code> запрос. <code class="highlighter-rouge">URL</code>, к которому мы будем обращаться, имеет следующий формат:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://www.ifmo.ru/ru/schedule/0/GROUP/WEEK/raspisanie_zanyatiy_GROUP.htm
+</code></pre></div></div>
+
+<p>Где <code class="highlighter-rouge">WEEK</code> это неделя (четная-нечетная), если неделя не указана, то расписание включает и четную и нечетную недели; <code class="highlighter-rouge">GROUP</code> - номер группы.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">config</span>
+
+
+<span class="k">def</span> <span class="nf">get_page</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">week</span><span class="o">=</span><span class="s">''</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">week</span><span class="p">:</span>
+        <span class="n">week</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">week</span><span class="p">)</span> <span class="o">+</span> <span class="s">'/'</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">'{domain}/{group}/{week}raspisanie_zanyatiy_{group}.htm'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> 
+        <span class="n">week</span><span class="o">=</span><span class="n">week</span><span class="p">,</span> 
+        <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">web_page</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">return</span> <span class="n">web_page</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Сайт Университета ИТМО не приветствует большого числа обращений. Поэтому подумайте о возможности сохранения страниц с расписанием локально или их хранение в памяти на время работы бота, чтобы при повторном обращении к той же страницы вам не пришлось делать новый запрос к серверу университета.</p>
+</blockquote>
+
+<p>Теперь из этой страницы нам нужно извлечь время занятий, место проведения, аудиторию и название дисциплины. Для этого нам понадобится HTML-парсер. В этой работе предлогается использовать модуль <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="k">def</span> <span class="nf">get_schedule</span><span class="p">(</span><span class="n">web_page</span><span class="p">):</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">web_page</span><span class="p">,</span> <span class="s">"html5lib"</span><span class="p">)</span>
+    
+    <span class="c"># Получаем таблицу с расписанием на понедельник</span>
+    <span class="n">schedule_table</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">"table"</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">"id"</span><span class="p">:</span> <span class="s">"1day"</span><span class="p">})</span>
+
+    <span class="c"># Время проведения занятий</span>
+    <span class="n">times_list</span> <span class="o">=</span> <span class="n">schedule_table</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">"td"</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">"class"</span><span class="p">:</span> <span class="s">"time"</span><span class="p">})</span>
+    <span class="n">times_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">time</span><span class="o">.</span><span class="n">span</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">times_list</span><span class="p">]</span>
+
+    <span class="c"># Место проведения занятий</span>
+    <span class="n">locations_list</span> <span class="o">=</span> <span class="n">schedule_table</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">"td"</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">"class"</span><span class="p">:</span> <span class="s">"room"</span><span class="p">})</span>
+    <span class="n">locations_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">room</span><span class="o">.</span><span class="n">span</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">room</span> <span class="ow">in</span> <span class="n">locations_list</span><span class="p">]</span>
+
+    <span class="c"># Название дисциплин и имена преподавателей</span>
+    <span class="n">lessons_list</span> <span class="o">=</span> <span class="n">schedule_table</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s">"td"</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">"class"</span><span class="p">:</span> <span class="s">"lesson"</span><span class="p">})</span>
+    <span class="n">lessons_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">lesson</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'</span><span class="se">\n\n</span><span class="s">'</span><span class="p">)</span> <span class="k">for</span> <span class="n">lesson</span> <span class="ow">in</span> <span class="n">lessons_list</span><span class="p">]</span>
+    <span class="n">lessons_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">', '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">info</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">lesson_info</span> <span class="k">if</span> <span class="n">info</span><span class="p">])</span> <span class="k">for</span> <span class="n">lesson_info</span> <span class="ow">in</span> <span class="n">lessons_list</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">times_list</span><span class="p">,</span> <span class="n">locations_list</span><span class="p">,</span> <span class="n">lessons_list</span>
+</code></pre></div></div>
+
+<p>Методы <code class="highlighter-rouge">find</code> и <code class="highlighter-rouge">find_all</code> позволяют найти теги с указанными атрибутами.</p>
+
+<p>Таким образом, мы получили время, место и название дисциплины (получение номера аудитории остается для самостоятельного выполнения). Наконец добавим нашему боту возможность вывода расписания на понедельник:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@bot.message_handler</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s">'monday'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_monday</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">web_page</span> <span class="o">=</span> <span class="n">get_page</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+    <span class="n">times_lst</span><span class="p">,</span> <span class="n">locations_lst</span><span class="p">,</span> <span class="n">lessons_lst</span> <span class="o">=</span> <span class="n">get_schedule</span><span class="p">(</span><span class="n">web_page</span><span class="p">)</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="s">''</span>
+    <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">lession</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">times_lst</span><span class="p">,</span> <span class="n">locations_lst</span><span class="p">,</span> <span class="n">lessons_lst</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">+=</span> <span class="s">'&lt;b&gt;{}&lt;/b&gt;, {}, {}</span><span class="se">\n</span><span class="s">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">lession</span><span class="p">)</span>
+
+    <span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">parse_mode</span><span class="o">=</span><span class="s">'HTML'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/05-telegram/monday.png" alt="" /></p>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Вы можете легко обобщить функции <code class="highlighter-rouge">get_monday</code> и <code class="highlighter-rouge">get_schedule</code> на любой день недели.</p>
+</blockquote>
+
+<h3 id="размещаем-бота-в-сети">Размещаем бота в Сети</h3>
+<p>Последняя часть лабораторной работы посвящена размещению бота на облачной платформе <a href="https://www.heroku.com">Heroku</a>.</p>
+
+<p>От вас требуется зарегистрироваться на Heroku и создать там новое приложение:</p>
+
+<p><img src="/assets/images/05-telegram/heroku_step1.png" alt="" /></p>
+
+<p><img src="/assets/images/05-telegram/heroku_step2.png" alt="" /></p>
+
+<p>В папке с вашим проектом создайте три файла:</p>
+<ul>
+  <li><code class="highlighter-rouge">runtime.txt</code> - версия интерпретатора Python, которая требуется для запуска приложения;</li>
+  <li><code class="highlighter-rouge">requirements.txt</code> - модули, необходимые для работы приложения;</li>
+  <li><code class="highlighter-rouge">Procfile</code> - указывает тип приложения и главный класс (в нашем случае это python-приложение и файл bot.py соответственно).</li>
+</ul>
+
+<p>Пример содержимого этих файлов приведен ниже:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### runtime.txt ###
+python-3.5.2
+
+
+### requirements.txt ###
+beautifulsoup4==4.5.1
+bs4==0.0.1
+pyTelegramBotAPI==2.1.7
+requests==2.11.1
+
+
+### Procfile ###
+web: python3 bot.py
+</code></pre></div></div>
+
+<p>Далее зайдите на вкладку <code class="highlighter-rouge">Deploy</code>, где подробно описан процесс размещения вашего приложения на сервисе Heroku:</p>
+
+<p><img src="/assets/images/05-telegram/heroku_step3.png" alt="" /></p>
+
+<p>После пуша на heroku master приложение автоматически настраивает проект и запускает бота. При успешном завершении ваш бот должен работать на удалённой машине.
+Чтобы проследить ход выполнения этих операций и найти возможные ошибки введите в консоли 
+<code class="highlighter-rouge">heroku logs --tail</code></p>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
