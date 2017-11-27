@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Заметки по классам в Python</title>
+  <meta name="description" content="Это краткий конспект по классам, который не является исчерпывающим руководством. Также я не даю определений таким понятиям как ООП, класс, объект и т.п. Все эти определения вы можете легко найти в сети.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/notes-on-classes/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Заметки по классам в Python">
+  <meta name="twitter:description" content="Это краткий конспект по классам, который не является исчерпывающим руководством. Также я не даю определений таким понятиям как ООП, класс, объект и т.п. Все эти определения вы можете легко найти в ...">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Заметки по классам в Python</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/classes/">classes</a>,
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/oop/">oop</a>,
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/blog/">blog</a>
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Это краткий конспект по классам, который не является исчерпывающим руководством. Также я не даю определений таким понятиям как ООП, класс, объект и т.п. Все эти определения вы можете легко найти в сети.</p>
+
+<h3 id="процедурный-подход">Процедурный подход</h3>
+
+<p>Представьте, что вы пишите веб-сервис и перед вами встала следующая задача: “<em>Как представить пользователя системы в программе?</em>”. Давайте договоримся, что у каждого пользователя должны быть следующие атрибуты:</p>
+
+<ul>
+  <li>имя (username)</li>
+  <li>адрес электронной почты (email)</li>
+  <li>пароль (password)</li>
+</ul>
+
+<p>Можно представить пользователя в виде нескольких переменных:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">username</span> <span class="o">=</span> <span class="s">'bob'</span>
+<span class="n">email</span> <span class="o">=</span> <span class="s">'bob@example.com'</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s">'foobar'</span>
+</code></pre></div></div>
+
+<p>У такого подхода есть несколько недостатков:</p>
+
+<ol>
+  <li>Мы пониманием, что переменные логически должны быть связаны между собой, но мы эту связь никак не показали. Другими словами, переменная <code class="highlighter-rouge">username</code>  может содержать имя одного пользователя, <code class="highlighter-rouge">email</code> относиться ко второму пользователю, а <code class="highlighter-rouge">password</code> к третьему.</li>
+  <li>Если нам необходимо одновременно взаимодействовать с несколькими пользователями, то для каждого из них нужно создавать по три таких переменных.</li>
+</ol>
+
+<p>Как показать, что существует логическая связь между этими переменными? Мы можем использовать любую подходящую структуру: список, словарь, кортеж, именованный кортеж. Как пример будем использовать словарь (именованный кортеж, т.е. <a href="https://www.blog.pythonlibrary.org/2016/03/15/python-201-namedtuple/"><code class="highlighter-rouge">namedtuple</code></a>, было бы использовать нечестно):</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Представление отдельно взятого пользователя</span>
+<span class="n">user</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'username'</span><span class="p">:</span> <span class="s">'bob'</span><span class="p">,</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="s">'bob@example.com'</span><span class="p">,</span>
+    <span class="s">'password'</span><span class="p">:</span> <span class="s">'foobar'</span>
+<span class="p">}</span>
+
+<span class="c"># А так мы теперь можем представить список пользователей</span>
+<span class="n">users_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'bob'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">:</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'foobar'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'username'</span><span class="p">:</span><span class="s">'joe'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">:</span> <span class="s">'joe@example.com'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'barfoo'</span><span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<p>Таким образом, объединив несколько значений (имя, адрес электронной почты и пароль) в контейнер, мы попытались показать, что существует логическая связь между этими значениями.</p>
+
+<p>Теперь напишем простую функцию, которая возвращает имя пользователя:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_username</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">user</span><span class="p">[</span><span class="s">'username'</span><span class="p">]</span>
+
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">get_username</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+<span class="s">'bob'</span>
+</code></pre></div></div>
+
+<p>Так как пользователь представлен словарем, то мы возвращаем значение по ключу <code class="highlighter-rouge">username</code>, которое соответствует имени.</p>
+
+<p>Одним из недостатков такого подхода является то, что мы не показали логическую связь между данными о пользователе и той функцией, которая должна с ними работать.</p>
+
+<p>В решении этой проблемы нам могут помочь классы, задача которых объединить данные и методы работы с ними.</p>
+
+<h3 id="создание-простого-класса">Создание простого класса</h3>
+
+<p>Начнем с создания простого класса:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Теперь создадим новый объект класса пользователь:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Атрибуты хранятся в специальном словаре (подробнее про модель данных в Python можно почитать <a href="https://docs.python.org/3.6/reference/datamodel.html">тут</a>):</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="p">{}</span>
+</code></pre></div></div>
+
+<p>Так как мы не создали еще ни одного атрибута, то и словарь будет пустым. Давайте добавим несколько атрибутов  (Python позволяет динамически привязывать новые атрибуты к объекту, в конце концов это просто словарь):</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s">'bob'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s">'bob@example.com'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s">'foobar'</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'bob'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">:</span> <span class="s">'foobar'</span><span class="p">}</span>
+
+<span class="c"># Следующие два выражения в нашем примере эквиваленты</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">username</span>
+<span class="s">'bob'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">'username'</span><span class="p">]</span>
+<span class="s">'bob'</span>
+</code></pre></div></div>
+
+<p>Что будет, если мы обратимся к атрибуту, которого не существует?</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">created_at</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">"&lt;input&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">created_at</span>
+<span class="nb">AttributeError</span><span class="p">:</span> <span class="s">'User'</span> <span class="nb">object</span> <span class="n">has</span> <span class="n">no</span> <span class="n">attribute</span> <span class="s">'created_at'</span>
+</code></pre></div></div>
+
+<p>Работать с атрибутами можно с помощью следующих функций:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">hasattr(obj, attr_name)</code> - проверить наличие атрибута <code class="highlighter-rouge">attr_name</code> в объекте <code class="highlighter-rouge">obj</code>. Если атрибут присутствует, то функция возвращает <code class="highlighter-rouge">True</code>, иначе <code class="highlighter-rouge">False</code>.</li>
+  <li><code class="highlighter-rouge">getattr(obj, attr_name[, default_value])</code> - получить значение атрибута. Можно указать значение по умолчанию <code class="highlighter-rouge">default_value</code>, которое будет возвращено, если атрибута не существует.</li>
+  <li><code class="highlighter-rouge">setattr(obj, attr_name, value)</code> - изменить значение атрибута <code class="highlighter-rouge">attr_name</code> на <code class="highlighter-rouge">value</code>. Если атрибут не существовал, то он будет создан.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s">'created_at'</span><span class="p">)</span>
+<span class="bp">False</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s">'username'</span><span class="p">)</span>
+<span class="bp">True</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s">'created_at'</span><span class="p">)</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">"&lt;input&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s">'created_at'</span><span class="p">)</span>
+<span class="nb">AttributeError</span><span class="p">:</span> <span class="s">'User'</span> <span class="nb">object</span> <span class="n">has</span> <span class="n">no</span> <span class="n">attribute</span> <span class="s">'created_at'</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s">'created_at'</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+<span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">757869</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">setattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s">'created_at'</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+<span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">757869</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Функция <code class="highlighter-rouge">setattr</code> может оказаться полезной, когда нам необходимо добавить в объект множество атрибутов, хранящихся в каком-нибудь контейнере:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">()</span>
+<span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'bob'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">:</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'foobar'</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Добавим теперь функцию получения имени пользователя в ранее созданный объект:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_username</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span> <span class="o">=</span> <span class="n">get_username</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'bob'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">:</span> <span class="s">'foobar'</span><span class="p">,</span> <span class="s">'get_username'</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">function</span> <span class="n">get_username</span> <span class="n">at</span> <span class="mh">0x1038256a8</span><span class="o">&gt;</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="s">'bob'</span>
+</code></pre></div></div>
+
+<p>Обратите внимание, что мы вызываем функцию <code class="highlighter-rouge">get_username</code> у объекта <code class="highlighter-rouge">u</code> и в качестве аргумента передаем сам объект <code class="highlighter-rouge">u</code>. Выглядит странно и некрасиво.</p>
+
+<blockquote>
+  <p>Черная магия питона: Ради справедливости нужно сказать, что мы можем динамически привязать метод к объекту, так, чтобы не пришлось передавать объект в качестве аргумента. Пример приведен ниже.</p>
+</blockquote>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span> <span class="o">=</span> <span class="n">MethodType</span><span class="p">(</span><span class="n">get_username</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span><span class="p">()</span>
+<span class="s">'bob'</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'bob'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">:</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">:</span> <span class="s">'foobar'</span><span class="p">,</span> <span class="s">'get_username'</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bound</span> <span class="n">method</span> <span class="n">get_username</span> <span class="n">of</span> <span class="o">&lt;</span><span class="n">__console__</span><span class="o">.</span><span class="n">U</span>
+<span class="n">ser</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x103839d30</span><span class="o">&gt;&gt;</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>Так как каждый объект класса <em>Пользователь</em> должен содержать одинаковый набор атрибутов, но с разными значениями, то было бы логичным вынести процесс создания атрибутов в отдельный метод. В Python таким методом является <code class="highlighter-rouge">__init__</code>:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+
+    <span class="k">def</span> <span class="nf">get_username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="s">'bob'</span><span class="p">,</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'foobar'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">email</span>
+<span class="s">'bob@example.com'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span><span class="p">()</span>
+<span class="s">'bob'</span>
+</code></pre></div></div>
+
+<p>Возникает вопрос “<em>Откуда взялся <code class="highlighter-rouge">self</code> в качестве первого аргумента у метода <code class="highlighter-rouge">__init__()</code>?</em>”. Упрощенно процесс создания и инициализации нового объекта можно описать следующими шагами:</p>
+
+<ol>
+  <li><code class="highlighter-rouge">u = User('bob', 'bob@example.com', 'foobar')</code></li>
+  <li>Вызывается конструктор объекта <a href="https://docs.python.org/3.6/reference/datamodel.html#object.__new__"><code class="highlighter-rouge">__new__()</code></a>, который возвращает “пустой” объект.</li>
+  <li>Созданный объект передается в инициализатор <code class="highlighter-rouge">__init__()</code> в качестве первого аргумента с именем <code class="highlighter-rouge">self</code> (такое имя не является обязательным, но используется по соглашению), за ним передаются все остальные аргументы указанные при вызове класса (<code class="highlighter-rouge">'bob', 'bob@example.com', 'foobar'</code>).</li>
+  <li>У объекта создаются все требуемые атрибуты, например <code class="highlighter-rouge">self.username = username</code>.</li>
+  <li>Инициализированный объект возвращается на место вызова класса, в примере переменная <code class="highlighter-rouge">u</code> связывается с созданным объектом.</li>
+</ol>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Как было сказано это упрощенная схема создания и инициализации нового объекта. Чтобы понимать этот процесс более полно, то необходимо ввести понятие метаклассов, о которых вы можете прочитать <a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">тут</a>.</p>
+</blockquote>
+
+<p>Вы заметили, что в метод <code class="highlighter-rouge">get_username()</code> также передается <code class="highlighter-rouge">self</code>? А также то, что при вызове этого метода мы не передаем никаких аргументов? Давайте рассмотрим два следующих выражения:</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span><span class="p">()</span>
+<span class="s">'bob'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">User</span><span class="o">.</span><span class="n">get_username</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="s">'bob'</span>
+</code></pre></div></div>
+
+<p>В Python классы также являются объектами (<em>в Python все является объектом</em>) и методы, в отличие от атрибутов, принадлежат классу, а не объекту. Поэтому метод <code class="highlighter-rouge">get_username()</code> вызывается не у объекта, а у класса, а объект передается в качестве аргумента (отсюда следует, что объект должен передаваться в качестве первого аргумента во все методы класса и по соглашению его называют <code class="highlighter-rouge">self</code>). Таким образом, выражение <code class="highlighter-rouge">u.get_username()</code> является просто синтаксическим сахаром (упрощенной формой записи) по отношению к <code class="highlighter-rouge">User.get_username(u)</code>.</p>
+
+<blockquote>
+  <p><strong>Замечание</strong>:  Конечно все несколько сложнее, рассмотрим следующий пример:</p>
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;</span> <span class="n">User</span><span class="o">.</span><span class="n">get_username</span>
+<span class="o">&lt;</span> <span class="n">function</span> <span class="n">User</span><span class="o">.</span><span class="n">get_username</span> <span class="n">at</span> <span class="mh">0x103a06268</span> <span class="o">&gt;</span>
+<span class="o">&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">get_username</span>
+<span class="o">&lt;</span> <span class="n">bound</span> <span class="n">method</span> <span class="n">User</span><span class="o">.</span><span class="n">get_username</span> <span class="n">of</span> <span class="o">&lt;</span> <span class="n">__console__</span><span class="o">.</span><span class="n">User</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1039a8eb8</span><span class="o">&gt;&gt;</span>
+</code></pre></div>  </div>
+  <p>В первом случае мы имеем функцию, а во втором - связный метод, другими словами есть разница в поведении в зависимости от того вызываем мы <code class="highlighter-rouge">get_username</code> у класса или у объекта. Такое поведение реализовано с помощью дескрипторов, о которых мы будем говорить ниже, а пока можно почитать вот <a href="http://emmanuel-klinger.net/pythons-attribute-descriptors.html">эту интересную статью</a>.</p>
+</blockquote>
+
+<h3 id="пример-создание-простой-orm">Пример: создание простой ORM</h3>
+
+<p>Что такое ORM? Вот пояснение с сайта <a href="https://www.fullstackpython.com/object-relational-mappers-orms.html">Full Stack Python</a>:</p>
+
+<blockquote>
+  <p>An object-relational mapper (ORM) is a code library that automates the transfer of data stored in relational databases tables into objects that are more commonly used in application code.</p>
+</blockquote>
+
+<p>В этом примере (полностью основанном на <a href="https://codescience.wordpress.com/2011/02/06/python-mini-orm/">этом коде</a>) мы рассмотрим пример создания примитивной ORM для SQLite базы данных, которая имеет <a href="https://docs.python.org/3.6/library/sqlite3.html">встроенную поддержку</a> в Python.</p>
+
+<p>Создадим БД с таблицей <em>Пользователи</em> и добавим туда несколько записей:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<span class="c"># Создание нового соединения с БД</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'users_db.sqlite3'</span><span class="p">)</span>
+
+<span class="c"># Курсор это объект, который позволяет выполнять запросы к БД</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="c"># Создание таблицы пользователей</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'CREATE TABLE users (id, username, email, password)'</span><span class="p">)</span>
+
+<span class="c"># Добавление новых записей</span>
+<span class="n">users</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">'john'</span><span class="p">,</span> <span class="s">'john@thebeatles.com'</span><span class="p">,</span> <span class="s">'foobar'</span><span class="p">),</span>
+   <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">'paul'</span><span class="p">,</span> <span class="s">'paul@thebeatles.com'</span><span class="p">,</span> <span class="s">'barfoo'</span><span class="p">),</span>
+   <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">'ringo'</span><span class="p">,</span> <span class="s">'ringo@thebeatles.com'</span><span class="p">,</span> <span class="s">'foobaz'</span><span class="p">),</span>
+   <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">'george'</span><span class="p">,</span> <span class="s">'george@thebeatles.com'</span><span class="p">,</span> <span class="s">'bazfoo'</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s">'INSERT INTO users VALUES (?,?,?,?)'</span><span class="p">,</span> <span class="n">users</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="c"># Вывод всех записей</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'SELECT * FROM users'</span><span class="p">):</span>
+   <span class="k">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>В результате вы должны увидеть следующие записи:</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">'john'</span><span class="p">,</span> <span class="s">'john@thebeatles.com'</span><span class="p">,</span> <span class="s">'foobar'</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">'paul'</span><span class="p">,</span> <span class="s">'paul@thebeatles.com'</span><span class="p">,</span> <span class="s">'barfoo'</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">'ringo'</span><span class="p">,</span> <span class="s">'ringo@thebeatles.com'</span><span class="p">,</span> <span class="s">'foobaz'</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">'george'</span><span class="p">,</span> <span class="s">'george@thebeatles.com'</span><span class="p">,</span> <span class="s">'bazfoo'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Теперь перейдем к ORM:</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sqlite3</span>
+
+
+<span class="k">class</span> <span class="nc">DataBase</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="s">'db'</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">f</span><span class="s">"{db}.sqlite3"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tbl_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sql_rows</span> <span class="o">=</span> <span class="n">f</span><span class="s">"SELECT * FROM {tbl_name}"</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">f</span><span class="s">"PRAGMA table_info({tbl_name})"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
+    <span class="k">def</span> <span class="nf">Table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tbl_name</span><span class="p">):</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(</span><span class="n">tbl_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">tbl_name</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Query</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">tbl_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">cursor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sql_rows</span> <span class="o">=</span> <span class="n">rows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tbl_name</span> <span class="o">=</span> <span class="n">tbl_name</span>
+
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criteria</span><span class="p">):</span>
+        <span class="n">key_word</span> <span class="o">=</span> <span class="s">"AND"</span> <span class="k">if</span> <span class="s">"WHERE"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_rows</span> <span class="k">else</span> <span class="s">"WHERE"</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="n">f</span><span class="s">"{self.sql_rows} {key_word} {criteria}"</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tbl_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">order_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criteria</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">f</span><span class="s">"{self.sql_rows} ORDER BY {criteria}"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tbl_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">group_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criteria</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">,</span> <span class="n">f</span><span class="s">"{self.sql_rows} GROUP BY {criteria}"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tbl_name</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sql_rows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sql_rows</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">fields</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">tbl_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">fields</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
+
+<span class="k">class</span> <span class="nc">Row</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">table_name</span> <span class="o">+</span> <span class="s">"_Row"</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span>  <span class="s">', '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">f</span><span class="s">"{attr}={value}"</span> <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s">"{self.__class__.__name__}({attrs})"</span>
+</code></pre></div></div>
+<p>Класс <code class="highlighter-rouge">DataBase</code> отвечает за создание соединения, класс <code class="highlighter-rouge">Query</code> за формирование запроса к БД, класс <code class="highlighter-rouge">Row</code> представляет одну запись в таблице.</p>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Все строки в формате <a href="https://cito.github.io/blog/f-strings/">f-strings</a>, который был введен в Python 3.6.</p>
+
+  <p>Метод <code class="highlighter-rouge">__repr__</code> переопределен, чтобы выводить чуть больше полезной информации об объекте, чем просто его адрес в памяти. Узнать больше про магические методы в питоне можно прочитав статью на <a href="https://habrahabr.ru/post/186608/">Хабре</a>.</p>
+</blockquote>
+
+<p>Ниже приведен пример использования:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">db</span> <span class="o">=</span> <span class="n">DataBase</span><span class="p">(</span><span class="s">'users_db'</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(</span><span class="s">'users'</span><span class="p">)</span>
+<span class="p">[</span><span class="s">'id'</span><span class="p">,</span> <span class="s">'username'</span><span class="p">,</span> <span class="s">'email'</span><span class="p">,</span> <span class="s">'password'</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s">'users'</span><span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span>
+<span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">users</span>
+<span class="p">[</span><span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">john</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">john</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">foobar</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">paul</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">paul</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">barfoo</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">ringo</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">ringo</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">foobaz</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">george</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">george</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">bazfoo</span><span class="p">)]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s">'users'</span><span class="p">)</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="s">'id &gt; 2'</span><span class="p">)</span><span class="o">.</span><span class="n">rows</span>
+<span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">users</span> <span class="n">WHERE</span> <span class="nb">id</span> <span class="o">&gt;</span> <span class="mi">2</span>
+<span class="p">[</span><span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">ringo</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">ringo</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">foobaz</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">george</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">george</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">bazfoo</span><span class="p">)]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s">'users'</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'username DESC'</span><span class="p">)</span><span class="o">.</span><span class="n">rows</span>
+<span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">users</span> <span class="n">ORDER</span> <span class="n">BY</span> <span class="n">username</span> <span class="n">DESC</span>
+<span class="p">[</span><span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">ringo</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">ringo</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">foobaz</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">paul</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">paul</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">barfoo</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">john</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">john</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">foobar</span><span class="p">),</span>
+ <span class="n">users_Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">george</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">george</span><span class="nd">@thebeatles.com</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">bazfoo</span><span class="p">)]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s">'users'</span><span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">users</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">user</span><span class="o">.</span><span class="nb">id</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
+<span class="s">'john'</span>
+</code></pre></div></div>
+
+<p><strong>Задания</strong>:</p>
+<ul>
+  <li>вы должны были заметить, что мы получаем объекты класса <code class="highlighter-rouge">users_Row</code>, а не класса <code class="highlighter-rouge">User</code>. Попробуйте внести изменения, чтобы мы получали объекты класса <code class="highlighter-rouge">User</code>:</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s">'users'</span><span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">type</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">__main__</span><span class="o">.</span><span class="n">User</span><span class="s">'&gt;</span><span class="err">
+</span><span class="s">&gt;&gt;&gt; user.get_username()</span><span class="err">
+</span><span class="s">'</span><span class="n">john</span><span class="s">'</span><span class="err">
+</span></code></pre></div></div>
+<ul>
+  <li>добавьте метод <code class="highlighter-rouge">limit(N)</code> в класс <code class="highlighter-rouge">DataBase</code>, который позволяет получить не больше N записей.</li>
+  <li>добавьте метод <code class="highlighter-rouge">insert(obj)</code>, который создает в БД новую запись об объекте <code class="highlighter-rouge">obj</code>.</li>
+</ul>
+
+<h3 id="приватные-поля-класса">“Приватные” поля класса</h3>
+
+<p>Допустим у нас имеется следующее определение класса, в котором есть методы для изменения и проверки пароля, а также адреса электронной почты:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_email</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">'^[_a-z0-9-]+(</span><span class="err">\</span><span class="s">.[_a-z0-9-]+)*@[a-z0-9-]+(</span><span class="err">\</span><span class="s">.[a-z0-9-]+)*(</span><span class="err">\</span><span class="s">.[a-z]{2,4})$'</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Invalid email"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+
+    <span class="c"># http://pythoncentral.io/hashing-strings-with-python/</span>
+    <span class="c"># https://docs.python.org/3.5/library/hashlib.html</span>
+    <span class="k">def</span> <span class="nf">make_salt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">salt</span> <span class="o">=</span> <span class="s">""</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">salt</span> <span class="o">=</span> <span class="n">salt</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">salt</span>
+
+    <span class="k">def</span> <span class="nf">set_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pw</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">salt</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_salt</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">pw</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="n">salt</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="o">+</span> <span class="s">","</span> <span class="o">+</span> <span class="n">salt</span>
+
+    <span class="k">def</span> <span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_password</span><span class="p">):</span>
+        <span class="n">password</span><span class="p">,</span> <span class="n">salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">','</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">password</span> <span class="o">==</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">user_password</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="n">salt</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Давайте посмотрим на работу с этими методами:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="s">'bob'</span><span class="p">,</span> <span class="s">'bob@example.com'</span><span class="p">,</span> <span class="s">'foobar'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">username</span>
+<span class="s">'bob'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">email</span>
+<span class="s">'bob@example.com'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">password</span>
+<span class="s">'fd6c85ddaccb0d13e8b4d45b6e3bcbcc18d3b737a10aef21d297c861d770da6d,PDrGK'</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">set_email</span><span class="p">(</span><span class="s">'bob-new-email'</span><span class="p">)</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">"&lt;input&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_email</span><span class="p">(</span><span class="s">'bob-new-eamil'</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s">"&lt;input&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">12</span><span class="p">,</span> <span class="ow">in</span> <span class="n">set_email</span>
+    <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Invalid email"</span><span class="p">)</span>
+<span class="nb">ValueError</span><span class="p">:</span> <span class="n">Invalid</span> <span class="n">email</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">set_email</span><span class="p">(</span><span class="s">'bob-new-eamil@example.com'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">email</span>
+<span class="s">'bob-new-eamil@example.com'</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="s">'barfoo'</span><span class="p">)</span>
+<span class="bp">False</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="s">'foobar'</span><span class="p">)</span>
+<span class="bp">True</span>
+</code></pre></div></div>
+
+<p>Допустим, что мы хотим изменить пароль (или адрес электронной почты) и делаем это напрямую обращаясь к атрибуту:</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s">'barfoo'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="s">'barfoo'</span><span class="p">)</span>
+<span class="bp">False</span>
+</code></pre></div></div>
+
+<p>Почему пароль не прошел проверку? Мы изменили значение атрибута напрямую, не используя функцию <code class="highlighter-rouge">set_password()</code>, таким образом, мы сохранили пароль в открытом виде. В свою очередь функция <code class="highlighter-rouge">check_password()</code> хеширует переданный ей пароль в качестве аргумента и затем сравнивает его с паролем, который хранился в атрибуте <code class="highlighter-rouge">password</code>.</p>
+
+<p>Очевидно, что нужно менять значение пароля или адреса электронной почты с помощью методов <code class="highlighter-rouge">set_password()</code> и <code class="highlighter-rouge">set_email()</code>, чтобы избежать подобного рода ошибок. А прямое обращение к полям <code class="highlighter-rouge">password</code> и <code class="highlighter-rouge">email</code> нужно ограничить.</p>
+
+<p>В языке Python сложно что-то запретить, в частности обращение к полям класса, но есть соглашения. Например, если имя атрибута начинается с одного нижнего подчеркивания, то он считается  (<strong>считается != является</strong>) приватным (private), другими словами, указывая нижнее подчеркивание перед именем атрибута мы “говорим” пользователям нашего класса “<em>Не нужно обращаться к этому полю напрямую, иначе можно нарушить логику работы</em>”. Таким образом, в примере приведенном выше, имена всех атрибутов (пароль, адрес электронной почты и имя пользователя) следовало бы начинать с нижнего подчеркивания, а для взаимодействия с ними использовать соответствующие методы, которые обычно называют “<em>сеттерами</em>” и “<em>геттерами</em>” (от set/get, например, <code class="highlighter-rouge">set_username</code> и <code class="highlighter-rouge">get_username</code>).</p>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Больше про нижние подчеркивания можно узнать <a href="https://shahriar.svbtle.com/underscores-in-python">тут</a>.</p>
+</blockquote>
+
+<h3 id="свойства-property">Свойства (property)</h3>
+
+<p>Давайте рассмотрим следующий пример: пусть у нас есть класс “Профиль пользователя” и поле дата рождения,</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UserProfile</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">first_name</span><span class="o">=</span><span class="s">''</span><span class="p">,</span> <span class="n">sur_name</span><span class="o">=</span><span class="s">''</span><span class="p">,</span> <span class="n">bdate</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">User</span><span class="p">),</span> <span class="s">'`user` field must be a User class instance'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span> <span class="o">=</span> <span class="n">first_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sur_name</span> <span class="o">=</span> <span class="n">sur_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bdate</span> <span class="o">=</span> <span class="n">bdate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_age</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_age_last_recalculated</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recalculate_age</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_recalculate_age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">age</span> <span class="o">=</span> <span class="n">today</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bdate</span><span class="o">.</span><span class="n">year</span>
+
+        <span class="k">if</span> <span class="n">today</span> <span class="o">&lt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">today</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bdate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bdate</span><span class="o">.</span><span class="n">day</span><span class="p">):</span>
+            <span class="n">age</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_age_last_recalculated</span> <span class="o">=</span> <span class="n">today</span>
+
+    <span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_age_last_recalculated</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_recalculate_age</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_age</span>
+
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="o">...</span>    
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UserProfile</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_age_last_recalculated</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_recalculate_age</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_age</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UserProfile</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fullname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">'{} {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sur_name</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+
+    <span class="nd">@fullname.setter</span>
+    <span class="k">def</span> <span class="nf">fullname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">surname</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sur_name</span> <span class="o">=</span> <span class="n">surname</span>
+
+    <span class="nd">@fullname.deleter</span>
+    <span class="k">def</span> <span class="nf">fullname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span> <span class="o">=</span> <span class="s">''</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sur_name</span> <span class="o">=</span> <span class="s">''</span>
+</code></pre></div></div>
+
+<h3 id="дескрипторы">Дескрипторы</h3>
+
+<h3 id="методы-класса-classmethod-и-staticmethod">Методы класса (@classmethod и @staticmethod)</h3>
+
+<h3 id="наследование">Наследование</h3>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TimestampedModel</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">updated_at</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">created_at</span> <span class="o">=</span> <span class="n">created_at</span> <span class="ow">or</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated_at</span> <span class="o">=</span> <span class="n">updated_at</span> <span class="ow">or</span> <span class="n">created_at</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">TimestampedModel</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">TimestampedModel</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span>
+
+    <span class="nd">@username.setter</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_username</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">new_username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">attr</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="k">class</span> <span class="nc">JSONSerializerMixin</span><span class="p">:</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">to_serializable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="o">+</span> <span class="s">"Z"</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="n">attr</span><span class="o">.</span><span class="n">has</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">attr</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">Exception</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"error"</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                <span class="s">"args"</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">toJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">JSONSerializerMixin</span><span class="o">.</span><span class="n">to_serializable</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fromJSON</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">datetime_parser</span><span class="p">(</span><span class="n">json_dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s">"</span><span class="si">%</span><span class="s">Y-</span><span class="si">%</span><span class="s">m-</span><span class="si">%</span><span class="s">d"</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">return</span> <span class="n">json_dict</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="o">**</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">object_hook</span><span class="o">=</span><span class="n">datetime_parser</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">TimestampedModel</span><span class="p">,</span> <span class="n">JSONSerializerMixin</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div></div>
+
+<h3 id="множественное-наследование-и-полиморфизм">Множественное наследование и полиморфизм</h3>
+
+<h3 id="метаклассы">Метаклассы</h3>
+
+<p>Таким же образом, как классы контролируют создание экземпляров и позволяют задавать поведение методов, метаклассы в Python могут делать все это для классов. Понять, что такое метаклассы, можно определив их как <em>классы классов</em>.</p>
+
+<p>Самый часто используемый метакласс - <code class="highlighter-rouge">type</code> т.к. это метакласс для всех классов по умолчанию, все остальные метаклассы должны наследоваться от него.</p>
+
+<h3 id="тип-type"><em>Тип type</em></h3>
+
+<p>В Python всё является объектом и должно иметь тип. Вкратце, тип - это сущность, которая знает как создать экземпляр. Например, тип числа <code class="highlighter-rouge">1</code> - <code class="highlighter-rouge">Int</code>, а тип <code class="highlighter-rouge">Int</code> - <code class="highlighter-rouge">type</code></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">type</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">int</span><span class="s">'&gt;</span><span class="err">
+</span><span class="s">&gt;&gt;&gt; type(int)</span><span class="err">
+</span><span class="s">&lt;class '</span><span class="nb">type</span><span class="s">'&gt;</span><span class="err">
+</span></code></pre></div></div>
+
+<p>Существует модуль <a href="https://docs.python.org/3/library/types.html" target="_blank"><code class="highlighter-rouge">types</code></a>, который предоставляет стандартный набор функций для работы с типами и определения типов, которые интерпретатор использует по умолчанию. Это может оказаться кстати, например, если вам нужно проверить является ли данный объект функцией или модулем.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">types</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">func</span><span class="p">():</span>
+<span class="o">...</span>     <span class="k">pass</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">)</span>
+<span class="bp">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span>
+<span class="bp">False</span>
+</code></pre></div></div>
+
+<p>Теперь, когда <code class="highlighter-rouge">type</code> тоже является объектом, какой тогда его тип? Получается, что типом типа <code class="highlighter-rouge">type</code> является… <code class="highlighter-rouge">type</code>:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">type</span><span class="s">'&gt;</span><span class="err">
+</span></code></pre></div></div>
+
+<p>Все создаваемые пользователем новые классы (<code class="highlighter-rouge">new-style classes</code>) также имеют тип <code class="highlighter-rouge">type</code>:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">pass</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">type</span><span class="s">'&gt;</span><span class="err">
+</span></code></pre></div></div>
+
+<p>Это происходит с 3 версии Python, однако в случае использования Python 2 вам необходимо помнить, что все классы следует наследовать от <code class="highlighter-rouge">object</code>. Иначе, они будут иметь тип <code class="highlighter-rouge">classobj</code>:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Python 2.x</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">B</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">pass</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">type</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="nb">type</span> <span class="s">'classobj'</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>В конце концов, если вызвать <code class="highlighter-rouge">type</code> с тремя аргументами, он будет вести себя как конструктор - так вы сможете создавать типы “на лету”. Этими аргументами являются имя нового типа, кортеж родительских классов и словарь класса (который содержит все то, что вы обычно размещаете в теле класса)</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">Type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s">'Type'</span><span class="p">,</span> <span class="p">(</span><span class="n">A</span><span class="p">,),</span> <span class="p">{</span><span class="s">'x'</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s">'f'</span><span class="p">:</span> <span class="n">f</span><span class="p">})</span>
+<span class="n">instance</span> <span class="o">=</span> <span class="n">Type</span><span class="p">()</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">Type</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="bp">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Type</span><span class="p">)</span>
+<span class="bp">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Type</span><span class="o">.</span><span class="n">x</span>
+<span class="mi">42</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">instance</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="mi">2</span>
+</code></pre></div></div>
+
+<p>Мы вернёмся к этому позже, когда будем разбирать конструктор метаклассов.</p>
+
+<h3 id="связываем-метаклассы"><em>Связываем метаклассы</em></h3>
+
+<p>Так как все метаклассы наследуются от <code class="highlighter-rouge">type</code>, самая простая реализация метакласса выглядит следующим образом:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>class M(type):
+  pass
+</code></pre></div></div>
+
+<p>Теперь любой класс, чьим метаклассом является <code class="highlighter-rouge">M</code>, будет иметь тип <code class="highlighter-rouge">M</code> (но также являться экземпляром типа <code class="highlighter-rouge">type</code>, потому что <code class="highlighter-rouge">M</code> наследуется от <code class="highlighter-rouge">type</code>)</p>
+
+<p>Как мы можем связать метакласс и класс? Увы, это ещё одна вещь, реализованная по-разному в Python 2 и Python 3.</p>
+
+<p>В Python 2, метакласс устанавливается в специальное поле класса - <code class="highlighter-rouge">__metaclass__</code></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Python 2.x only</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">M</span>
+</code></pre></div></div>
+
+<p>В Python 3 метакласс передаётся в качестве аргумента:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Python 3.x only</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">M</span><span class="p">):</span>
+  <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Одним из способов унифицировать этот процесс является использование библиотеки <a href="https://pypi.python.org/pypi/six" target="_blank"><code class="highlighter-rouge">six</code></a>, предоставляющей единый способ связывания метаклассов с основным классом:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Python 2 and 3</span>
+
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="c"># metaclass</span>
+<span class="k">class</span> <span class="nc">M</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c"># base class</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">A</span><span class="p">)):</span>
+    <span class="k">pass</span>
+
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="ow">is</span> <span class="n">M</span>
+
+<span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="ow">is</span> <span class="n">M</span>
+</code></pre></div></div>
+
+<h3 id="перехватываем-конструкторы-типов"><em>Перехватываем конструкторы типов</em></h3>
+
+<p>Как мы рассмотрели выше, сигнатура конструктора у <code class="highlighter-rouge">type</code> следующая:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>type(name, bases, classdict)
+</code></pre></div></div>
+
+<p>Тогда определение классов с помощью ключевого слова <code class="highlighter-rouge">class</code> можно рассматривать как “синтаксический сахар”, позволяющий не вызывать конструктор <code class="highlighter-rouge">type</code> напрямую.</p>
+
+<p>Определим 2 класса:</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">2</span>
+
+</code></pre></div></div>
+
+<p>Мы можем переписать код выше с использованием <code class="highlighter-rouge">type</code> напрямую:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clsdict_a</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'x'</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s">'A'</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,),</span> <span class="n">clsdict_a</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">2</span>
+
+<span class="n">clsdict_b</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'y'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s">'f'</span><span class="p">:</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">f</span><span class="p">),</span>
+    <span class="s">'g'</span><span class="p">:</span> <span class="n">g</span>
+<span class="p">}</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s">'B'</span><span class="p">,</span> <span class="p">(</span><span class="n">A</span><span class="p">,),</span> <span class="n">clsdict_b</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Всё самое интересное происходит внутри конструктора <code class="highlighter-rouge">type</code>, а все определяемые пользователем метаклассы могут варьировать список аргументов, которые он получает. Другими словами, вы можете перехватить создание класса сразу после того, как интерпретатор считал определение класса, и ровно до того момента, когда произойдёт обращение к <code class="highlighter-rouge">type</code>. Для этого необходимо переопределить метод <code class="highlighter-rouge">__new__</code>.</p>
+
+<p>Давайте посмотрим на пример, в котором мы хотим, чтобы во всех наследниках конкретного класса автоматически увеличивалось значение <code class="highlighter-rouge">id</code> в случае, если <code class="highlighter-rouge">track</code> установлен в <code class="highlighter-rouge">True</code> в теле класса; также мы хотим хранить все отслеживаемые классы в общем поле <code class="highlighter-rouge">classes</code>:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">six</span>
+
+<span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="n">classes</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">):</span>
+        <span class="n">clsdict</span><span class="p">[</span><span class="s">'id'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">track</span> <span class="o">=</span> <span class="n">clsdict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">'track'</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">clsdict</span><span class="p">[</span><span class="s">'id'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span> <span class="k">if</span> <span class="n">track</span> <span class="k">else</span> <span class="bp">None</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Meta</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
+            <span class="n">meta</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span>
+
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">Meta</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Trackable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">assert</span> <span class="n">Trackable</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="p">[]</span>
+<span class="k">assert</span> <span class="n">Meta</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="p">[]</span>
+<span class="k">assert</span> <span class="n">Trackable</span><span class="o">.</span><span class="nb">id</span> <span class="ow">is</span> <span class="bp">None</span>
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Trackable</span><span class="p">):</span>
+    <span class="n">track</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="nb">id</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="n">Trackable</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="p">[</span><span class="n">A</span><span class="p">]</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s">'track'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">assert</span> <span class="n">B</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="p">[</span><span class="n">A</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">B</span><span class="o">.</span><span class="nb">id</span> <span class="ow">is</span> <span class="bp">None</span>
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">Trackable</span><span class="p">):</span>
+    <span class="n">track</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="n">B</span><span class="o">.</span><span class="n">classes</span> <span class="o">==</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="nb">id</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="k">assert</span> <span class="n">Trackable</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="n">C</span><span class="o">.</span><span class="nb">id</span><span class="p">]</span> <span class="ow">is</span> <span class="n">C</span>
+</code></pre></div></div>
+
+<p>Сперва мы наследуем метакласс <code class="highlighter-rouge">Meta</code> от <code class="highlighter-rouge">type</code>, в котором переопределяем метод <code class="highlighter-rouge">__new__</code> и создаём переменную <code class="highlighter-rouge">classes</code> уровня класса, которая отражает текущее состояние.</p>
+
+<p>Сигнатура метода <code class="highlighter-rouge">__new__</code> совпадает с сигнатурой конструктора <code class="highlighter-rouge">type</code> - она тоже получает имя класса, кортеж родительских типов и словарь свойств класса; она также должна вернуть полностью сформированный тип. В этом методе мы проверяем наличие поля <code class="highlighter-rouge">track</code> в словаре класса и его значение. Если поле есть и значение установлено в True, то мы присваиваем значение <code class="highlighter-rouge">id</code> классового уровня соответственно, иначе - <code class="highlighter-rouge">None</code>.</p>
+
+<p>В завершении, мы вызываем конструктор основного метакласса для формирования типа, при желании сохраняем его в списке отслеживаемых классов и возвращаем сформированный тип. Стоит упомянуть, что мы могли использовать метод <code class="highlighter-rouge">type.__new__</code> вместо <code class="highlighter-rouge">super(Meta, meta).__new__</code>, но в целом это хорошая практика избегать жёстко закодированные основные типы, которые иногда приводят к неожиданному поведению при наследовании.</p>
+
+<p>Обратите внимание, что все переменные классового уровня (такие как <code class="highlighter-rouge">classes</code>) в этом примере могут также быть доступны наследникам. Похожим образом экземпляры методов метаклассов доступны как методы класса одновременно для классов и их экземпляров.</p>
+
+<h3 id="метакласс-как-реестр"><em>Метакласс как реестр</em></h3>
+
+<p>Типичный случай применения метаклассов - отслеживание созданных классов для последующего доступа к ним во время выполнения по имени или идентификатору.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">six</span>
+
+<span class="k">class</span> <span class="nc">RegistryMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">meta</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">RegistryMeta</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Registry</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="n">_registry</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">):</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Registry</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">clsdict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">'__base__'</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+            <span class="n">meta</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls</span>
+            <span class="k">if</span> <span class="s">'alias'</span> <span class="ow">in</span> <span class="n">clsdict</span><span class="p">:</span>
+                <span class="n">meta</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls</span>
+        <span class="k">return</span> <span class="n">cls</span>
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">Registry</span><span class="p">)):</span>
+    <span class="n">__base__</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">alias</span> <span class="o">=</span> <span class="s">'foo'</span>
+
+<span class="k">assert</span> <span class="n">Registry</span><span class="p">[</span><span class="s">'A'</span><span class="p">]</span> <span class="ow">is</span> <span class="n">A</span>  <span class="c"># lookup by class name</span>
+<span class="k">assert</span> <span class="n">Registry</span><span class="p">[</span><span class="s">'B'</span><span class="p">]</span> <span class="ow">is</span> <span class="n">B</span>
+<span class="k">assert</span> <span class="n">Registry</span><span class="p">[</span><span class="s">'foo'</span><span class="p">]</span> <span class="ow">is</span> <span class="n">B</span>  <span class="c"># or by alias</span>
+
+<span class="c"># Base is not in registry</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">Registry</span><span class="p">[</span><span class="s">'Base'</span><span class="p">]</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">KeyError</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>В примере выше, все наследники <code class="highlighter-rouge">Base</code> будут отслеживаться метаклассом <code class="highlighter-rouge">Registry</code>, и к ним можно будет обратиться позже по имени класса или значению поля <code class="highlighter-rouge">alias</code> при его наличии.</p>
+
+<p>Перед тем, как зарегистрировать класс, мы проверяем наличие поля <code class="highlighter-rouge">__base__</code>, чтобы учитывать только прямых потомков <code class="highlighter-rouge">Base</code>.</p>
+
+<p>Для того, чтобы сделать класс <code class="highlighter-rouge">Registry</code> индексируемым, мы должны связать метакласс <code class="highlighter-rouge">RegistryMeta</code> с ним, ведь в нем мы реализовали “магический” метод <code class="highlighter-rouge">__getitem__</code>. Насколько страшно звучит фраза “метакласс метакласса”, настолько же мы в действительности следуем такой логике, реализуя метод для экземпляров в теле класса. Если вам нужен экземпляр для чего-либо, вы реализуете методы в его типе, дабы последний знал, как связать реализованную функциональность с объектом во время его создания.</p>
+
+<p>Подытожим иерархию метакласса следующим примером:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a = A()
+assert type(a) is A
+assert type(A) is Registry
+assert type(Registry) is RegistryMeta
+assert type(RegistryMeta) is type
+</code></pre></div></div>
+
+<h3 id="singleton-паттерн"><em>Singleton-паттерн</em></h3>
+
+<p>Использование глобальных объектов - априори плохая затея, но если вы твердо решили идти этим путем, вам следует убедиться, что это Singleton, в котором существует один единственный экземпляр какого-либо класса в любой момент выполнения, от которого невозможно наследоваться.</p>
+
+<p>Как мы уже убедились, если метакласс связан с основным классом, всякий раз, когда от основного класса происходит наследование, вызывается метод <code class="highlighter-rouge">__new__</code>. Это позволяет с легкостью обрабатывать неперехватываемую часть. Если по какой-либо причине вы хотите предотвратить возможность наследования от метакласса, вам следует реализовать метакласс для метаклассов.</p>
+
+<p>Когда речь идёт о контролировании создаваемых экземпляров метакласса, переопределение метода <code class="highlighter-rouge">__new__</code> больше недостаточно: вместо него мы должны переопределить <code class="highlighter-rouge">__call__</code>. Легко запомнить: <code class="highlighter-rouge">__new__</code> срабатывает при создании нового класса, <code class="highlighter-rouge">__call__</code> - при создании нового экземпляра класса. Это работает точно так же и в случае реализации вышеуказанных методов в обычных классах. Таким образом экземпляры этих классов можно будет вызывать.</p>
+
+<p>Чтобы разобраться, как эти методы работают в связке, взглянем на следующий фрагмент:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="k">class</span> <span class="nc">M</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'metaclass::new'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'metaclass::call'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'---'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">M</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'class::new'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'class::init'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'class::call'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+
+
+<span class="k">print</span><span class="p">(</span><span class="s">'---'</span><span class="p">)</span>
+<span class="n">instance</span> <span class="o">=</span> <span class="n">C</span><span class="p">(</span><span class="s">'foo'</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">'---'</span><span class="p">)</span>
+<span class="n">instance</span><span class="p">(</span><span class="s">'bar'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Вывод будет следующим:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>metaclass::new
+---
+metaclass::call ('foo',) {'x': 1}
+class::new ('foo',) {'x': 1}
+class::init ('foo',) {'x': 1}
+---
+class::call ('bar',) {'y': 2}
+</code></pre></div></div>
+
+<p>Возвращаясь к singleton-классу, мы должны переопределить <code class="highlighter-rouge">__call__</code> в метаклассе для перехвата конструктора экземпляров и возвращения существующих экземпляров, которые могли быть ранее сохранены прямо в классе. Если экземпляр не существует, мы можем создать его, вызвав <code class="highlighter-rouge">super</code>, который в свою очередь вызовет конструктор класса, если он определён.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">six</span>
+
+<span class="k">class</span> <span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span> <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="nb">TypeError</span><span class="p">(</span><span class="s">'Cannot inherit from singleton class'</span><span class="p">)</span>
+        <span class="n">clsdict</span><span class="p">[</span><span class="s">'_instance'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Singleton</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+            <span class="n">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Singleton</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">Singleton</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">b</span>  <span class="c"># all new instances point to the same object</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+        <span class="k">pass</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">TypeError</span><span class="p">)</span>  <span class="c"># cannot inherit from singleton</span>
+</code></pre></div></div>
+
+<p>Реализация весьма проста и прозрачна, однако здесь ещё есть место для улучшений. К примеру, <code class="highlighter-rouge">__call__</code> обрабатывает полученные аргументы только в первый раз; во всех остальных вызовах он лишь безоговорочно возвращает сохранённое значение.</p>
+
+<h3 id="генерируем-дескрипторы"><em>Генерируем дескрипторы</em></h3>
+
+<p>Ещё один частый случай использования метаклассов - автоматизация создания дескрипторов. В Python дескриптором является любой объект, который реализует хотя бы один из следующих методов: <code class="highlighter-rouge">__get__</code>, <code class="highlighter-rouge">__set__</code> или <code class="highlighter-rouge">__delete__</code></p>
+
+<p>Дескрипторы контролируют доступ к свойствам, а также задают поведение для получения, установки или удаления свойства из словаря объекта. Рассмотрим простую реализацию:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Descriptor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">cls</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">instance</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Descriptor</span><span class="p">(</span><span class="s">'x'</span><span class="p">)</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="k">del</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Это может выглядеть как излишество, так как мы бы могли напрямую работать с свойствами экземпляров. Тем не менее, дескрипторы полезны в случаях, когда мы хотим добавить дополнительную логику в один из методов get, set или delete. Например, мы можем полностью переписать встроенные свойства/методы с использованием дескрипторов.</p>
+
+<p>Зачем нам нужно было передавать строку <code class="highlighter-rouge">x</code> в <code class="highlighter-rouge">Descriptor</code> явно? Ответ крайне прост - с одной стороны, дескриптор должен знать имя атрибута для поиска в словаре объекта, с другой стороны - на момент инициализации он не может ссылаться на словарь объекта, потому что тот пока что не существует. Так, например, в момент присваивания <code class="highlighter-rouge">a = A()</code> невозможно сообщить классу <code class="highlighter-rouge">A</code> о том, куда его экземпляр будет присвоен.</p>
+
+<p>Здесь в дело вступают метаклассы. Как раз до того, как будет создан тип, у нас есть полный словарь класса для наших нужд, и мы можем заменять конкретные поля, используя дескрипторы.</p>
+
+<p>В следующем примере мы создаём основной класс, наследники которого могут использовать специальный синтаксис для генерации свойств типа с значениями по умолчанию.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Typed</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="s">'foo'</span>
+</code></pre></div></div>
+
+<p>Мы хотим, чтобы <code class="highlighter-rouge">x</code> был числовым свойством с стандартным значением <code class="highlighter-rouge">None</code>, а <code class="highlighter-rouge">y</code> - строкой со стандартным значением <code class="highlighter-rouge">foo</code>. Когда значения по умолчанию присвоены, оба свойства попытаются привести установленные значения к своему типу.</p>
+
+<p>Возможная реализация дескриптора:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">six</span>
+
+<span class="k">class</span> <span class="nc">Descriptor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cls</span> <span class="o">=</span> <span class="n">cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c"># convert the value to `cls` and write to instance dict</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+        <span class="c"># retrieve the value from instance dict</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="n">_types</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">clsdict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">_types</span><span class="p">:</span>
+                <span class="c"># a type with no default</span>
+                <span class="n">clsdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Descriptor</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">_types</span><span class="p">:</span>
+                    <span class="c"># a type and a default value</span>
+                    <span class="n">clsdict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Descriptor</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Meta</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">clsdict</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Typed</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">Meta</span><span class="p">)):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Typed</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="s">'foo'</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="s">'42'</span>
+<span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">42</span>
+<span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="s">'foo'</span>
+<span class="n">a</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="s">'42'</span>
+</code></pre></div></div>
+
+<p>Заметьте, что мы до сих пор должны передавать имена полей в <code class="highlighter-rouge">Descriptor</code>, но на этот раз это было сделано метаклассом автоматически, а имена свойств попросту соответствовали ключам в словаре. Это основное преимущество использования метаклассов - реализовывать всю тяжёлую работу в метаклассе, чтобы пользовательский код выглядел проще.</p>
+
+<blockquote>
+  <p>Источник: <a href="http://ivansmirnov.io/python-metaclasses/">http://ivansmirnov.io/python-metaclasses/</a>, статья может быть доступна по ссылке <a href="http://archive.li/35l34">http://archive.li/35l34</a>.</p>
+</blockquote>
+
+<h3 id="абстрактные-классы">Абстрактные классы</h3>
+
+<p>Продолжим рассматривать пример с классом <em>Пользователь</em>. Мы можем разделить пользователей на два типа: <strong>анонимные пользователи</strong>, то есть те пользователи, которые не зарегистрированы или не вошли в систему под своим логином и паролем, и <strong>авторизованные пользователи</strong>.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AbstractUser</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">set_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_password</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_password</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">is_anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">()</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Замечание: Если проводить параллель с другими языками программирования, например, Java, то такой класс более справедливо было бы назвать <a href="http://stackoverflow.com/questions/761194/interface-vs-abstract-class-general-oo">интерфейсом</a>.</p>
+</blockquote>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AnonymousUser</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">is_anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_password</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_password</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">is_anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractUser</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_password</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_password</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">()</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">is_anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div></div>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
