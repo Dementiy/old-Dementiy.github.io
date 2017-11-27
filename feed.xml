@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2017-11-27T17:20:21+03:00</updated>
+  <updated>2017-11-27T17:32:49+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -518,7 +518,7 @@ RuntimeError: can't start new thread
 &lt;p&gt;Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов &lt;code class=&quot;highlighter-rouge&quot;&gt;asyncore.dispatcher&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;asynchat.async_chat&lt;/code&gt;. Каждый созданный канал добавляется в глобальный &lt;code class=&quot;highlighter-rouge&quot;&gt;map&lt;/code&gt; (словарь вида: &lt;code class=&quot;highlighter-rouge&quot;&gt;дескриптор сокета: канал&lt;/code&gt;), который используется в функции &lt;code class=&quot;highlighter-rouge&quot;&gt;loop()&lt;/code&gt;. Вызов функции &lt;code class=&quot;highlighter-rouge&quot;&gt;loop()&lt;/code&gt; активирует один из механизмов “пулинга” (&lt;code class=&quot;highlighter-rouge&quot;&gt;select&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;poll&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt;), который продолжает работать до тех пор, пока все каналы не будут закрыты.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Начиная с версии Python 3.6 модули &lt;code class=&quot;highlighter-rouge&quot;&gt;asyncore&lt;/code&gt; и asynchat` считаются устаревшими (deprecated) и рекомендуется использовать модуль &lt;a href=&quot;https://docs.python.org/3.6/library/asyncio.html#module-asyncio&quot;&gt;asyncio&lt;/a&gt;.&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Начиная с версии Python 3.6 модули &lt;code class=&quot;highlighter-rouge&quot;&gt;asyncore&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;asynchat&lt;/code&gt; считаются устаревшими (deprecated) и рекомендуется использовать модуль &lt;a href=&quot;https://docs.python.org/3.6/library/asyncio.html#module-asyncio&quot;&gt;asyncio&lt;/a&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Рассмотрим простой пример сервера, который на каждое новое соединение создает свой обработчик (обратите внимание, что экземпляры классов &lt;code class=&quot;highlighter-rouge&quot;&gt;AsyncHTTPServer&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;AsyncHTTPRequestHandler&lt;/code&gt; являются сетевыми каналами):&lt;/p&gt;
