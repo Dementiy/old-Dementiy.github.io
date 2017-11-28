@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Прогнозируем, классифицируем и кластеризуем (draft)</title>
+  <meta name="description" content="">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/11-ml/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Прогнозируем, классифицируем и кластеризуем (draft)">
+  <meta name="twitter:description" content="">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Прогнозируем, классифицируем и кластеризуем (draft)</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/golang/">golang</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/r/">R</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/datascience/">datascience</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<p>Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.</p>
+
+<p>Перед выполнением каждого задания дается краткое описание рассматриваемой задачи (с минимальными математическими выкладками), приводится пример возможного решения на языке R, далее следует само задание, а именно реализация описываемых алгоритмов на языке Python (подразумевается использование модулей <code class="highlighter-rouge">numpy</code> и <code class="highlighter-rouge">pandas</code> для выполнения векторных операций) и в конце приводится пример решения задания с использованием библиотеки <code class="highlighter-rouge">sklearn</code>.</p>
+
+<h3 id="регрессия">Регрессия</h3>
+
+<p><strong>Линейная регрессия</strong> – метод восстановления зависимости между двумя переменными:</p>
+
+<script type="math/tex; mode=display">y = \theta_0 + \theta_1x_1 + \theta_2x_2 + ... + \theta_nx_n</script>
+
+<p>Задача заключается в поиске такого набора параметров <script type="math/tex">\theta</script>, чтобы получать как можно лучшие результаты в предсказании <script type="math/tex">y</script>. В этом задании мы будем рассмотривать метод градиентного спуска для подбора параметров <script type="math/tex">\theta</script> (существуют и другие методы, например, метод наименьших квадратов).</p>
+
+<p>В качестве датасета нам послужат данные собранные в 1991 году Л. Уиллерманом (Willerman Lee) о 40 правополушарных студентах, изучавших курс психологии в Юго-Западном университете. Исследование, проведенное Уиллерманом, заключалось в поиске связи между размером мозга и коэффициентом интеллекта. Для исследования выбирались те студенты, которые не страдали алкоголизмом, потерей сознания, а также повреждениями мозга, эпилепсией или сердечной недостаточностью. Для определения размера мозга испытуемых исследователи использовали магнитно-резонансную томографию. Также каждому студенту было предложено пройти тесты Векслера. Информация о поле, весе и росте также была включена в данные. Таким образом, собранные Уиллерманом данные включают в себя следующие переменные:</p>
+
+<ul>
+  <li>пол (Gender) – мужской или женский;</li>
+  <li>значение комбинированного полного коэффициента интеллекта (FSIQ – Full Scale IQ);</li>
+  <li>коэффициент вербального интеллекта (VIQ – Verbal IQ);</li>
+  <li>баллы, набранные по тестам Векслера (PIQ – Performance IQ);</li>
+  <li>вес тела в фунтах (Weight);</li>
+  <li>рост в дюймах (Height);</li>
+  <li>количество пикселей на снимках МРТ (MRI_Count).</li>
+</ul>
+
+<p>В качестве простого примера построим двумерную модель для определения (прогнозирования) коэффициента вербального интеллекта по коэффициенту комбинированного полного интеллекта:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">brainSize</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s2">"brain_size.csv"</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="n">brainSize</span><span class="p">)</span><span class="w">
+  </span><span class="n">Gender</span><span class="w"> </span><span class="n">FSIQ</span><span class="w"> </span><span class="n">VIQ</span><span class="w"> </span><span class="n">PIQ</span><span class="w"> </span><span class="n">Weight</span><span class="w"> </span><span class="n">Height</span><span class="w"> </span><span class="n">MRI_Count</span><span class="w">
+</span><span class="m">1</span><span class="w"> </span><span class="n">Female</span><span class="w">  </span><span class="m">133</span><span class="w"> </span><span class="m">132</span><span class="w"> </span><span class="m">124</span><span class="w">    </span><span class="m">118</span><span class="w">   </span><span class="m">64.5</span><span class="w">    </span><span class="m">816932</span><span class="w">
+</span><span class="m">2</span><span class="w">   </span><span class="n">Male</span><span class="w">  </span><span class="m">140</span><span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="m">124</span><span class="w">     </span><span class="kc">NA</span><span class="w">   </span><span class="m">72.5</span><span class="w">   </span><span class="m">1001121</span><span class="w">
+</span><span class="m">3</span><span class="w">   </span><span class="n">Male</span><span class="w">  </span><span class="m">139</span><span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">150</span><span class="w">    </span><span class="m">143</span><span class="w">   </span><span class="m">73.3</span><span class="w">   </span><span class="m">1038437</span><span class="w">
+</span><span class="m">4</span><span class="w">   </span><span class="n">Male</span><span class="w">  </span><span class="m">133</span><span class="w"> </span><span class="m">129</span><span class="w"> </span><span class="m">128</span><span class="w">    </span><span class="m">172</span><span class="w">   </span><span class="m">68.8</span><span class="w">    </span><span class="m">965353</span><span class="w">
+</span><span class="m">5</span><span class="w"> </span><span class="n">Female</span><span class="w">  </span><span class="m">137</span><span class="w"> </span><span class="m">132</span><span class="w"> </span><span class="m">134</span><span class="w">    </span><span class="m">147</span><span class="w">   </span><span class="m">65.0</span><span class="w">    </span><span class="m">951545</span><span class="w">
+</span><span class="m">6</span><span class="w"> </span><span class="n">Female</span><span class="w">   </span><span class="m">99</span><span class="w">  </span><span class="m">90</span><span class="w"> </span><span class="m">110</span><span class="w">    </span><span class="m">146</span><span class="w">   </span><span class="m">69.0</span><span class="w">    </span><span class="m">928799</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">brainSize</span><span class="o">$</span><span class="n">FSIQ</span><span class="w"> </span><span class="c1"># input variables</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">brainSize</span><span class="o">$</span><span class="n">VIQ</span><span class="w">  </span><span class="c1"># output variables</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+    </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rgb</span><span class="p">(</span><span class="m">0.2</span><span class="p">,</span><span class="w"> </span><span class="m">0.4</span><span class="p">,</span><span class="w"> </span><span class="m">0.6</span><span class="p">,</span><span class="w"> </span><span class="m">0.4</span><span class="p">),</span><span class="w">
+    </span><span class="n">main</span><span class="o">=</span><span class="s1">'Full Scale IQ vs Verbal IQ'</span><span class="p">,</span><span class="w">
+    </span><span class="n">xlab</span><span class="o">=</span><span class="s2">"FSIQ"</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"VIQ"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/linreg1.png" width="70%" /></p>
+
+<h3 id="метод-градиентного-спуска"><em>Метод градиентного спуска</em></h3>
+
+<p>Метод градиентного спуска это простой метод для поиска локального минимума функции. Подбор параметров <script type="math/tex">\theta</script> происходит в соответствии со следующим правилом:</p>
+
+<script type="math/tex; mode=display">\theta := \theta - \alpha \frac{\partial}{\partial \theta}J(\theta)</script>
+
+<p>Где <script type="math/tex">J(\theta)</script> называется целевой функцией (cost function), а <script type="math/tex">\alpha</script> скоростью обучения (learning rate). Целевая функция вычисляется по следующей формуле:</p>
+
+<script type="math/tex; mode=display">J(\theta) = \frac{1}{2m}\sum_{i=1}^{m}(h_{\theta}(x_i) - y_i)^2 \rightarrow \frac{\partial}{\partial \theta}J(\theta) = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
+
+<p>В результате подстановки получим следующее правило для пересчета параметров <script type="math/tex">\theta</script>:</p>
+
+<script type="math/tex; mode=display">\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
+
+<p>В репозитории уже есть готовая реализация метода градиентного спуска на языке R, поэтому давайте воспользуемся ей:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">library</span><span class="p">(</span><span class="n">repmis</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">source_data</span><span class="p">(</span><span class="s2">"https://github.com/Dementiy/LINK!!!"</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">gradientDescent</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="m">0.00001</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="o">$</span><span class="n">theta</span><span class="w">
+            </span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="m">0.008634596</span><span class="w">
+</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="m">0.987622436</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Таким образом, итоговая модель для предсказания значения вербального интеллекта будет выглядеть следующим образом:</p>
+
+<script type="math/tex; mode=display">VIQ = 0.008634596 + 0.987622436 \times FSIQ</script>
+
+<p>Например, в случае, когда комбинированный полный коэффициент интеллекта принимает значение в 100 баллов, то значение вербального интеллекта будет равно 98.77 баллам:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="m">0.008634596</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">0.987622436</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">98.77088</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Построим графики сходимости целевой функции:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="o">$</span><span class="n">cost_history</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s1">'l'</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">main</span><span class="o">=</span><span class="s1">'Cost function'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'cost'</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'Iterations'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/linreg2.png" width="50%" /></p>
+
+<p>Следует заметить, что приведенная реализация метода градиентного спуска основывается на постоянном шаге <script type="math/tex">\alpha</script>, также мы положили число итераций равное 100, но на графике сходимости целевой функции хорошо видно, что мы можем уменьшить требуемое число итераций.</p>
+
+<p>Вашей задачей является …</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LinearRegression</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Пример с использованием библиотеки <code class="highlighter-rouge">sklearn</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sklearn</span>
+</code></pre></div></div>
+
+<h3 id="классификация">Классификация</h3>
+
+<p>В общем виде задачу классификации можно представить следующим образом. Имеется множество объектов, которые разделены на классы по некоторым признакам. Например, успевающие студенты и отстающие студенты. В обучающей выборке задано конечное множество объектов и их признаков. Например, перечень всех студентов учебного заведения и все оценки по прошедшим и текущим дисциплинам. Для каждого из объектов обучающей выборки известно, к каким классам они относятся. Принадлежность же остальных объектов к классам неизвестна. Требуется построить алгоритм, способный классифицировать произвольный объект из исходного множества, то есть указать наименование (или номер) класса, к которому объект отнесён в результате применения алгоритма классификации.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LogisticRegression</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div></div>
+
+<h3 id="кластеризация">Кластеризация</h3>
+
+<p><strong>Кластерный анализ</strong> – это способ группировки многомерных объектов, основанный на представлении результатов отдельных наблюдений точками подходящего геометрического пространства с последующим выделением групп как «сгустков» этих точек (кластеров, таксонов). Задачей такого разделения на группы является ухватить естественную структуру данных и абстрагироваться от индивидуальных характеристик каждого объекта к более общим признакам, которые объединяют эти объекты в кластеры. Например, кластеризация документов по их содержимому или кластеризация покупателей по их потребительской корзине и т.д. Так как заранее не известно по каким признакам следует объединять объекты в кластеры, то кластерный анализ относят к методам <strong>обучения без учителя</strong> (unsupervised learning).</p>
+
+<p>Одним из наиболее простых и распространенных алгоритмов кластеризации является алгоритм k-средних (k-means), в котором каждый кластер представлен его центром (центроидом). k-средних можно описать следующими 4-мя шагами:</p>
+
+<ol>
+  <li>Выбрать k объектов как начальные центроиды.</li>
+  <li>Отнести остальные объекты к ближайшим центроидам.</li>
+  <li>Произвести перерасчет центроидов.</li>
+  <li>Повторять шаги 2 и 3 до тех пор, пока центроиды не перестанут «двигаться».</li>
+</ol>
+
+<p>Пример поиска трех кластеров, используя алгоритм K-средних представлен на рисунках ниже:</p>
+
+<p><img src="/assets/images/11-ml/kmeans1.png" alt="" />
+<img src="/assets/images/11-ml/kmeans2.png" alt="" />
+<img src="/assets/images/11-ml/kmeans3.png" alt="" />
+<img src="/assets/images/11-ml/kmeans4.png" alt="" />
+<img src="/assets/images/11-ml/kmeans5.png" alt="" />
+<img src="/assets/images/11-ml/kmeans6.png" alt="" />
+<img src="/assets/images/11-ml/kmeans7.png" alt="" />
+<img src="/assets/images/11-ml/kmeans8.png" alt="" /></p>
+
+<p>Вашей задачей является написать класс <code class="highlighter-rouge">KMeans</code> со следующим интерфейсом:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">KMeans</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Для обучения модели будем использовать хорошо известный набор данных с лепестками цветов ириса:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'iris.csv'</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s">'Name'</span><span class="p">]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">clusters</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">_clusters</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+
+<span class="c"># Create a colormap</span>
+<span class="n">colormap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s">'red'</span><span class="p">,</span> <span class="s">'lime'</span><span class="p">,</span> <span class="s">'black'</span><span class="p">])</span>
+
+<span class="c"># Plot Sepal</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">SepalLength</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">SepalWidth</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colormap</span><span class="p">[</span><span class="n">clusters</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Sepal'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">PetalLength</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">PetalWidth</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colormap</span><span class="p">[</span><span class="n">clusters</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Petal'</span><span class="p">)</span>
+</code></pre></div></div>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
