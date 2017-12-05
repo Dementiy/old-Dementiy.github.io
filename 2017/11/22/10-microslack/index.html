@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Чат на базе веб-сокетов</title>
+  <meta name="description" content="Эта работа посвящена созданию простого клона мессенджера Slack.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/10-microslack/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Чат на базе веб-сокетов">
+  <meta name="twitter:description" content="Эта работа посвящена созданию простого клона мессенджера Slack.">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Чат на базе веб-сокетов</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/golang/">golang</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/web/">web</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Эта работа посвящена созданию простого клона мессенджера Slack.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
+<span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">'Index page'</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
+<span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'/'</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+<span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+<span class="kn">import</span> <span class="nn">jinja2</span>
+<span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+
+<span class="nd">@aiohttp_jinja2.template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s">'title'</span><span class="p">:</span> <span class="s">'Index page'</span><span class="p">}</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
+<span class="n">aiohttp_jinja2</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="s">'templates'</span><span class="p">))</span>
+<span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+<span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>                                                             
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>Welcome to <span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+<span class="kn">import</span> <span class="nn">jinja2</span>
+<span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+
+<span class="kn">from</span> <span class="nn">chat.views</span> <span class="kn">import</span> <span class="n">Index</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
+    <span class="n">aiohttp_jinja2</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="s">'templates'</span><span class="p">))</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_static</span><span class="p">(</span><span class="s">'/static'</span><span class="p">,</span> <span class="s">'static'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'static'</span><span class="p">)</span> <span class="c"># аргумент name используется для того, чтобы мы могли обратиться к app.router.static</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">Index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">create_app</span><span class="p">())</span>
+<span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+<span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+
+
+<span class="k">class</span> <span class="nc">Index</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">View</span><span class="p">):</span>
+    
+    <span class="nd">@aiohttp_jinja2.template</span><span class="p">(</span><span class="s">'index.html'</span><span class="p">)</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">'title'</span><span class="p">:</span> <span class="s">'Index page'</span><span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;title&gt;</span>{{ title }}<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{ app.router.static.url(filename='chat.js') }}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+...
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+<span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+
+
+<span class="k">class</span> <span class="nc">LoginView</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">View</span><span class="p">):</span>
+    <span class="c"># http://aiohttp.readthedocs.io/en/stable/web.html#class-based-views</span>
+    
+    <span class="nd">@aiohttp_jinja2.template</span><span class="p">(</span><span class="s">'login.html'</span><span class="p">)</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'user'</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPFound</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">'title'</span><span class="p">:</span> <span class="s">'Login'</span><span class="p">}</span>
+    
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPFound</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+        <span class="c"># http://aiohttp.readthedocs.io/en/stable/web.html#http-forms</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s">'user'</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">'name'</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"//oss.maxcdn.com/semantic-ui/2.1.8/semantic.min.css"</span> <span class="na">type=</span><span class="s">"text/css"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"ui three column stackable centered grid"</span><span class="nt">&gt;</span>                       
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"column"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">"/login"</span> <span class="na">method=</span><span class="s">"post"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"ui fluid action input"</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"name"</span> <span class="na">placeholder=</span><span class="s">"Username"</span> <span class="na">required</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">class=</span><span class="s">"ui primary button"</span><span class="nt">&gt;</span>Log in<span class="nt">&lt;/button&gt;</span>
+                    <span class="nt">&lt;/div&gt;</span>
+                <span class="nt">&lt;/form&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+<span class="kn">from</span> <span class="nn">accounts.views</span> <span class="kn">import</span> <span class="n">Login</span>
+<span class="o">...</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'*'</span><span class="p">,</span> <span class="s">'/login'</span><span class="p">,</span> <span class="n">Login</span><span class="p">)</span>
+    <span class="o">...</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">auth_cookie_factory</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+    <span class="c"># http://aiohttp.readthedocs.io/en/stable/web.html#middlewares</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">middleware</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+        <span class="c"># http://aiohttp.readthedocs.io/en/stable/web_reference.html#aiohttp.web.BaseRequest.path</span>
+        <span class="c"># http://aiohttp.readthedocs.io/en/stable/web_reference.html#aiohttp.web.BaseRequest.cookies</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s">'/login'</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'user'</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># http://aiohttp.readthedocs.io/en/stable/web.html#exceptions</span>
+            <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPFound</span><span class="p">(</span><span class="s">'/login'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="n">handler</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">middleware</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+<span class="kn">from</span> <span class="nn">middlewares</span> <span class="kn">import</span> <span class="n">auth_cookie_factory</span>
+<span class="o">...</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">middlewares</span><span class="o">=</span><span class="p">[</span><span class="n">auth_cookie_factory</span><span class="p">,])</span>
+    <span class="o">...</span>
+</code></pre></div></div>
+
+<h3 id="замена-кук-на-сессии">Замена кук на сессии:</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+<span class="kn">import</span> <span class="nn">jinja2</span>
+<span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+<span class="kn">import</span> <span class="nn">aioredis</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session</span> <span class="kn">import</span> <span class="n">session_middleware</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session.redis_storage</span> <span class="kn">import</span> <span class="n">RedisStorage</span>
+
+<span class="kn">from</span> <span class="nn">chat.views</span> <span class="kn">import</span> <span class="n">Index</span>
+<span class="kn">from</span> <span class="nn">accounts.views</span> <span class="kn">import</span> <span class="n">Login</span>
+<span class="kn">from</span> <span class="nn">middlewares</span> <span class="kn">import</span> <span class="n">auth_session_factory</span><span class="p">,</span> <span class="n">request_session_factory</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">close_redis</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">redis_pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">await</span> <span class="n">app</span><span class="o">.</span><span class="n">redis_pool</span><span class="o">.</span><span class="n">wait_closed</span><span class="p">()</span>
+    
+    <span class="n">redis_pool</span> <span class="o">=</span> <span class="n">await</span> <span class="n">aioredis</span><span class="o">.</span><span class="n">create_pool</span><span class="p">((</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="mi">6379</span><span class="p">),</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span><span class="n">middlewares</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">session_middleware</span><span class="p">(</span><span class="n">RedisStorage</span><span class="p">(</span><span class="n">redis_pool</span><span class="p">)),</span>
+        <span class="n">request_session_factory</span><span class="p">,</span>
+        <span class="n">auth_session_factory</span>
+    <span class="p">])</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">redis_pool</span> <span class="o">=</span> <span class="n">redis_pool</span>
+    <span class="n">aiohttp_jinja2</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="s">'templates'</span><span class="p">))</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_static</span><span class="p">(</span><span class="s">'/static'</span><span class="p">,</span> <span class="s">'static'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'static'</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">Index</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'*'</span><span class="p">,</span> <span class="s">'/login'</span><span class="p">,</span> <span class="n">Login</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">on_shutdown</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">close_redis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">create_app</span><span class="p">())</span>
+<span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session</span> <span class="kn">import</span> <span class="n">get_session</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">request_session_factory</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">middleware</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="n">handler</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">middleware</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">auth_session_factory</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">middleware</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="s">'/login'</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'user'</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPFound</span><span class="p">(</span><span class="s">'/login'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="n">handler</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">middleware</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session</span> <span class="kn">import</span> <span class="n">get_session</span>
+
+<span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">View</span><span class="p">):</span>
+
+    <span class="nd">@aiohttp_jinja2.template</span><span class="p">(</span><span class="s">'login.html'</span><span class="p">)</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'user'</span><span class="p">):</span>
+        <span class="o">...</span>
+    
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">'user'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">'name'</span><span class="p">]</span>
+        <span class="o">...</span>
+</code></pre></div></div>
+
+<h3 id="шаблон-интерфейса">Шаблон интерфейса</h3>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;title&gt;&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"https://fonts.googleapis.com/css?family=Roboto:300,400,700,900&amp;amp;subset=cyrillic,cyrillic-ext"</span> <span class="na">rel=</span><span class="s">"stylesheet"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"{{ app.router.static.url(filename='css/style.css') }}"</span> <span class="na">rel=</span><span class="s">'stylesheet'</span> <span class="na">type=</span><span class="s">'text/css'</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{ app.router.static.url(filename='js/vue.js') }}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"app"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;app-header&gt;&lt;/app-header&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"main"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;channels&gt;&lt;/channels&gt;</span>
+                <span class="nt">&lt;messages&gt;&lt;/messages&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;app-footer&gt;&lt;/app-footer&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{ app.router.static.url(filename='js/chat.js') }}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'app-header'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="header"&gt;
+            &lt;div class="team-menu"&gt;MicroSlack&lt;/div&gt;
+            &lt;div class="channel-menu"&gt;
+                &lt;span class="channel-menu_name"&gt;
+                    &lt;span class="channel-menu_prefix"&gt;#&lt;/span&gt;
+                    general
+                &lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'app-footer'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="footer"&gt;
+            &lt;div class="user-menu"&gt;
+                &lt;span class="user-menu_profile-pic"&gt;&lt;/span&gt;
+                &lt;span class="user-menu_username"&gt;scotch&lt;/span&gt;
+                &lt;img class="connection_icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABmFBMVEUAAAD////////////////////////////////////2+/LR5bKw1Hmfy1KUxz2VyD2izVKz1nnS5rP////A3JuOw0qKwkCNxD+QxT6Sxj6Txz6SxUnC3Jv1+fGXx2GDvkCGwECIwUCLwj+PxD6PxT+JwUCFwECZyGD2+vGSxWF9vEGAvkGDv0CMwz+Wx2GPw2F4ukJ7u0J+vUGBvkGHwUB8u0KSxGG31pp0uEN3uUJ5u0KFv0CCv0B6u0K415p5uU1yt0N/vUF1uEN8u0zG3bFttURwtkR5ukLH3rGWxnlqtERutUR2uUOZx3l6uVZos0VvtkRxt0Nzt0N8ulVisUVlskVns0VzuENmskVfsEVps0VztlZer0VhsEVjsUVstER1t1aOwXhcrkZdr0VgsEaQwnm/2a9YrUZbrka/2rDz+PFhr09XrEZksE6pzplUq0ZVrEZarUaqzpl0tWJRq0dWrEZ1tmJztWJOqUdSq0dxtGJMqEdNqUdQqkdytWKmzJhXrFBKqEdZrU+716+GvXhjr1dIp0hkr1dYtVOVAAAAFHRSTlMAV8/v/wCH+x/n////////////9kvBHZAAAAG7SURBVHgBvdOxjtNAEIDhGe/MZO3sxVaiIJkiSNdQUPJOeQlqXoCCIg/EU9BQHRKg5CT7ErzrHTa+aBOqaxC/tdLK+2kbj+H/hoWhlCmQr0HeyYxyM8mvkWHKoAfBS6cBWEeYugAzf4QGp1SV8DvU/ZjBdN7iud6hdnOTdl+TuALyrUPEwfdu3nc1ipr9AwdIFZPysJylRDfa6cZL2rfgMd9QjO8R0Y+/u7sa4LHZz4wN/MXEyw1hbK1VZdV7PZ1OyufzktsxXADCW5EkXq06Paan02Uoo3kHmAEzJ8HBN6v5qlkqaxTmCdAzQK8Noi6rXwCrJyutepUMAARnXS++3cvm2xvftR0PzAyQAXtwdNChifvFHppBdR003IDCIg6JDOse4DX8WIdo1TwfpaUgqWC9c4eqqg5HF20QZdAMmDlasdHWkrKR03J0A4iIXRTrpba29laiY8YMyOyMKYkXroyROZZuwVTyztAFJPmZKBGq+FxFVBr5BHr7ubd3GICfAM+88qDHHYe/BmbbIAaGKU/Fz10emDxyHxBhgJTg+DGP3O3QbltMBkd92F2H9sWxB772wo9z2z8FfwDHWbdKLDfq1AAAAABJRU5ErkJggg=="&gt;
+                &lt;span class="connection_status"&gt;online&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="input-box"&gt;
+                &lt;input type="text" class="input-box_text"&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'channel'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;li class="channel active"&gt;
+            &lt;a class="channel_name" href="#"&gt;
+                &lt;span class="unread"&gt;0&lt;/span&gt;
+                &lt;span&gt;&lt;span class="prefix"&gt;#&lt;/span&gt;general&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/li&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'channels'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="listings"&gt;
+            &lt;div class="listings_channels"&gt;
+                &lt;h2 class="listings_header"&gt;Channels&lt;/h2&gt;
+                &lt;ul class="channel_list"&gt;
+                    &lt;channel&gt;&lt;/channel&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+            &lt;div class="listings_direct-messages"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="message"&gt;
+            &lt;a href="#" class="message_profile-pic"&gt;&lt;/a&gt;
+            &lt;a href="#" class="message_username"&gt;scotch&lt;/a&gt;
+            &lt;span class="message_timestamp"&gt;&lt;/span&gt;
+            &lt;span class="message_star"&gt;&lt;/span&gt;
+            &lt;span class="message_content"&gt;Message&lt;/span&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'messages'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="message-history"&gt;
+            &lt;message&gt;&lt;/message&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="na">el</span><span class="p">:</span> <span class="s1">'#app'</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="подгрузка-временных-сообщений">Подгрузка временных сообщений</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">Channel</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">View</span><span class="p">):</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">({</span>
+            <span class="s">'messages'</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'CIA Agent'</span><span class="p">,</span> <span class="s">'text'</span><span class="p">:</span> <span class="s">"At least you can talk. Who are you?"</span><span class="p">},</span>
+                <span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'Bane'</span><span class="p">,</span> <span class="s">'text'</span><span class="p">:</span> <span class="s">"It doesn't matter who we are... what matters is our plan."</span><span class="p">},</span>
+                <span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'Bane'</span><span class="p">,</span> <span class="s">'text'</span><span class="p">:</span> <span class="s">"No one cared who I was until I put on the mask."</span><span class="p">},</span>
+            <span class="p">]</span>
+        <span class="p">})</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+    <span class="na">el</span><span class="p">:</span> <span class="s1">'#app'</span><span class="p">,</span>
+
+    <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">messages</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">},</span>
+
+    <span class="na">methods</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">getChannelHistory</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">axios</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'/general/history'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">app</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">unshift</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nx">messages</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">messages</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="na">created</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">getChannelHistory</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="отображение-сообщений">Отображение сообщений</h3>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"main"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;channels&gt;&lt;/channels&gt;</span>
+    <span class="nt">&lt;messages</span> <span class="na">:messages=</span><span class="s">"messages"</span><span class="nt">&gt;&lt;/messages&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">props</span><span class="p">:</span> <span class="p">[</span><span class="s1">'message'</span><span class="p">],</span>
+
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="message"&gt;
+            &lt;a href="#" class="message_profile-pic"&gt;&lt;/a&gt;
+            &lt;a href="#" class="message_username"&gt;&lt;/a&gt;
+            &lt;span class="message_timestamp"&gt;&lt;/span&gt;
+            &lt;span class="message_star"&gt;&lt;/span&gt;
+            &lt;span class="message_content"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+
+
+<span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'messages'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">props</span><span class="p">:</span> <span class="p">[</span><span class="s1">'messages'</span><span class="p">],</span>
+
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="message-history"&gt;
+            &lt;message
+                v-for="message in messages"
+                :message="message"&gt;
+            &lt;/message&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="добавление-сообщениям-идентификаторов">Добавление сообщениям идентификаторов</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Channel</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">View</span><span class="p">):</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">({</span>
+            <span class="s">'messages'</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'CIA Agent'</span><span class="p">,</span> <span class="s">'text'</span><span class="p">:</span> <span class="s">"At least you can talk. Who are you?"</span><span class="p">},</span>
+                <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'Bane'</span><span class="p">,</span> <span class="s">'text'</span><span class="p">:</span> <span class="s">"It doesn't matter who we are... what matters is our plan."</span><span class="p">},</span>
+                <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'username'</span><span class="p">:</span> <span class="s">'Bane'</span><span class="p">,</span> <span class="s">'text'</span><span class="p">:</span> <span class="s">"No one cared who I was until I put on the mask."</span><span class="p">},</span>
+            <span class="p">]</span>
+        <span class="p">})</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'messages'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">props</span><span class="p">:</span> <span class="p">[</span><span class="s1">'messages'</span><span class="p">],</span>
+
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="message-history"&gt;
+            &lt;message
+                v-for="message in messages"
+                :message="message"
+                :key="message.id"&gt;
+            &lt;/message&gt;
+        &lt;/div&gt;
+    `</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="шаблон-для-отправки-сообщений">Шаблон для отправки сообщений</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Vue</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'app-footer'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">template</span><span class="p">:</span> <span class="s2">`
+        &lt;div class="footer"&gt;
+            &lt;div class="user-menu"&gt;
+                &lt;span class="user-menu_profile-pic"&gt;&lt;/span&gt;
+                &lt;span class="user-menu_username"&gt;scotch&lt;/span&gt;
+                &lt;img class="connection_icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABmFBMVEUAAAD////////////////////////////////////2+/LR5bKw1Hmfy1KUxz2VyD2izVKz1nnS5rP////A3JuOw0qKwkCNxD+QxT6Sxj6Txz6SxUnC3Jv1+fGXx2GDvkCGwECIwUCLwj+PxD6PxT+JwUCFwECZyGD2+vGSxWF9vEGAvkGDv0CMwz+Wx2GPw2F4ukJ7u0J+vUGBvkGHwUB8u0KSxGG31pp0uEN3uUJ5u0KFv0CCv0B6u0K415p5uU1yt0N/vUF1uEN8u0zG3bFttURwtkR5ukLH3rGWxnlqtERutUR2uUOZx3l6uVZos0VvtkRxt0Nzt0N8ulVisUVlskVns0VzuENmskVfsEVps0VztlZer0VhsEVjsUVstER1t1aOwXhcrkZdr0VgsEaQwnm/2a9YrUZbrka/2rDz+PFhr09XrEZksE6pzplUq0ZVrEZarUaqzpl0tWJRq0dWrEZ1tmJztWJOqUdSq0dxtGJMqEdNqUdQqkdytWKmzJhXrFBKqEdZrU+716+GvXhjr1dIp0hkr1dYtVOVAAAAFHRSTlMAV8/v/wCH+x/n////////////9kvBHZAAAAG7SURBVHgBvdOxjtNAEIDhGe/MZO3sxVaiIJkiSNdQUPJOeQlqXoCCIg/EU9BQHRKg5CT7ErzrHTa+aBOqaxC/tdLK+2kbj+H/hoWhlCmQr0HeyYxyM8mvkWHKoAfBS6cBWEeYugAzf4QGp1SV8DvU/ZjBdN7iud6hdnOTdl+TuALyrUPEwfdu3nc1ipr9AwdIFZPysJylRDfa6cZL2rfgMd9QjO8R0Y+/u7sa4LHZz4wN/MXEyw1hbK1VZdV7PZ1OyufzktsxXADCW5EkXq06Paan02Uoo3kHmAEzJ8HBN6v5qlkqaxTmCdAzQK8Noi6rXwCrJyutepUMAARnXS++3cvm2xvftR0PzAyQAXtwdNChifvFHppBdR003IDCIg6JDOse4DX8WIdo1TwfpaUgqWC9c4eqqg5HF20QZdAMmDlasdHWkrKR03J0A4iIXRTrpba29laiY8YMyOyMKYkXroyROZZuwVTyztAFJPmZKBGq+FxFVBr5BHr7ubd3GICfAM+88qDHHYe/BmbbIAaGKU/Fz10emDxyHxBhgJTg+DGP3O3QbltMBkd92F2H9sWxB772wo9z2z8FfwDHWbdKLDfq1AAAAABJRU5ErkJggg=="&gt;
+                &lt;span class="connection_status"&gt;online&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="input-box"&gt;
+                &lt;input type="text" class="input-box_text" v-model="newMsg" @keypress="sendMessage"&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    `</span><span class="p">,</span>
+
+    <span class="na">data</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="na">newMsg</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="na">methods</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nx">sendMessage</span><span class="p">(</span><span class="nx">kbEvent</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">kbEvent</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">newMsg</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">app</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="s1">'username'</span><span class="p">:</span> <span class="s1">'anonymous'</span><span class="p">,</span>
+                    <span class="s1">'text'</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">newMsg</span><span class="p">,</span>
+                    <span class="s1">'id'</span><span class="p">:</span> <span class="mi">3</span>
+                <span class="p">})</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">newMsg</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="броадкаст-сообщений">Броадкаст сообщений</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">json</span>
+<span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">WebSocketHandler</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">View</span><span class="p">):</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ws</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">WebSocketResponse</span><span class="p">()</span>
+        <span class="n">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="n">channel_waiters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">[</span><span class="s">'waiters'</span><span class="p">][</span><span class="s">'general'</span><span class="p">]</span>
+        <span class="n">channel_waiters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">async</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">ws</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">tp</span> <span class="o">==</span> <span class="n">web</span><span class="o">.</span><span class="n">MsgType</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s">'username'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">'user'</span><span class="p">]</span>
+                    <span class="n">channel_waiters</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">msg</span><span class="o">.</span><span class="n">tp</span> <span class="o">==</span> <span class="n">web</span><span class="o">.</span><span class="n">MsgType</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">'connection closed with exception'</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ws</span> <span class="ow">in</span> <span class="n">channel_waiters</span><span class="p">:</span>
+                <span class="n">channel_waiters</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+
+        <span class="n">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ws</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="o">...</span>
+<span class="kn">from</span> <span class="nn">chat.views</span> <span class="kn">import</span> <span class="n">Index</span><span class="p">,</span> <span class="n">Channel</span><span class="p">,</span> <span class="n">WebSocketHandler</span>
+<span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">BroadcastList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">waiter</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">waiter</span><span class="o">.</span><span class="n">send_str</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">'error was happining during broadcast'</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">close_websockets</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">app</span><span class="p">[</span><span class="s">'waiters'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">while</span> <span class="n">channel</span><span class="p">:</span>
+                <span class="n">ws</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="n">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">'Server shutdown'</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="n">app</span><span class="p">[</span><span class="s">'waiters'</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">BroadcastList</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span><span class="s">'/general/messages'</span><span class="p">,</span> <span class="n">WebSocketHandler</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">on_shutdown</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">close_websockets</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">sendMessage</span><span class="p">(</span><span class="nx">kbEvent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">kbEvent</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">newMsg</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">app</span><span class="p">.</span><span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+            <span class="s1">'text'</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">newMsg</span><span class="p">,</span>
+        <span class="p">}));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">newMsg</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="nx">data</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nl">messages</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="nx">ws</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+<span class="p">},</span>
+
+<span class="p">...</span>
+<span class="nx">created</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="s1">'ws://'</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">host</span> <span class="o">+</span> <span class="s1">'/general/messages'</span><span class="p">);</span>
+    <span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">'text'</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">app</span><span class="p">.</span><span class="nx">messages</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">ws</span> <span class="o">=</span> <span class="nx">ws</span><span class="p">;</span>
+    
+    <span class="k">this</span><span class="p">.</span><span class="nx">getChannelHistory</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="добавляем-каналы">Добавляем каналы</h3>
+
+<h3 id="хранение-сообщений-в-mongodb-и-подгрузка-сообщений">Хранение сообщений в mongodb и подгрузка сообщений</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">motor.motor_asyncio</span>
+<span class="kn">import</span> <span class="nn">faker</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
+
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">motor_asyncio</span><span class="o">.</span><span class="n">AsyncIOMotorClient</span><span class="p">(</span><span class="s">'localhost'</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">test_database</span>
+<span class="n">collection</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">test_collection</span>
+
+
+<span class="k">def</span> <span class="nf">generate_collection_data</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">faker</span><span class="o">.</span><span class="n">Faker</span><span class="p">()</span>
+    <span class="n">channels</span> <span class="o">=</span> <span class="p">(</span><span class="s">'general'</span><span class="p">,</span> <span class="s">'random'</span><span class="p">)</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">({</span>
+        <span class="s">'text'</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">text</span><span class="p">(),</span>
+        <span class="s">'username'</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">user_name</span><span class="p">(),</span>
+        <span class="s">'ts'</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">date_time</span><span class="p">()),</span>
+        <span class="s">'channel'</span><span class="p">:</span> <span class="n">channels</span><span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])]</span>
+    <span class="p">}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">messages</span>
+
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">do_insert</span><span class="p">():</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="n">generate_collection_data</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">await</span> <span class="n">collection</span><span class="o">.</span><span class="n">insert_many</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">await</span> <span class="n">collection</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"count: {count}"</span><span class="p">)</span>
+
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">do_insert</span><span class="p">())</span>
+</code></pre></div></div>
+
+<h3 id="добавление-регистрации-и-модели-пользователя">Добавление регистрации и модели пользователя</h3>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
