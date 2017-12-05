@@ -30,11 +30,14 @@ $$y = \theta_0 + \theta_1x_1 + \theta_2x_2 + ... + \theta_nx_n$$
  - рост в дюймах (Height);
  - количество пикселей на снимках МРТ (MRI_Count).
 
-В качестве простого примера построим двумерную модель для определения (прогнозирования) коэффициента вербального интеллекта по коэффициенту комбинированного полного интеллекта:
+В качестве простого примера построим двумерную модель для определения (прогнозирования) коэффициента вербального интеллекта VIQ по коэффициенту комбинированного полного интеллекта FSIQ.
+
+Загрузим набор данных из репозитория и построим диаграмму рассеяния для соответствующих переменных:
 
 ```r
-> brainSize <- read.csv("brain_size.csv")
-> head(brainSize)
+> library(repmis)
+> df <- source_data("https://raw.githubusercontent.com/Dementiy/pybook-assignments/master/homework11/brain_size.csv")
+> head(df)
   Gender FSIQ VIQ PIQ Weight Height MRI_Count
 1 Female  133 132 124    118   64.5    816932
 2   Male  140 150 124     NA   72.5   1001121
@@ -42,15 +45,14 @@ $$y = \theta_0 + \theta_1x_1 + \theta_2x_2 + ... + \theta_nx_n$$
 4   Male  133 129 128    172   68.8    965353
 5 Female  137 132 134    147   65.0    951545
 6 Female   99  90 110    146   69.0    928799
-> X <- brainSize$FSIQ # input variables
-> y <- brainSize$VIQ  # output variables
+> X <- df$FSIQ # input variables
+> y <- df$VIQ  # output variables
 > plot(X, y,
-    col = rgb(0.2, 0.4, 0.6, 0.4),
     main='Full Scale IQ vs Verbal IQ',
     xlab="FSIQ", ylab="VIQ")
 ```
 
-<img src="/assets/images/11-ml/linreg1.png" width="70%">
+<img src="/assets/images/11-ml/linreg1_new.png" width="70%">
 
 ### *Метод градиентного спуска*
 
@@ -66,17 +68,24 @@ $$J(\theta) = \frac{1}{2m}\sum_{i=1}^{m}(h_{\theta}(x_i) - y_i)^2 \rightarrow \f
 
 $$\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i$$
 
+> Более подробно про метод градиентного спуска можно почитать [тут](http://mccormickml.com/2014/03/04/gradient-descent-derivation/).
+
 В репозитории уже есть готовая реализация метода градиентного спуска на языке R, поэтому давайте воспользуемся ей:
 
 ```r
-> library(repmis)
-> source_data("https://github.com/Dementiy/LINK!!!")
+> source("https://raw.githubusercontent.com/Dementiy/pybook-assignments/master/homework11/gradient_descent.R")
 > result <- gradientDescent(X, y, 0.00001, 100)
 > result$theta
             [, 1]
 [1, ] 0.008634596
 [2, ] 0.987622436
+> plot(X, y,
+    main='Full Scale IQ vs Verbal IQ',
+    xlab="FSIQ", ylab="VIQ")
+> abline(a=result$theta[1], b=result$theta[2])
 ```
+
+<img src="/assets/images/11-ml/linreg3.png" width="70%">
 
 Таким образом, итоговая модель для предсказания значения вербального интеллекта будет выглядеть следующим образом:
 
@@ -96,16 +105,18 @@ $$VIQ = 0.008634596 + 0.987622436 \times FSIQ$$
     main='Cost function', ylab='cost', xlab='Iterations')
 ```
 
-<img src="/assets/images/11-ml/linreg2.png" width="50%">
+<img src="/assets/images/11-ml/linreg2.png" width="70%">
 
 Следует заметить, что приведенная реализация метода градиентного спуска основывается на постоянном шаге $$\alpha$$, также мы положили число итераций равное 100, но на графике сходимости целевой функции хорошо видно, что мы можем уменьшить требуемое число итераций.
 
-Вашей задачей является ...
+### *Задание*
+
+Вашей задачей является реализовать метод градиентного спуска:
 
 ```python
-class LinearRegression:
+class GDRegression:
     
-    def __init__(self):
+    def __init__(self, alpha=0.01, n_iter=100):
         pass
 
     def fit(self, X_train, y_train):
@@ -115,11 +126,114 @@ class LinearRegression:
         pass
 ```
 
-Пример с использованием библиотеки `sklearn`:
+> **Замечание**: Имена методов выбраны в соответствии с тем как они названы в `sklearn`.
+
+Метод `fit` обучает модель на данных `X_train` (матрица признаков) и `y_train`(вектор ответов). Результатом работы этого метода являются два атрибута: `coef_` - вектор оценок для $$\theta_i$$ ($$i$$ принимает значения от 1 до $$p$$, где $$p$$ - это количество признаков) и `intercept_` - оцененное значение для $$\theta_0$$.
+
+Метод `predict` возвращает вектор прогнозов для новых данных.
+
+Давайте рассмотрим пример использования класса `GDRegression`. Для начала загрузим набор данных, выведем пять первых наблюдений и построим диаграмму рассеивания:
 
 ```python
->>> import sklearn
+>>> import pandas as pd
+>>> import matplotlib.pyplot as plt
+>>> data = pd.read_csv("brain_size.csv")
+>>> data.head()
+   Gender  FSIQ  VIQ  PIQ  Weight  Height  MRI_Count
+0  Female   133  132  124   118.0    64.5     816932
+1    Male   140  150  124     NaN    72.5    1001121
+2    Male   139  123  150   143.0    73.3    1038437
+3    Male   133  129  128   172.0    68.8     965353
+4  Female   137  132  134   147.0    65.0     951545
+>>> plt.scatter(data["FSIQ"], data["VIQ"])
+>>> plt.show()
 ```
+
+Теперь создадим модель с параметрами `alpha=0.00001` и `n_iter=100` и обучим ее на всех имеющихся данных:
+
+```python
+>>> X = data.iloc[:, 1:2] # to keep it as DataFrame
+>>> # X.insert(0, "Ones", np.ones(len(X)))
+>>> y = data["VIQ"]
+>>> model = GDRegression(alpha=0.00001)
+>>> model.fit(X, y)
+>>> model.coef_
+array([ 0.98762244])
+>>> model.intercept_
+0.0086345960432628564
+```
+
+Итак, мы получили следующие оценки для параметров $$\theta$$: $$\theta_0 = 0.00863459$$, $$\theta_1 = 0.98762244$$. Не сложно заметить, что они совпадают с предыдущими значениями.
+
+Давайте сделаем несколько прогнозов для имеющихся данных:
+
+```python
+>>> model.predict(X.iloc[1:5, :])
+array([138.275366, 137.287766, 131.362163, 135.312565])
+```
+
+### *Пример с использованием библиотеки sklearn*
+
+```python
+>>> from sklearn.linear_model import SGDRegression
+>>> data = pd.read_csv("brain_size.csv")
+>>> X = data.iloc[:, 1:2]
+>>> y = data["VIQ"]
+>>> model = SGDRegression(n_iter=5, penalty='none',
+    learning_rate='constant', eta0=0.00001)
+>>> model.fit(X, y)
+>>> model.coef_
+array([ 0.97827634])
+>>> model.intercept_
+array([ 0.00892904])
+>>> model.predict(X.iloc[1:5, :])
+array([ 136.96761663,  135.98934029,  130.11968225,  134.03278761])
+```
+
+### *Выбор модели*
+
+```python
+def rmse(y_hat, y):
+    errors = y_hat - y
+    total_error = np.dot(errors, errors)
+    return np.sqrt(total_error/len(y_hat))
+```
+
+
+```python
+>>> from sklearn.model_selection import train_test_split
+>>> X_train, X_test, y_train, y_test = train_test_split(X, y,
+    test_size=0.3, random_state=0)
+>>> X_train.shape, y_train.shape, X_test.shape, y_test.shape
+((28, 1), (12, 1), (28,), (12,))
+>>> model = GDRegression(alpha=0.00001)
+>>> model.fit(X_train, y_train)
+>>> model.coef_
+array([ 0.98536805])
+>>> model.intercept_
+array([ 0.00886374])
+>>> pred = model.predict(X_test)
+>>> rmse(pred, y_test)
+6.7600543165795841
+```
+
+```python
+>>> from sklearn.model_selection import KFold
+>>> kf = KFold(n_splits=3)
+>>> errors = []
+>>> for train, test in kf.split(X):
+       X_train = X.iloc[train, :]
+       y_train = y[train]
+       model.fit(X_train, y_train)
+       pred = model.predict(X_test)
+       errors.append(rmse(pred, y_test))
+>>> print(errors)
+[10.3443, 7.1500, 6.5616]
+```
+
+**Задания**:
+1. Используя кросс-валидацию построить лучшую модель.
+2. Реализовать метод стохастического градиентного спуска.
 
 ### Классификация
 
@@ -142,8 +256,21 @@ class LogisticRegression:
 
 **Кластерный анализ** – это способ группировки многомерных объектов, основанный на представлении результатов отдельных наблюдений точками подходящего геометрического пространства с последующим выделением групп как «сгустков» этих точек (кластеров, таксонов). Задачей такого разделения на группы является ухватить естественную структуру данных и абстрагироваться от индивидуальных характеристик каждого объекта к более общим признакам, которые объединяют эти объекты в кластеры. Например, кластеризация документов по их содержимому или кластеризация покупателей по их потребительской корзине и т.д. Так как заранее не известно по каким признакам следует объединять объекты в кластеры, то кластерный анализ относят к методам **обучения без учителя** (unsupervised learning).
 
-Одним из наиболее простых и распространенных алгоритмов кластеризации является алгоритм k-средних (k-means), в котором каждый кластер представлен его центром (центроидом). k-средних можно описать следующими 4-мя шагами:
+Одним из наиболее простых и распространенных алгоритмов кластеризации является алгоритм k-средних (k-means), в котором каждый кластер представлен его центром (центроидом).
 
+ - $$k$$ означает число кластеров. Число кластеров не определяется автоматически и в каждом кластере может быть разное число объектов;
+ - k-средних использует двух шаговый эвристический подход к группированию похожих объектов: **шаг присваивания** и **шаг обновления**;
+ - схожесть (похожесть) объектов измеряется с помощью **функции дистанции**.
+
+### *Вычисление дистанции между объектами*
+ - в методе k-средних значение каждого признака объекта воспринимается как координата в многомерном пространстве (например, если у нам известен только рост и вес человека, то мы имеем дело с двумерным объектом, где одна из координат это рост, а вторая - вес);
+ - схожесть объектов можно вычислить используя любую математическую функцию (метрику) схожести;
+ - обычно выбирается Евклидово расстояние:
+	$$dist(x,y) = \sqrt{\sum_{i=1}^{n}(x_i-y_i)^2}$$
+
+### *Алгоритм k-средних*
+
+k-средних можно описать следующими 4-мя шагами:
 1. Выбрать k объектов как начальные центроиды.
 2. Отнести остальные объекты к ближайшим центроидам.
 3. Произвести перерасчет центроидов.
@@ -159,6 +286,55 @@ class LogisticRegression:
 ![](/assets/images/11-ml/kmeans6.png)
 ![](/assets/images/11-ml/kmeans7.png)
 ![](/assets/images/11-ml/kmeans8.png)
+
+### *Замечания по k-средних*
+* k-средних эвристический алгоритм и не является детерминированным:
+    - начальное положение центроидов оказывает существенное влияние на конечный результат;
+    - резуьтаты могут быть разными даже на одном и том же наборе данных.
+* так как используется расстояние для измерения схожести объектов, то все данные должны быть числовыми:
+    - числовые данные должны быть приведены к единой шкале;
+    - могут возникнуть проблемы при кластеризации наборов данных состоящих из категориальных переменных.
+* иногда требуется знать предметную область и работать по методу проб и ошибок, чтобы получить нужные кластеры:
+    - нужно заранее знать число кластеров `k`;
+    - может потребоваться оценка эксперта для ответа на вопрос *Являются ли полученные кластеры значимыми?*
+
+### *Как выбирать начальные положения центроидов?*
+ - можем случайным образом генерировать центры кластеров;
+ - или случайно выбрать k-объектов и назначить их центрами;
+ - но существуют и другие алгоритмы, которые позволяют увеличить точность и скорость сходимости k-средних, например:
+> Baswade, Nalwade. Selection of Initial Centroids for k-Means Algorithm
+>
+> 1. From n objects calculate a point whose attribute values are average of n-objects attribute values. So first initial centroid is average on n-objects.
+> 2. Select next initial centroids from n-objects in such a way that the Euclidean distance of that object is maximum from other selected initial centroids.
+> 3. Repeat step 2 until we get k initial centroids. From these steps we will get initial centroids and with these initial centroids perform k-Means algorithm.
+
+### *Подготовка данных к кластеризации*
+
+Так как в методе k-средних значение каждого признака является координатой в многомерном пространстве, то все значения должны быть числовыми. Кроме того, хорошей практикой является приведение всех значений к единой шкале:
+ - min-max нормализация:
+ $$x_{new} = \frac{x-min(x)}{max(x)-min(x)}$$
+ - z-score:
+ $$x_{new} = \frac{x - \mu}{\sigma} = \frac{x - mean(x)}{stddev(x)}$$
+ - введение порога:
+ $$x_{new} = 1 \mbox{ if } x \ge c \mbox{ else } 0$$
+
+Пример функций нормализации данных на языке R:
+```r
+# create normalization function
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x))
+}
+
+# create z-score standartization function (exists in R, @see ?scale)
+scale <- function(x) {
+  return (x - mean(x)) / sd(x)
+}
+
+# create threshold function
+threshold <- function(x, c) {
+  return (ifelse(x > c, 1, 0)
+}
+```
 
 Вашей задачей является написать класс `KMeans` со следующим интерфейсом:
 
@@ -200,3 +376,18 @@ plt.subplot(1, 2, 2)
 plt.scatter(df.PetalLength, df.PetalWidth, c=colormap[clusters], s=40)
 plt.title('Petal')
 ```
+
+### *Как выбирать число кластеров?*
+
+Одной из проблем кластеризации является верное определение числа кластеров. Одним из используемых методов, для решения этой проблемы, является отображение зависимости изменения суммы квадратов ошибок от выбранного числа кластеров:
+
+```r
+mydata <- bd.rates
+wss <- (nrow(mydata) - 1) * sum(apply(mydata), 2, var))
+for (i in 2:15)
+    wss[i] <- sum(kmeans(mydata, centers = i)$withinss)
+plot(1:15, wss, type='b', 
+           xlab='Number of clusters', 
+           ylab='Within groups sum of squares')
+```
+
