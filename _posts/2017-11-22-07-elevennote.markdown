@@ -4,7 +4,7 @@ title: Приложение для ведения заметок
 categories: python golang web практики
 ---
 
-> Лабораторная работа основана на [замечательном руководстве](https://github.com/sixfeetup/ElevenNote) по Django от компании Six Feet Up.
+> Эта работа основана на [замечательном руководстве](https://github.com/sixfeetup/ElevenNote) по Django от компании Six Feet Up.
 
 Как обычно создайте новую ветку разработки, папку для вашего проекта `elevennote` и виртуальное окружение с именем `elevennote-env`, в котором установите следующие пакеты:
 
