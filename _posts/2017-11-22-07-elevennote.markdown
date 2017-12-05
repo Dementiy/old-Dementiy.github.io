@@ -1,0 +1,1128 @@
+---
+layout: post
+title: Приложение для ведения заметок
+categories: python golang web практики
+---
+
+> Лабораторная работа основана на [замечательном руководстве](https://github.com/sixfeetup/ElevenNote) по Django от компании Six Feet Up.
+
+Как обычно создайте новую ветку разработки, папку для вашего проекта `elevennote` и виртуальное окружение с именем `elevennote-env`, в котором установите следующие пакеты:
+
+```bash
+(elevennote-env) $ pip install Django==1.11.5
+(elevennote-env) $ pip install psycopg2==2.7.3.1
+(elevennote-env) $ pip install python-decouple==3.1
+(elevennote-env) $ pip install uWSGI==2.0.15
+```
+
+Можете запустить команду `pip freeze` для просмотра установленных пакетов:
+
+```python
+(elevennote-env) $ pip freeze
+Django==1.11.5
+psycopg2==2.7.3.1
+uWSGI==2.0.15
+python-decouple==3.1
+pytz==2017.2
+```
+
+Все зависимости будем хранить в отдельном манифесте:
+
+```bash
+(elevennote-env) $ mkdir requirements
+(elevennote-env) $ pip freeze > requirements/base.txt
+(elevennote-env) $ echo "-r base.txt" >> requirements/dev.txt
+(elevennote-env) $ echo "-r base.txt" >> requirements/prod.txt
+```
+
+Теперь создадим новый проект с помощью команды `django-admin` (исходники проекта будем хранить в папке `src`). Обратите внимание, что имя проекта `config`, а все файлы проекта будут созданы в текущей рабочей директории (на что указывает `.`):
+
+```bash
+(elevennote-env) $ mkdir src && cd $_
+(elevennote-env) $ django-admin startproject config .
+(elevennote-env) $ ls
+config manage.py
+```
+
+В результате вы должны получить следующую структуру проекта:
+```bash
+elevennote/
+├── requirements
+│   ├── base.txt
+│   ├── dev.txt
+│   └── prod.txt
+└── src
+    ├── config
+    │   ├── __init__.py
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    └── manage.py
+```
+
+Можете проверить, что проект запускается командой `python manage.py runserver` (если после запуска была создана БД `db.sqlite3`, а какие-то файлы закешированы `__pycache__`, то можете смело удалить их).
+
+Конфигурацию нашего проекта разделим на:
+- `base.py` - общая конфигурация для всех развертываний проекта;
+- `local.py` - конфигурация, которая используется при разработке (включенный режим откладки, дополнительные пакеты для разработки, например, `django-debug-toolbar`);
+- `production.py` - настройки, которые используются для production-сервера.
+
+```bash
+(elevennote-env) $ mkdir src/config/settings
+(elevennote-env) $ mv src/config/settings.py src/config/settings/base.py
+(elevennote-env) $ touch src/config/settings/__init__.py
+(elevennote-env) $ touch src/config/settings/local.py
+(elevennote-env) $ touch src/config/settings/production.py
+(elevennote-env) $ touch src/config/settings/settings.ini
+(elevennote-env) $ tree src/config
+config/
+├── __init__.py
+├── settings
+│   ├── __init__.py
+│   ├── base.py
+│   ├── local.py
+│   ├── production.py
+│   └── settings.ini
+├── urls.py
+└── wsgi.py
+```
+
+`config/settings/base.py`
+```python
+import os
+from decouple import config
+
+
+def root(*dirs):
+    base_dir = os.path.join(os.path.dirname(__file__), '..', '..')
+    return os.path.abspath(os.path.join(base_dir, *dirs))
+
+
+BASE_DIR = root()
+
+SECRET_KEY = config('SECRET_KEY')
+
+INSTALLED_APPS = [
+    # ...
+]
+
+MIDDLEWARE = [
+    # ...
+]
+
+ROOT_URLCONF = 'config.urls'
+
+TEMPLATES = [
+    # ...
+]
+
+WSGI_APPLICATION = 'config.wsgi.application'
+
+AUTH_PASSWORD_VALIDATORS = [
+    # ...
+]
+
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+```
+
+`configs/settings/local.py`
+```python
+from .base import *
+
+DEBUG = True
+
+INSTALLED_APPS += [
+    'django.contrib.postgres',
+]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', cast=int),
+    }
+}
+```
+
+В `config/settings/settings.ini` укажите секретный ключ для Django, имя БД, пользователя БД, его пароль, адрес хоста и порт, на котором будет запущена БД:
+```python
+[settings]
+SECRET_KEY=
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=
+```
+
+> **Замечание**: Не добавляйте `settings.ini` в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в `.gitignore`.
+
+`manage.py`
+```python
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+```
+
+Создадим docker-окружение для разработки и запуска нашего проекта. 
+
+> Для знакомства с докером можно почитать статью [What is docker and how to use it with python](http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/), а также занимательную статью в [блоге](http://grishaev.me/docker) Ивана Гришаева.
+
+Установите докер для вашей системы (инструкции можно получить [тут](https://docs.docker.com/engine/installation/)) и создайте `Dokerfile` в корне вашего проекта:
+
+```bash
+FROM python:3.6
+ENV PYTHONUNBUFFERED 1
+RUN mkdir /config
+COPY requirements /config/requirements
+RUN pip install -r /config/requirements/dev.txt
+RUN mkdir /src;
+WORKDIR /src
+```
+
+**TODO**: Пояснения к Dockerfile
+
+Теперь в корне проекта создадим файл `docker-compose.yml`:
+
+```
+version: '2'
+services:
+    nginx:
+        image: nginx:latest
+        container_name: ng01
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./deploy/nginx:/etc/nginx/conf.d
+        depends_on:
+            - web
+    web:
+        build: .
+        container_name: dg01
+        command: bash -c "python manage.py makemigrations && python manage.py migrate && uwsgi --ini /usr/local/etc/elevennote.ini"
+        depends_on:
+            - db
+        volumes:
+            - ./src:/src
+            - ./deploy/uwsgi:/usr/local/etc/
+        expose:
+            - "8000"
+    db:
+        image: postgres:latest
+        container_name: ps01
+```
+
+**TODO**: Пояснения к docker-compose.yml
+
+`deploy/uwsgi/elevennote.ini`
+```ini
+[uwsgi]
+chdir = /src
+module = config.wsgi:application
+master = true
+processes = 5
+socket = 0.0.0.0:8000
+vacuum = true
+die-on-term = true
+env = DJANGO_SETTINGS_MODULE=config.settings.local
+```
+
+**TODO**: Пояснения к конфигурации uwsgi
+
+
+`deploy/nginx/elevennote.conf`
+```
+upstream web {
+    ip_hash;
+    server web:8000;
+}
+
+server {
+    location / {
+        include uwsgi_params;
+        uwsgi_pass web;
+    }
+    listen 8000;
+    server_name localhost;
+}
+```
+
+**TODO**: Пояснения к nginx
+
+
+На текущий момент структура вашего проекта должна быть следующей:
+```
+.
+├── Dockerfile
+├── deploy
+│   ├── nginx
+│   │   └── elevennote.conf
+│   └── uwsgi
+│       └── elevennote.ini
+├── docker-compose.yml
+├── requirements
+│   ├── base.txt
+│   ├── dev.txt
+│   └── prod.txt
+└── src
+    ├── config
+    │   ├── __init__.py
+    │   ├── settings
+    │   │   ├── __init__.py
+    │   │   ├── base.py
+    │   │   ├── local.py
+    │   │   ├── production.py
+    │   │   └── settings.ini
+    │   ├── urls.py
+    │   └── wsgi.py
+    └── manage.py
+```
+
+```bash
+$ docker-compose build
+$ docker-compose up
+```
+
+Теперь приложение запущено и вы можете обратиться к нему по адресу [http://localhost:8000](http://localhost:8000), где должны увидеть стандартное приветствие Django:
+
+<img src="/assets/images/07-elevennote/elevennote1.png">
+
+На текущий момент осталась одна нерешенная проблема - обработка статических файлов:
+
+<img src="/assets/images/07-elevennote/elevennote2.png">
+
+**Задание**: Решите обозначенную проблему путем внесения соответствующих изменений в `docker-compose.yml`, `deploy/nginx/elevennote.conf` и `src/config/settings/base.py`.
+
+> На текущий момент нам больше не нужно виртуальное окружение, так как эту часть функций, а именно изоляции окружения, на себя взял докер. Дополнительно можете посмотреть выступление Антона Егорова с Moscow Python: [Докеризация приложений на Python](https://www.youtube.com/watch?v=X2jlKUHbepY).
+
+Создадим нового суперпользователя. Для этого подключимся к контейнеру:
+
+```sh
+$ docker exec -it dg01 bash
+$ root@67a3bcc5c881$ python manage.py createsuperuser
+Username (leave blank to use 'root'): 
+Email address: 
+Password: 
+Password (again): 
+Superuser created successfully.
+root@67a3bcc5c881:/src# exit
+```
+
+Создадим новое приложение `notes` (заметки) и добавим его в `INSTALLED_APPS`:
+
+```bash
+$ docker-compose run web python manage.py startapp notes
+```
+
+`src/config/settings/base.py`
+```python
+INSTALLED_APPS = [
+    # ...
+    'notes',
+]
+```
+
+Создадим первую модель `Note` со следующими полями:
+- заголовок (`title`) с ограничением 200 символов;
+- текст заметки (`body`);
+- и датой создания (`pub_date`).
+
+`notes/models.py`
+```python
+class Note(models.Model):
+    title = models.CharField(max_length=200)
+    body = models.TextField()
+    pub_date = models.DateTimeField('date published')
+```
+
+Зарегистрируем созданную модель в панели администратора:
+`notes/admin.py`
+```python
+from django.contrib import admin
+from .models import Note
+
+admin.site.register(Note)
+```
+
+И применим внесенные изменения к БД:
+```bash
+$ docker-compose run web python manage.py makemigrations notes
+$ docker-compose run web python manage.py migrate
+```
+
+Теперь откройте панель администратора [http://localhost:8000/admin](http://localhost:8000/admin). Вы должны увидеть, что появился новый раздел `Notes`, в котором вы можете создавать, редактировать и удалять заметки.
+
+<img src="/assets/images/07-elevennote/elevennote3.png">
+
+```bash
+$ pip install django-admin-honeypot==1.0.0
+```
+
+`config/settings/base.py`
+```python
+INSTALLED_APPS = [
+    # ...
+    'admin_honeypot',
+    # ...
+]
+```
+
+`config/urls.py`
+```python
+urlpatterns = [
+    url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    url(r'^secret/', admin.site.urls),
+]
+```
+
+<img src="/assets/images/07-elevennote/elevennote4.png">
+
+`notes/admin.py`
+```python
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('title', 'pub_date', 'was_published_recently')
+    list_filter = ['pub_date']
+
+# Replace your other register call with this line:
+admin.site.register(Note, NoteAdmin)
+```
+
+`notes/models.py`
+```python
+def was_published_recently(self):
+    return self.pub_date >= timezone.now() - timedelta(days=1)
+```
+
+<img src="/assets/images/07-elevennote/elevennote5.png">
+
+```bash
+$ mkdir notes/tests
+$ mv notes/tests.py notes/tests/test_models.py
+```
+
+`notes/tests/test_models.py`
+```python
+import datetime
+
+from django.utils import timezone
+from django.test import TestCase
+
+from .models import Note
+
+class NoteMethodTests(TestCase):
+
+    def test_was_published_recently(self):
+    """
+    was_published_recently() should return False for notes whose pub_date is in the future.
+    """
+        time = timezone.now() + datetime.timedelta(days=30)
+        future_note = Note(pub_date=time)
+        self.assertEqual(future_note.was_published_recently(), False)
+```
+
+```bash
+$ python manage.py test
+Creating test database for alias 'default'...
+F
+======================================================================
+FAIL: test_was_published_recently (note.tests.NoteMethodTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/vagrant/Projects/elevennote/elevennote/note/tests.py", line 18, in test_was_published_recently
+     self.assertEqual(future_note.was_published_recently(), False)
+AssertionError: True != False
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+```
+
+`notes/models.py`
+```python
+def was_published_recently(self):
+    now = timezone.now()
+    return now - timedelta(days=1) <= self.pub_date <= now
+```
+
+`config/urls.py`
+```python
+url(r'^notes/', include('notes.urls', namespace="notes")),
+```
+
+```bash
+$ touch notes/urls.py
+```
+
+`notes/urls.py`
+```python
+from django.conf.urls import url
+ 
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+    url(r'^(?P<note_id>[0-9]+)/$', views.detail, name='detail'),
+]
+```
+
+`notes/views.py`
+```python
+from django.shortcuts import get_object_or_404, render
+
+from .models import Note
+
+
+def index(request):
+    latest_note_list = Note.objects.order_by('-pub_date')[:5]
+    context = {
+        'latest_note_list': latest_note_list,
+    }
+    return render(request, 'notes/index.html', context)
+
+def detail(request, note_id):
+     note = get_object_or_404(Note, pk=note_id)
+     return render(request, 'notes/detail.html', {'note': note})
+```
+
+```bash
+$ mkdir -p templates/notes
+```
+
+`config/settings/base.py`
+```python
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [root('templates')],
+        # ...
+    },
+]
+```
+
+`templates/note/index.html`
+{% raw %}
+```html
+{% if latest_note_list %}
+   <ul>
+   {% for note in latest_note_list %}
+     <li><a href="{% url 'notes:detail' note.id %}">{{ note.title }}</a></li>
+   {% endfor %}
+   </ul>
+{% else %}
+  <p>No notes are available.</p>
+{% endif %}
+```
+{% endraw %}
+
+`templates/note/detail.html`
+```html
+<h1>{{ note.title }}</h1>
+<p>{{ note.body }}</p>
+```
+
+> **Замечание**: При необходимости вы можете перезапустить контейнер `web` командой `docker-compose restart web`.
+
+`notes/tests/tests_views.py`
+```python
+
+```
+
+```bash
+$ python manage.py startapp accounts
+```
+
+`config/urls.py`
+```python
+#...
+from django.http import HttpResponseRedirect
+
+urlpatterns = [
+    # Handle the root url.
+    url(r'^$', lambda r: HttpResponseRedirect('notes/')),
+
+    # Admin
+    url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    url(r'^secret/', admin.site.urls),
+
+    # Accounts app
+    url(r'^accounts/', include('accounts.urls', namespace="accounts")),
+ 
+    # Notes app
+    url(r'^notes/', include('note.urls', namespace="notes")),
+]
+```
+
+```bash
+$ touch accounts/urls.py
+```
+
+`accounts/urls.py`
+```python
+from django.conf.urls import url
+from django.contrib.auth import views
+
+urlpatterns = [
+    url(r'^login/$', views.login, name='login'),
+    url(r'^logout/$', views.logout, name='logout'),
+]
+```
+
+`templates/registration/login.html`
+{% raw %}
+```html
+<form action="{% url 'accounts:login' %}" method="post" accept-charset="utf-8">
+  {% csrf_token %}
+  {% for field in form %}
+    <label>{{ field.label }}</label>
+    {% if field.errors %}
+      {{ field.errors }}
+    {% endif %}
+    {{ field }}
+  {% endfor %}
+  <input type="hidden" name="next" value="{{ next }}" />
+  <input class="button small" type="submit" value="Submit"/>
+</form>
+```
+{% endraw %}
+
+`notes/views.py`
+```python
+# ...
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def index(request):
+    # ...
+
+
+@login_required
+def detail(request):
+    # ...
+```
+
+`notes/tests/test_views.py`
+```python
+
+```
+
+
+```bash
+$ mkdir static
+$ cd static
+$ wget https://github.com/twbs/bootstrap/releases/download/v3.0.3/bootstrap-3.0.3-dist.zip
+$ unzip bootstrap-3.0.3-dist.zip
+$ mv dist bootstrap
+$ cd ..
+```
+
+`config/settings/base.py`
+```python
+# ...
+STATIC_URL = '/static/'
+STATIC_ROOT = '/static'
+STATICFILES_DIRS = [
+    root('static'),
+]
+```
+
+```bash
+# Fix me
+wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
+unzip templates-ch6.zip   # If prompted to replace, say (Y)es
+cd ..
+```
+
+
+`accounts/views.py`
+```python
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import FormView
+
+
+class RegisterView(FormView):
+    template_name = 'registration/register.html'
+    form_class = UserCreationForm
+    success_url='/'
+    
+    def form_valid(self, form):
+        #save the new user first
+        form.save()
+        
+        #get the username and password
+        username = self.request.POST['username']
+        password = self.request.POST['password1']
+        
+        #authenticate user then login
+        user = authenticate(username=username, password=password)
+        login(self.request, user)
+        return super(RegisterView, self).form_valid(form)
+```
+
+`accounts/urls.py`
+```python
+from django.conf.urls import url
+from django.contrib.auth import views as auth_views
+from django.core.urlresolvers import reverse_lazy
+
+from .views import RegisterView
+
+urlpatterns = [
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, {"next_page" : reverse_lazy('accounts:login')}, name='logout'),
+    url('^register/', RegisterView.as_view(), name='register'),
+]
+```
+
+
+`config/settings/base.py`
+```python
+# ...
+LOGIN_REDIRECT_URL = '/'
+```
+
+<img src="/assets/images/07-elevennote/elevennote6.png">
+
+`accounts/tests/test_views.py`
+```python
+
+```
+
+`notes/models.py`
+```python
+# ...
+from django.contrib.auth.models import User
+
+
+class Note(models.Model):
+    # ...
+    owner = models.ForeignKey(User, related_name='notes', on_delete=models.CASCADE)
+```
+
+```bash
+$ python manage.py makemigrations
+$ python manage.py migrate
+```
+
+`notes/views.py`
+```python
+latest_note_list = Note.objects.filter(owner=request.user).order_by('-pub_date')[:5]
+```
+
+`notes/admin.py`
+```python
+list_display = ('title', 'owner', 'pub_date', 'was_published_recently')
+```
+
+
+`notes/views.py`
+```python
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, DetailView
+
+from .models import Note
+
+
+class NoteList(ListView):
+    paginate_by = 5
+    template_name = 'notes/index.html'
+    context_object_name = 'latest_note_list'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(NoteList, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return Note.objects.filter(owner=self.request.user)
+
+
+class NoteDetail(DetailView):
+    model = Note
+    template_name = 'notes/detail.html'
+    context_object_name = 'note'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(NoteDetail, self).dispatch(*args, **kwargs)
+```
+
+`notes/urls.py`
+```python
+from django.conf.urls import url
+
+from .views import NoteList, NoteDetail
+
+urlpatterns = [
+    url(r'^$', NoteList.as_view(), name='index'),
+    url(r'^(?P<pk>[0-9]+)/$', NoteDetail.as_view(), name='detail'),
+]
+```
+
+`notes/views.py`
+```python
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class NoteList(LoginRequiredMixin, ListView):
+    # ...
+
+class NoteDetail(LoginRequiredMixin, DetailView):
+    # ...
+```
+
+> В [руководстве](https://github.com/sixfeetup/ElevenNote/wiki/09-Intro-to-Mixins) от Six Feet Up объясняется как создать собственный миксин, который бы решал аналогичную задачу.
+
+`notes/forms.py`
+
+```python
+from django import forms
+
+from .models import Note
+
+class NoteForm(forms.ModelForm):
+
+    class Meta:
+        model = Note
+        exclude = ['owner', 'pub_date']
+```
+
+`notes/views.py`
+```python
+from django.views.generic import ListView, DetailView, CreateView
+from django.utils import timezone
+from django.core.urlresolvers import reverse_lazy
+
+from .forms import NoteForm
+...
+
+class NoteCreate(LoginRequiredMixin, CreateView):
+    form_class = NoteForm
+    template_name = 'notes/form.html'
+    success_url = reverse_lazy('notes:index')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        form.instance.pub_date = timezone.now()
+        return super(NoteCreate, self).form_valid(form)
+```
+
+`notes/urls.py`
+```python
+url(r'^new/$', NoteCreate.as_view(), name='create'),
+```
+
+`templates/notes/form.html`
+{% raw %}
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if form.errors %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form action="{% url 'notes:create' %}" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {% for field in form %}
+    <p>
+        <label>{{ field.label }}</label>
+        {% if field.errors %}
+    <div class="alert alert-danger" role="alert">
+            {{ field.errors }}
+    </div>
+        {% endif %}
+        {{ field }}
+    </p>
+    {% endfor %}
+    <input type="hidden" name="next" value="{{ next }}" />
+    <input class="button small" type="submit" value="Submit"/>
+</form>
+
+{% endblock %}
+```
+{% endraw %}
+
+`templates/notes/index.html`
+{% raw %}
+```html
+<a href="{% url 'notes:create' %}">Create a new note</a>
+```
+{% endraw %}
+
+`template/notes/index.html`
+{% raw %}
+```html
+{% if is_paginated %}
+<div class="pagination">
+   <span class="step-links">
+       {% if page_obj.has_previous %}
+           <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+       {% endif %}
+
+       <span class="current">
+           Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+       </span>
+
+       {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">next</a>
+       {% endif %}
+  </span>
+</div>
+{% endif %}
+```
+{% endraw %}
+
+`notes/views.py`
+```python
+return Note.objects.filter(owner=self.request.user)
+```
+
+```python
+return Note.objects.filter(owner=self.request.user).order_by('-pub_date')
+```
+
+```bash
+$ python -m pip install django-wysiwyg
+```
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'django_wysiwyg',
+    # ...
+]
+
+#...
+DJANGO_WYSIWYG_FLAVOR = 'ckeditor'
+```
+
+```bash
+$ cd static
+$ wget https://download.cksource.com/CKEditor/CKEditor/CKEditor%204.7.2/ckeditor_4.7.2_full.zip
+$ unzip ckeditor_4.7.2_full.zip
+$ cd ..
+```
+
+`notes/views.py`
+```python
+from django.core.exceptions import PermissionDenied
+
+...
+
+# In NoteDetail class, override the get() method to raise an
+# error if the user tries to view another user's note.
+
+def get(self, request, *args, **kwargs):
+    self.object = self.get_object()
+
+    if self.object.owner != self.request.user:
+        raise PermissionDenied
+
+    context = self.get_context_data(object=self.object)
+    return self.render_to_response(context)
+```
+
+`notes/views.py`
+```python
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+
+...
+
+class NoteUpdate(LoginRequiredMixin, UpdateView):
+    model = Note
+    form_class = NoteForm
+    template_name = 'notes/form.html'
+    success_url = reverse_lazy('notes:index')
+
+    def form_valid(self, form):
+       form.instance.pub_date = timezone.now()
+       return super(NoteUpdate, self).form_valid(form)
+```
+
+`notes/urls.py`
+```python
+url(r'^(?P<pk>[0-9]+)/edit/$', NoteUpdate.as_view(), name='update'),
+```
+
+`templates/notes/form.html`
+{% raw %}
+```html
+{% if object %}
+<form action="{% url 'notes:update' object.pk %}" method="post" accept-charset="utf-8">
+{% else %}
+<form action="{% url 'notes:create' %}" method="post" accept-charset="utf-8">
+{% endif %}
+```
+{% endraw %}
+
+`templates/notes/index.html`
+{% raw %}
+```html
+<a href="{% url 'notes:update' note.id %}">Edit</a>
+```
+{% endraw %}
+
+`templates/notes/index.html`
+{% raw %}
+```html
+<p>
+   <a href="{% url 'notes:update' note.id %}">{{ note.title }}</a><br />
+   {{ note.body | safe }}
+</p>
+<hr />
+```
+{% endraw %}
+
+`notes/mixins.py`
+```python
+from .models import Note
+
+
+class NoteMixin(object):
+   def get_context_data(self, **kwargs):
+       context = super(NoteMixin, self).get_context_data(**kwargs)
+
+       context.update({
+          'notes': Note.objects.filter(owner=self.request.user).order_by('-pub_date'),
+       })
+       
+       return context
+```
+
+`notes/views.py`
+```python
+class NoteCreate(LoginRequiredMixin, NoteMixin, CreateView):
+```
+
+```python
+class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
+
+    ...
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        
+        if self.object.owner != self.request.user:
+            raise PermissionDenied
+
+        return super(NoteUpdate, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        
+        if self.object.owner != self.request.user:
+            raise PermissionDenied
+
+        return super(NoteUpdate, self).post(request, *args, **kwargs)
+```
+
+```bash
+$ wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch16.zip
+$ unzip templates-ch16.zip
+```
+
+```bash
+cd static
+wget https://github.com/sixfeetup/ElevenNote/raw/master/static-elevennote-ch16.zip
+unzip static-elevennote-ch16.zip
+cd ..
+```
+
+`notes/mixins.py`
+```python
+def check_user_or_403(self, user):
+    """ Issue a 403 if the current user is no the same as the `user` param. """
+    if self.request.user != user:
+        raise PermissionDenied
+```
+
+`notes/views.py`
+```python
+class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
+    model = Note
+    success_url = reverse_lazy('notes:index')
+ 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.check_user_or_403(self.object.owner)
+        return super(NoteDelete, self).post(request, *args, **kwargs)
+```
+
+`notes/urls.py`
+```python
+url(r'^(?P<pk>[0-9]+)/delete/$', NoteDelete.as_view(), name='delete'),
+```
+
+`templates/notes/form.html`
+{% raw %}
+```html
+{% if object %}
+  <form action="{% url 'notes:delete' object.pk %}" method="post" id="delete-note-form">
+    {% csrf_token %}
+    <a class="btn btn-default" id="delete-note">
+      <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+    </a>
+  </form>
+{% endif %}
+```
+{% endraw %}
+
+<img src="/assets/images/07-elevennote/elevennote7.png">
+
+
+`notes/views.py`
+```python
+def get_success_url(self):
+    return reverse('notes:update', kwargs={
+        'pk': self.object.pk
+    })
+```
+
+**Задание:** Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). Добавление и удаление тегов должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
+
+<img src="/assets/images/07-elevennote/elevennote8.png">
+
+### Continuous Integration с CircleCI
+
+
+### Добавляем API с помощью DRF
+
+```bash
+$ pip install djangorestframework
+$ python manage.py api
+```
+
+`config/settings/base.py`
+```python
+INSTALLED_APPS = [
+    # ...
+    'rest_framework',
+    # ...
+    'api',
+]
+```
+
+`api/base/serializers.py`
+```python
+from rest_framework import serializers
+
+from notes.models import Note
+
+class NoteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Note
+        fields = ('id', 'title', 'body', 'pub_date')
+```
