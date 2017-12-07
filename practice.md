@@ -2,6 +2,7 @@
 layout: page
 title: "Практические задания по Python&Golang"
 permalink: /practice/
+comments: true
 ---
 
 Каждая практика может относится к одной или нескольким категориям:
