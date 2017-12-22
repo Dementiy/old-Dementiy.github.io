@@ -374,10 +374,119 @@ $$P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)$$
 
 > Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.
 
-Вы можете догадаться, что если появится слово, которое мы раньше не встречали, то $$\prod_{i}P(w_i \mid C) = 0$$, поэтому на практике берут логарифм:
+Вы можете догадаться, что если появится слово, которого мы раньше не встречали, то $$\prod_{i}P(w_i \mid C) = 0$$, а следовательно и $$P(C \mid D) = 0$$.
+
+Одним из типичных решений является использование Lidstone smoothing ($$\alpha < 1$$) и Laplacian smoothing ($$\alpha = 1$$):
+
+$$P(w_i \mid C = c) = \frac{n_{i,c} + \alpha}{n_c + \alpha d}$$
+
+где:
+ - $$n_{i,c}$$ - число наблюдений признака $$w_i$$ для класса $$c$$;
+ - $$n_c$$ - число наблюдений признака $$w_i$$ среди всех классов;
+ - $$\alpha$$ - параметр сглаживания;
+ - $$d$$ - размерность вектора признаков $$W = \left \langle w_1,...,w_d \right \rangle$$. 
+
+Еще одним "техническим" трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:
 
 $$P(C|D) = \ln P(C) + \sum_i \ln P(w_i|C)$$
 
 Итак, наша итоговая модель будет выглядеть следующим образом:
 
 $$\hat{y} = argmax_c\Big(\ln P(C=c) + \sum_i \ln P(w_i|C = c) \Big)$$
+
+### *Пример*
+...
+
+### *Задание*
+
+Вашей задачей является написать наивный байесовский классификатор:
+
+```python
+class NaiveBayesClassifier:
+    
+    def __init__(self, alpha):
+        pass
+
+    def fit(self, X, y):
+        """ Fit Naive Bayes classifier according to X, y. """
+        pass
+
+    def predict(self, X):
+        """ Perform classification on an array of test vectors X. """
+        pass
+    
+    def score(self, X_test, y_test):
+        """ Returns the mean accuracy on the given test data and labels. """
+        pass
+```
+
+Для проверки классификатора воспользуемся датасетом содержащим смс сообщения относящиеся к одному из двух классов: спам (spam) и не спам (ham). Описание набора данных можно найти [тут](https://archive.ics.uci.edu/ml/datasets/sms+spam+collection), а сам датасет есть в репозитории.
+
+Для начала загрузим данные с помощью модуля `csv` и посмотрим на первые три записи:
+
+```python
+>>> import csv
+>>> with open("SMSSpamCollection") as f:
+        data = list(csv.reader(f, delimiter="\t"))
+>>> len(data)
+5572
+>>> data[:3]
+[['ham',
+  'Go until jurong point, crazy.. Available only in bugis n great world la e '
+  'buffet... Cine there got amore wat...'],
+ ['ham', 'Ok lar... Joking wif u oni...'],
+ ['spam',
+  'Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005. Text FA '
+  "to 87121 to receive entry question(std txt rate)T&C's apply "
+  "08452810075over18's"]]
+```
+
+Приведем все сообщения к нижнему регистру и избавимся от символов пунктуации:
+
+```python
+>>> import string
+>>> def clean(s):
+        translator = str.maketrans("", "", string.punctuation)
+        return s.translate(translator)
+>>> X, y = [], []
+>>> for target, msg in data:
+        X.append(msg)
+        y.append(target)
+>>> X = [clean(x).lower() for x in X]
+>>> X[:3]
+['go until jurong point crazy available only in bugis n great world la e buffet cine there got amore wat', 'ok lar joking wif u oni', 'free entry in 2 a wkly comp to win fa cup final tkts 21st may 2005 text fa to 87121 to receive entry questionstd txt ratetcs apply 08452810075over18s']
+```
+
+Разобьем набор данных на обучабщую и тестовую выборки в соотношении 70%/30%. Обучающая выборка используется для построения модели (обучения классификатора), а тестовая выборка для оценки работы классификатора на новых данных (притворимся, что 30% данных мы раньше не видели):
+
+```python
+>>> X_train, y_train, X_test, y_test = X[:3900], y[:3900], X[3900:], y[3900:]
+```
+
+Теперь построим модель классификатора и оценим ее работу:
+
+```python
+model = NaiveBayesClassifier()
+model.fit(X_train, y_train)
+print(model.score(X_test, y_test))
+# 0.9820574162679426
+```
+
+Сравним результаты с классификатором [MultinomialNB](http://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html#sklearn.naive_bayes.MultinomialNB) из библиотеки `sklearn`:
+
+```python
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+model = Pipeline([
+    ('vectorizer', TfidfVectorizer()),
+    ('classifier', MultinomialNB(alpha=0.05)),
+])
+
+model.fit(X_train, y_train)
+print(model.score(X_test, y_test))
+# 0.982057416268
+```
+
+Мы получили в точности тоже значение, что говорит нам о правильности работы нашего классификатора.
