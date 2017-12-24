@@ -16,13 +16,13 @@ categories: python golang web практики
 
 Обратите внимание, что последним ответом `BotFather` был токен доступа (`access_token`), который нам понадобится в дальнейшей работе.
 
-> **Внимание**: У каждого из вас будет свой токен доступа, которым не следует делиться с другими.
+> **Внимание**: У вас будет свой токен доступа, которым не следует делиться с другими.
 
 На текущем этапе созданный нами бот ничего не умеет делать и не знает ни одной команды. Для "обучения" бота мы будем использовать [API](https://core.telegram.org/bots/api), который предоставляет телеграмм:
 
 > The Bot API is an HTTP-based interface created for developers keen on building bots for Telegram
 
-Мы не будем напрямую работать с API, как это было в "Лабораторной работе №4", а воспользуемся модулем [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI). Подробное руководство на русском языке по работе с этим модулем вы можете найти [тут](https://kondra007.gitbooks.io/telegram-bot-lessons/content/chapter1.html).
+Мы не будем напрямую работать с API, как это было в работе с API ВКонтакте, а воспользуемся модулем [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI). Подробное руководство на русском языке по работе с этим модулем вы можете найти [тут](https://kondra007.gitbooks.io/telegram-bot-lessons/content/chapter1.html).
 
 Теперь нам нужно установить модуль pyTelegramBotAPI:
 
@@ -154,7 +154,7 @@ def get_monday(message):
 > **Замечание**: Вы можете легко обобщить функции `get_monday` и `get_schedule` на любой день недели.
 
 ### Размещаем бота в Сети  
-Последняя часть лабораторной работы посвящена размещению бота на облачной платформе [Heroku](https://www.heroku.com).
+Последняя часть работы посвящена размещению бота на облачной платформе [Heroku](https://www.heroku.com).
 
 От вас требуется зарегистрироваться на Heroku и создать там новое приложение:
 
