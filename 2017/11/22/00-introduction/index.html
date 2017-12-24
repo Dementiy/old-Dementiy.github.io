@@ -183,7 +183,12 @@
 
 <h3 id="установка-интерпретатора-python">Установка интерпретатора Python</h3>
 
-<p>В первую очередь вам будет нужен интерпретатор языка Python (о том, что такое “интерпретатор” можно почитать <a href="">тут</a>), а также компилятор языка Golang, если вы захотите выполнить практики на двух языках. Установка компилятора Golang останется в качестве самостоятельного задания (официальное руководство по установке можно найти <a href="https://golang.org/doc/install">тут</a>). Где взять интерпретатор Python? На юникс-подобных операционных системах (Linux, MacOS и др.) интерпретатор Python, скорее всего, уже установлен. Проверить это вы можете набрав в терминале (командной строке) команду <code class="highlighter-rouge">python</code>, например:</p>
+<p>В первую очередь вам будет нужен интерпретатор языка Python (о том, что такое «интерпретатор» можно почитать <a href="http://interactivepython.org/runestone/static/thinkcspy/GeneralIntro/ThePythonProgrammingLanguage.html">тут</a>), а также компилятор языка Golang, если вы захотите выполнить практики на двух языках. Установка компилятора Golang останется в качестве самостоятельного задания (официальное руководство по установке можно найти <a href="https://golang.org/doc/install">тут</a>). Где взять интерпретатор Python? На юникс-подобных операционных системах (Linux, MacOS и др.) интерпретатор Python, скорее всего, уже установлен. Проверить это вы можете набрав в терминале (командной строке) команду <code class="highlighter-rouge">python</code>, например:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Знак доллара <code>$</code> обозначает приглашение к вводу команд. В Windows такое приглашение обычно выглядит как символ больше <code>&gt;</code>.</p>
+</div>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python
 Python 2.7.10 <span class="o">(</span>default, Jul 30 2016, 18:31:42<span class="o">)</span>
@@ -192,11 +197,7 @@ Type <span class="s2">"help"</span>, <span class="s2">"copyright"</span>, <span 
 <span class="o">&gt;&gt;&gt;</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p>Знак доллара <code class="highlighter-rouge">$</code> обозначает приглашение к вводу команд. В Windows такое приглашение обычно выглядит как символ больше <code class="highlighter-rouge">&gt;</code>.</p>
-</blockquote>
-
-<p>Обратите внимание на версию, в моем случае это 2.7.10. Нам она не подходит (“<em>Why not?</em>” - можно почитать <a href="https://wiki.python.org/moin/Python2orPython3">тут</a> и <a href="http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html">тут</a>). Нам нужен интерпретатор третьей версии. Если вы видите, что версия вторая, то попробуйте набрать команду <code class="highlighter-rouge">python3</code>:</p>
+<p>Обратите внимание на версию, в моем случае это 2.7.10. Нам она не подходит («Why not?» - можно почитать <a href="https://wiki.python.org/moin/Python2orPython3">тут</a> и <a href="http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html">тут</a>). Нам нужен интерпретатор третьей версии. Если вы видите, что версия вторая, то попробуйте набрать команду <code class="highlighter-rouge">python3</code>:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3
 Python 3.6.1 <span class="o">(</span>v3.6.1:69c0db5050, Mar 21 2017, 01:21:04<span class="o">)</span>
@@ -208,23 +209,24 @@ Type <span class="s2">"help"</span>, <span class="s2">"copyright"</span>, <span 
 <p>Если же появляется сообщение об ошибке, то интерпретатор нужно установить. Скачать интерпретатор под нужную операционную систему вы можете с официального <a href="https://www.python.org/downloads/">сайта</a> (если вы пользователь Linux-системы, то установить интерпретатор можете из репозитория).
 После установки обязательно проверьте, что интерпретатор запускается:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">На ОС Windows есть вероятность, что, набрав команду <code>python</code> или <code>python3</code> после установки, вы получите сообщение об ошибке. Попробуйте набрать <code>py</code> или <code>py3</code>. Если вы по-прежнему получаете сообщение об ошибке, то возможно, что путь к интерпретатору не указан в переменной окружения <code>PATH</code>. Подробнее читайте <a href="https://docs.python.org/3/using/windows.html#configuring-python">тут</a>.</p>
+</div>
+
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3
 <span class="o">&gt;&gt;&gt;</span> print<span class="o">(</span><span class="s2">"Hello, World!"</span><span class="o">)</span>
 Hello, World!
 <span class="o">&gt;&gt;&gt;</span> quit<span class="o">()</span>
 </code></pre></div></div>
 
-<p>Это интерактивный режим работы с интерпретатором языка Python (<a href="https://ru.wikipedia.org/wiki/REPL">REPL</a>). Три символа “<em>больше</em>” <code class="highlighter-rouge">&gt;&gt;&gt;</code> являются приглашением к вводу команд. Для завершения работы с интерпретатором нужно набрать команду <code class="highlighter-rouge">quit()</code>.</p>
-
-<blockquote>
-  <p><strong>Замечание</strong>: Если вы устанавливаете Python на Windows, то есть вероятность, что, набрав команду <code class="highlighter-rouge">python</code> или <code class="highlighter-rouge">python3</code> после установки, вы получите сообщение об ошибке. Если так, то попробуйте набрать <code class="highlighter-rouge">py</code> или <code class="highlighter-rouge">py3</code>, вместо <code class="highlighter-rouge">python</code> и <code class="highlighter-rouge">python3</code>, соответственно. Если вы по-прежнему получаете сообщение об ошибке, то возможно, что путь к интерпретатору не указан в переменной окружения <code class="highlighter-rouge">PATH</code>. “У меня все равно ничего не работает!” - прочитайте как правильно все <a href="https://docs.python.org/3/using/windows.html#configuring-python">настроить</a>.</p>
-</blockquote>
+<p>Это интерактивный режим работы с интерпретатором языка Python (<a href="https://ru.wikipedia.org/wiki/REPL">REPL</a>). Три символа «больше» <code class="highlighter-rouge">&gt;&gt;&gt;</code> являются приглашением к вводу команд. Для завершения работы с интерпретатором нужно набрать команду <code class="highlighter-rouge">quit()</code>.</p>
 
 <h3 id="выбор-редактора-кода">Выбор редактора кода</h3>
 
-<p>Вам будет нужен редактор кода. Это может быть “простой” текстовый редактор с подсветкой синтаксиса <a href="http://sublimetext.com/3">SublimeText</a> или же полноценная среда разработки <a href="https://www.jetbrains.com/pycharm/download/">PyCharm</a> (подходящим для меня решением оказалась связка из редактора <a href="http://www.vim.org/">Vim</a> с разными плагинами и интересного, на мой взгляд, проекта <a href="https://kite.com/">Kite</a>). Я вам рекомендую попробовать оба варианта, но средой разработки пользоваться после того, как научитесь работать с интерпретатором и системой контроля версий.</p>
+<p>Вам будет нужен редактор кода. Это может быть «простой» текстовый редактор с подсветкой синтаксиса <a href="http://sublimetext.com/3">SublimeText</a> или же полноценная среда разработки <a href="https://www.jetbrains.com/pycharm/download/">PyCharm</a> (подходящим для меня решением оказалась связка из редактора <a href="http://www.vim.org/">Vim</a> с разными плагинами и интересного, на мой взгляд, проекта <a href="https://kite.com/">Kite</a>). Я вам рекомендую попробовать оба варианта, но средой разработки пользоваться после того, как научитесь работать с интерпретатором и системой контроля версий.</p>
 
-<p>Для ваших работ заведите себе отдельную папку, назовите ее <code class="highlighter-rouge">cs102</code> (можете назвать иначе). В этой папке создайте новый файл с именем <code class="highlighter-rouge">hello.py</code>, откройте его с помощью редактора <code class="highlighter-rouge">SublimeText</code> (или любого <a href="https://wiki.python.org/moin/PythonEditors">другого</a>, который вам больше понравился):</p>
+<p>Для ваших работ заведите себе отдельную папку, назовите ее <code class="highlighter-rouge">cs102</code> (так исторически сложилось, можете назвать иначе). В этой папке создайте новый файл с именем <code class="highlighter-rouge">hello.py</code>, откройте его с помощью редактора <code class="highlighter-rouge">SublimeText</code> (или любого <a href="https://wiki.python.org/moin/PythonEditors">другого</a>, который вам больше понравился):</p>
 
 <p><img src="/assets/images/00-introduction/sublimetext.png" alt="" /></p>
 
@@ -243,14 +245,15 @@ Hello, World!
 
 <p>Для более комфортной работы с <code class="highlighter-rouge">virtualenv</code> мы будем использовать расширение <code class="highlighter-rouge">virtualenvwrapper</code> (ниже приведены команды для Unix-like систем, см. замечание):</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Для пользователей Windows следует установить модуль <code>virtualenvwrapper-win</code> вместо <code>virtualenvwrapper</code>.</p>
+</div>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip install virtualenvwrapper
 <span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"source virtualenvwrapper.sh"</span> <span class="o">&gt;&gt;</span> ~/.bashrc
 <span class="nv">$ </span><span class="nb">source</span> ~/.bashrc
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Замечание</strong>: Для пользователей Windows следует установить модуль <code class="highlighter-rouge">virtualenvwrapper-win</code> вместо <code class="highlighter-rouge">virtualenvwrapper</code>. Также рекомендуется установить <a href="https://git-for-windows.github.io/">Git SCM</a>.</p>
-</blockquote>
 
 <p>Создать новое виртуальное окружение можно с помощью команды <code class="highlighter-rouge">mkvirtualenv</code> (обратите внимание на то, как меняется путь к интерпретатору python):</p>
 
@@ -264,16 +267,20 @@ Hello, World!
 <span class="err">$</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>Замечание</strong>: Если у вас не получается настроить <code class="highlighter-rouge">virtualenvwrapper</code> на ОС Windows, то можете ограничиться <code class="highlighter-rouge">virtualenv</code>:</p>
-  <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>virtualenv cs102-env
+<p>Если у вас не получается настроить <code class="highlighter-rouge">virtualenvwrapper</code> на ОС Windows, то можете ограничиться <code class="highlighter-rouge">virtualenv</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>virtualenv cs102-env
 <span class="nv">$ </span>cs102-env<span class="se">\S</span>cripts<span class="se">\a</span>ctivate.bat
 <span class="o">(</span>cs102-env<span class="o">)</span> <span class="nv">$ </span><span class="c"># Окружение активировано</span>
 <span class="nv">$ </span>deactivate
-</code></pre></div>  </div>
-</blockquote>
+</code></pre></div></div>
 
-<p>Давайте в созданном виртуальном окружении установим два новых пакета: <a href="http://www.bpython-interpreter.org">bpython</a> и <a href="https://ipython.org/">ipython</a>. Это тоже интерпретаторы языка Python, но с дополнительными функциями (подсветка синтаксиса, подсказки и др):</p>
+<p>Для примера в созданном виртуальном окружении установим два новых пакета: <a href="http://www.bpython-interpreter.org">bpython</a> и <a href="https://ipython.org/">ipython</a>. Это тоже интерпретаторы языка Python, но с дополнительными функциями (подсветка синтаксиса, подсказки и др):</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last"><code>bpython</code> на Windows может <a href="https://docs.bpython-interpreter.org/windows.html">не работать</a>.</p>
+</div>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Не забудем перейти в наше виртуальное окружение</span>
 <span class="nv">$ </span>workon cs102
@@ -285,11 +292,7 @@ Hello, World!
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>ipython
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>Замечание</strong>: <code class="highlighter-rouge">bpython</code> на Windows может <a href="https://docs.bpython-interpreter.org/windows.html">не работать</a>.</p>
-</blockquote>
-
-<p>В этом примере мы использовали <a href="https://docs.python.org/3.5/installing/index.html">pip</a> для установки новых пакетов. Иногда устанавливаемый пакет требует наличие других пакетов для своей работы, обычно эти пакеты устанавливаются автоматически (говорят “по зависимостям”). Но может возникнуть ситуация, когда вам придется вручную установить нужную библиотеку. Если вы не знаете как это сделать, то поищите ответ на <a href="http://stackoverflow.com">stackoverflow.com</a>, скорее всего кто-то уже столкнулся с той же проблемой, что и вы.</p>
+<p>В этом примере мы использовали <a href="https://docs.python.org/3.5/installing/index.html">pip</a> для установки новых пакетов. Иногда устанавливаемый пакет требует наличие других пакетов для своей работы, обычно эти пакеты устанавливаются автоматически (говорят «по зависимостям»). Но может возникнуть ситуация, когда вам придется вручную установить нужную библиотеку. Если вы не знаете как это сделать, то поищите ответ на <a href="http://stackoverflow.com">stackoverflow.com</a>, скорее всего кто-то уже столкнулся с той же проблемой, что и вы.</p>
 
 <p>Теперь всякий раз приступая к работе, активируйте созданное виртуальное окружение с помощью команды <code class="highlighter-rouge">workon cs102</code>. Полный список команд по работе с <code class="highlighter-rouge">virtualenvwrapper</code> можно найти <a href="https://virtualenvwrapper.readthedocs.io/en/latest/command_ref.html">тут</a>.</p>
 
@@ -308,6 +311,11 @@ Hello, World!
 <p><img src="/assets/images/00-introduction/scratch.png" alt="" /></p>
 
 <p>Достаточно повторить указанные шаги, но вместо файла <code class="highlighter-rouge">contributors.txt</code> мы сделаем коммит (загрузим изменения на сервер) нашей программы <code class="highlighter-rouge">hello.py</code>:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Если после выполнения команды <code>git init</code> вы получили сообщение об ошибке о том, что команда <code>git</code> не найдена, то, скорее всего, вы работаете под Windows и <code>git</code> нужно <a href="https://git-for-windows.github.io/">установить</a>.</p>
+</div>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git init
 Initialized empty Git repository <span class="k">in</span> /Users/dementiy/Projects/cs102/.git/
@@ -345,10 +353,6 @@ To https://Dementiy@bitbucket.org/Dementiy/cs102.git
 <span class="k">*</span> <span class="o">[</span>new branch] master -&gt; master
 Branch master <span class="nb">set </span>up to track remote branch master from origin.
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Замечание</strong>: если после выполнения команды <code class="highlighter-rouge">git init</code> вы получили сообщение об ошибке о том, что команда <code class="highlighter-rouge">git</code> не найдена, то, скорее всего, вы работаете под Windows и <code class="highlighter-rouge">git</code> нужно <a href="https://git-scm.com/download/win">установить</a>.</p>
-</blockquote>
 
 <p>Теперь убедитесь, что новый файл появился на bitbucket.org. Для этого зайдите в раздел <code class="highlighter-rouge">Source</code>:</p>
 
@@ -397,7 +401,9 @@ no changes added to commit <span class="o">(</span>use <span class="s2">"git add
 
 <p>Пока нам этого будет достаточно.</p>
 
-<p><strong>Задание</strong>: Добавьте в репозиторий файл с именем <code class="highlighter-rouge">README.md</code>, который должен содержать информацию о вас как о разработчике и небольшое описание вашего репозитория (например, “Решения практических работ с сайта https://dementiy.github.io”). <code class="highlighter-rouge">README.md</code> должен быть в формате Markdown, про который можно почитать <a href="https://github.com/OlgaVlasova/markdown-doc/blob/master/README.md">тут</a>. Также можете воспользоваться онлайн редактором <a href="http://dillinger.io/">Dillinger</a>.</p>
+<h3 id="задание">Задание</h3>
+
+<p>Добавьте в репозиторий файл с именем <code class="highlighter-rouge">README.md</code>, который должен содержать информацию о вас как о разработчике и небольшое описание вашего репозитория (например: «Решения практических работ с сайта <a href="https://dementiy.github.io">https://dementiy.github.io</a>»). <code class="highlighter-rouge">README.md</code> должен быть в формате Markdown, про который можно почитать <a href="https://github.com/OlgaVlasova/markdown-doc/blob/master/README.md">тут</a>. Также можете воспользоваться онлайн редактором <a href="http://dillinger.io/">Dillinger</a>.</p>
 
 <p>Все вопросы и замечания пишите в комментариях или в Slack’е (<a href="https://get.slack.help/hc/en-us/articles/115004071768-What-is-Slack-">что такое Slack?</a>).</p>
 

@@ -10,7 +10,7 @@
   
   
   <title>Алгоритмы шифрования</title>
-  <meta name="description" content="Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.">
+  <meta name="description" content="Эта первая работа в серии, которая посввящена базовым конструкциям языка Python. Также в этой работе описан общий подход к выполнению заданий.">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary">
   
   <meta name="twitter:title" content="Алгоритмы шифрования">
-  <meta name="twitter:description" content="Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.">
+  <meta name="twitter:description" content="Эта первая работа в серии, которая посввящена базовым конструкциям языка Python. Также в этой работе описан общий подход к выполнению заданий.">
   
   
 
@@ -204,27 +204,26 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>Так как это ваша первая лабораторная работа, то в ней описаны общие требования предъявляемые к выполнению текущей и всех последующих работ.</p>
+    <p>Эта первая работа в серии, которая посввящена базовым конструкциям языка Python. Также в этой работе описан общий подход к выполнению заданий.</p>
 
-<p>Каждое задание оценивается в отдельности, таким образом, оценку вы получаете по совокупности выполненных заданий (в лабораторной работе №1 таких заданий - три). В оценку включается балл за стиль выполнения задания, поэтому прочитайте официальное руководство по стилю https://www.python.org/dev/peps/pep-0008/ (также некоторые пояснения по оформлению кода можно найти <a href="https://github.com/Dementiy/pydonts">здесь</a>). Соответствие вашей работы PEP8 можно узнать “прогнав” исходный код вашей программы через утилиту <code class="highlighter-rouge">pep8</code>.</p>
+<p>Все исходники к работам можно найти в <a href="https://github.com/Dementiy/pybook-assignments">репозитории</a> (следите за его обновлениями). Чтобы получить все шаблоны к работам достаточно выполнить следующую команду:</p>
 
-<p>Все исходники к работам вы можете найти в <a href="https://github.com/Dementiy/pybook-assignments">репозитории курса</a> (следите за его обновлениями). Чтобы получить список всех работ достаточно выполнить следующую команду:</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Описание работы с командой <code>git</code> читай в разделе <a href="https://dementiy.github.io/2017/11/22/00-introduction/">Настройка рабочего окружения</a>.</p>
+</div>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone https://Dementiy@bitbucket.org/Dementiy/cs102_2016.git
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone https://github.com/Dementiy/pybook-assignments.git
 </code></pre></div></div>
 
-<blockquote>
-  <p>Описание работы с командой <code class="highlighter-rouge">git</code> читай в разделе <a href="href=&quot;https://dementiy.gitbooks.io/-python/content/lab0.html">Настройка рабочего окружения</a>.</p>
-</blockquote>
-
-<p>Все дальнейшие изменения в репозитории можно получать с помощью команды <code class="highlighter-rouge">git pull</code> (её рекомендуется использовать каждый раз, когда вы приступаете к выполнению новой лабораторной работы):</p>
+<p>Все дальнейшие изменения в репозитории можно получать с помощью команды <code class="highlighter-rouge">git pull</code> (её рекомендуется использовать каждый раз, когда вы приступаете к выполнению новой работы):</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git pull
 </code></pre></div></div>
 
 <h3 id="прежде-чем-приступить-к-выполнению-работы">Прежде чем приступить к выполнению работы</h3>
 
-<p>Перед тем как начать выполнять лабораторную работу не забудьте перейти в рабочую директорию и активировать ваше виртуальное окружение:</p>
+<p>Перед тем как начать выполнять задания не забудьте перейти в рабочую директорию и активировать ваше виртуальное окружение:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>путь/к/рабочей_директории
 <span class="nv">$ </span>workon cs102
@@ -241,7 +240,7 @@ Switched to a new branch <span class="s1">'develop'</span>
 Switched to a new branch <span class="s1">'feature/caesar'</span>
 </code></pre></div></div>
 
-<p>И, наконец, создадим папку, в которой будем хранить все файлы, относящиеся к первой лабораторной работе:</p>
+<p>И, наконец, создадим папку, в которой будем хранить все файлы, относящиеся к первой работе:</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(cs102) $ mkdir homework01
 </code></pre></div></div>
@@ -266,6 +265,16 @@ SBWKRQ
 </code></pre></div></div>
 
 <p>Вам необходимо написать тело для следующих двух функций:</p>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Воспользуйтесь встроенными функциями <code>ord()</code> и <code>chr()</code>. Функция <code>ord()</code> позволяет получить код указанного символа, а <code>chr()</code> работает наоборот - возвращает символ по его коду.</p>
+</div>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">О кодировках можно почитать <a href="http://kunststube.net/encoding/">тут</a> и <a href="http://farmdev.com/talks/unicode/">тут</a>.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encrypt_caesar</span><span class="p">(</span><span class="n">plaintext</span><span class="p">):</span>
     <span class="s">"""
@@ -299,19 +308,6 @@ SBWKRQ
 
 <p>В результате переменные <code class="highlighter-rouge">ciphertext</code> и <code class="highlighter-rouge">plaintext</code> должны содержать зашифрованное и расшифрованное сообщения соответственно.</p>
 
-<blockquote>
-  <p><a href="https://mail.python.org/pipermail/python-win32/2005-April/003100.html">Hint</a>: Воспользуйтесь встроенными функциями <code class="highlighter-rouge">ord()</code> и <code class="highlighter-rouge">chr()</code>. Функция <code class="highlighter-rouge">ord()</code> позволяет получить код указанного символа, например:</p>
-  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; ord('A')
-65
-&gt;&gt; chr(65) # работает наоборот - возвращает символ по его коду
-'A'
-</code></pre></div>  </div>
-</blockquote>
-
-<blockquote>
-  <p>О кодировках можно почитать <a href="http://kunststube.net/encoding/">тут</a> и <a href="http://farmdev.com/talks/unicode/">тут</a>.</p>
-</blockquote>
-
 <p>В папке <code class="highlighter-rouge">homework01</code> создайте файл с именем <code class="highlighter-rouge">caesar.py</code> и шаблоном приведенным выше. Сделайте коммит с первоначальным шаблоном:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git add homework01/caesar.py
@@ -333,22 +329,24 @@ SBWKRQ
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python3 <span class="nt">-m</span> doctest <span class="nt">-v</span> caesar.py
 </code></pre></div></div>
 
+<p>Также обратите свое внимание на официальное руководство по стилю <a href="https://www.python.org/dev/peps/pep-0008/">pep8</a> (некоторые пояснения по оформлению кода можно найти <a href="https://github.com/Dementiy/pydonts">здесь</a>). Соответствие вашего кода PEP8 можно узнать «прогнав» исходный код вашей программы через утилиту <code class="highlighter-rouge">pep8</code>.</p>
+
 <p>Если все тесты были пройдены успешно, то объедините (merge) ваши изменения с веткой <code class="highlighter-rouge">develop</code>:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Вы можете воспользоваться приложением <a href="https://www.sourcetreeapp.com/">Source Tree</a> для наглядного отслеживания вносимых изменений.</p>
+</div>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout develop
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git merge <span class="nt">--no-ff</span> feature/caesar
 </code></pre></div></div>
 
-<blockquote>
-  <p>Замечание: Вы можете воспользоваться приложением <a href="https://www.sourcetreeapp.com/">Source Tree</a> для наглядного отслеживания вносимых изменений.</p>
-</blockquote>
+<p>В качестве практики измените ваши функции так, чтобы размер сдвига был произвольным:</p>
 
-<blockquote>
-  <p>Практика: Измените ваши функции так, чтобы размер сдвига был произвольным:</p>
-  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>encrypt_caesar(plaintext, shift)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>encrypt_caesar(plaintext, shift)
 decrypt_caesar(plaintext, shift)
-</code></pre></div>  </div>
-</blockquote>
+</code></pre></div></div>
 
 <h3 id="шифр-виженера">Шифр Виженера</h3>
 
@@ -362,6 +360,11 @@ decrypt_caesar(plaintext, shift)
 </code></pre></div></div>
 
 <p>Ваша задача написать тело для следующих двух функций так, чтобы переменные <code class="highlighter-rouge">ciphertext</code> и <code class="highlighter-rouge">plaintext</code> содержали зашифрованное и расшифрованное сообщения соответственно.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Обратите внимание, что символы <code>A</code> и <code>a</code> в ключе не оказывают никакого влияния на шифруемое сообщение. Если же в качестве ключа мы будем использовать <code>C</code> или <code>c</code>, то получим шифр Цезаря.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encrypt_vigenere</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
     <span class="s">"""
@@ -388,10 +391,6 @@ decrypt_caesar(plaintext, shift)
     <span class="c"># PUT YOUR CODE HERE</span>
     <span class="k">return</span> <span class="n">plaintext</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p>Обратите внимание, что символы <code class="highlighter-rouge">A</code> и <code class="highlighter-rouge">a</code> в ключе не оказывают никакого влияния на шифруемое сообщение. Если же в качестве ключа мы будем использовать <code class="highlighter-rouge">C</code> или <code class="highlighter-rouge">c</code>, то получим шифр Цезаря.</p>
-</blockquote>
 
 <p>Перед выполнением задания не забудьте создать новую ветвь функциональности <code class="highlighter-rouge">feature/vigenere</code> и сделать коммит с шаблоном (файл с шаблоном должен быть размещен в каталоге <code class="highlighter-rouge">homework01</code> под именем <code class="highlighter-rouge">vigener.py</code>):</p>
 
@@ -431,9 +430,7 @@ decrypt_caesar(plaintext, shift)
   <li>Расшифровка</li>
 </ol>
 
-<blockquote>
-  <p>От вас в этом задании требуется выполнить только шаг генерации ключей, остальные два шага уже даны (см. исходники к работе).</p>
-</blockquote>
+<p>От вас в этом задании требуется выполнить только шаг генерации ключей, остальные два шага уже даны (см. исходники к работе).</p>
 
 <p>На этапе генерации создаётся два ключа: открытый (public key, с помощью которого каждый сможет зашифровать сообщение и отправить его нам) и закрытый (private key, которым мы можем расшифровать полученные сообщения). Для этого выбирается два <a href="https://ru.wikipedia.org/wiki/Простое_число">простых числа</a> <code class="highlighter-rouge">p</code> и <code class="highlighter-rouge">q</code>. Позволим пользователю вводить эти числа, но их необходимо проверять на простоту. Для этого напишем функцию, но предварительно создадим новую ветку функциональности и сделаем коммит с шаблоном для этого задания:</p>
 
@@ -456,10 +453,6 @@ decrypt_caesar(plaintext, shift)
     <span class="c"># PUT YOUR CODE HERE</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p>Если вы не понимаете, как работают функции, то напишите небольшую программу выводящую <code class="highlighter-rouge">True</code> или <code class="highlighter-rouge">False</code> в зависимости от того, является число простым или нет. Затем полученный код скопируйте в приведенную выше функцию (вместо ключевого слова <code class="highlighter-rouge">pass</code>) и замените <code class="highlighter-rouge">print(True)</code> на <code class="highlighter-rouge">return True</code>, а <code class="highlighter-rouge">print(False)</code> на <code class="highlighter-rouge">return False</code>.</p>
-</blockquote>
 
 <p>Если вы закончили работу над функцией <code class="highlighter-rouge">is_prime(n)</code> - сделайте коммит:</p>
 
@@ -549,13 +542,13 @@ decrypt_caesar(plaintext, shift)
 
 <h3 id="после-выполнения-всех-заданий">После выполнения всех заданий</h3>
 
-<p>После выполнения всех задач лабораторной работы создайте новый релиз:</p>
+<p>После выполнения всех заданий создайте новый релиз:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout <span class="nt">-b</span> release-1.0 develop
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git commit <span class="nt">-m</span> <span class="s2">"Релиз 1.0"</span>
 </code></pre></div></div>
 
-<p>Если ваша работа была <strong>зачтена</strong>, то закройте ветвь релиза:</p>
+<p>После чего закройте ветвь релиза:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git checkout master
 <span class="o">(</span>cs102<span class="o">)</span> <span class="nv">$ </span>git merge <span class="nt">--no-ff</span> release-1.0

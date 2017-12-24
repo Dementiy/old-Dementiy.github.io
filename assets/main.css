@@ -3,7 +3,7 @@
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
-body { font: 400 24px/1.5 "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif; color: #111; background-color: #ffffff; -webkit-text-size-adjust: 100%; -webkit-font-feature-settings: "kern" 1; -moz-font-feature-settings: "kern" 1; -o-font-feature-settings: "kern" 1; font-feature-settings: "kern" 1; font-kerning: normal; }
+body { font: 400 18px/1.5 "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif; color: #111; background-color: #ffffff; -webkit-text-size-adjust: 100%; -webkit-font-feature-settings: "kern" 1; -moz-font-feature-settings: "kern" 1; -o-font-feature-settings: "kern" 1; font-feature-settings: "kern" 1; font-kerning: normal; }
 
 table { width: 100%; margin: 0 0 20px 0; text-align: left; }
 
@@ -16,7 +16,7 @@ img { max-width: 100%; vertical-align: middle; }
 /** Figures */
 figure > img { display: block; }
 
-figcaption { font-size: 21px; }
+figcaption { font-size: 15.75px; }
 
 /** Lists */
 ul, ol { margin-left: 30px; }
@@ -48,8 +48,8 @@ pre { padding: 8px 12px; overflow-x: auto; }
 pre > code { border: 0; padding-right: 0; padding-left: 0; }
 
 /** Wrapper */
-.wrapper { max-width: -webkit-calc(1000px - (30px * 2)); max-width: calc(1000px - (30px * 2)); margin-right: auto; margin-left: auto; padding-right: 30px; padding-left: 30px; }
-@media screen and (max-width: 800px) { .wrapper { max-width: -webkit-calc(1000px - (30px)); max-width: calc(1000px - (30px)); padding-right: 15px; padding-left: 15px; } }
+.wrapper { max-width: -webkit-calc(900px - (30px * 2)); max-width: calc(900px - (30px * 2)); margin-right: auto; margin-left: auto; padding-right: 30px; padding-left: 30px; }
+@media screen and (max-width: 800px) { .wrapper { max-width: -webkit-calc(900px - (30px)); max-width: calc(900px - (30px)); padding-right: 15px; padding-left: 15px; } }
 
 /** Clearfix */
 .wrapper:after, .pagination:after { content: ""; display: table; clear: both; }
@@ -83,7 +83,7 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 .post-archives .post-link { font-size: 24px; }
 .post-archives > li { margin-bottom: 30px; }
 
-.post-meta { font-size: 21px; color: #828282; }
+.post-meta { font-size: 15.75px; color: #828282; }
 
 .post-link, .post-link:visited { color: #111; }
 .post-link:hover { color: #2568ba; }
@@ -176,9 +176,9 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 .highlight .vi { color: #008080; }
 .highlight .il { color: #099; }
 
-pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 16px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
+pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 14px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
 
-blockquote { font-size: 20px; }
+blockquote { font-size: 16px; }
 
 h1, h2, h3, h4, h5, h6 { font-family: "Alegreya Sans"; }
 
@@ -188,6 +188,32 @@ h1 { font-weight: 700; }
 
 .page-content { padding-top: 60px; }
 
+p { margin: 1em 0; text-align: justify; }
+
+.site-footer p { text-align: center; }
+
 .site-header { font-size: 18px; }
 
 .site-title { font-size: 18px; }
+
+/* --- Admonitions --------------------------------------------------------- */
+.note { font-size: 65%; line-height: 125%; float: left; width: 290px; padding: 0; margin-left: -320px; }
+
+.note code { font-size: 64%; }
+
+.note p { text-align: left; padding: 0; margin: 0; padding-top: 0.5em; }
+
+.note p.first { padding: 0; padding-bottom: .5em; font-weight: 400; border-bottom: 1px solid #000; }
+
+.legend { font-family: "Alegreya Sans"; font-size: 75%; line-height: 125%; padding: 0; float: right; width: 290px; margin-right: -320px; }
+
+.legend p { text-align: left; padding: 0; margin: 0; padding-top: 0.5em; }
+
+.legend p.first { padding: 0; padding-bottom: .5em; font-weight: 400; border-bottom: 1px solid #000; }
+
+.legend code { font-size: 64%; }
+
+@media all and (max-width: 1400px) { .note, .legend { box-sizing: border-box; width: 80%; margin: 10px auto; float: none; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; } }
+@media all and (max-width: 870px) { pre.code, pre.output { padding-left: 0.5em; }
+  body { font-size: 16px; } }
+@media all and (max-width: 500px) { body { font-size: 14px; } }

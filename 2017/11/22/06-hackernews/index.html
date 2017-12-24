@@ -292,7 +292,7 @@
   <li><strong>количество “лайков”</strong> - 63.</li>
 </ul>
 
-<p>Для извлечения данных с веб-страниц существует множество разных модулей. Проблема с HTML в том, что большинство браузеров ведет себя “прощающе” относительно страниц, написанных не по стандартам HTML (в чем вы могли убедиться выполняя лабораторную работу №5). Впрочем, обработка даже не полностью корректного HTML-кода не так сложна, если под рукой есть подходящие инструменты. Мы будем пользоваться модулем <code class="highlighter-rouge">Beautiful Soup 4</code>.</p>
+<p>Для извлечения данных с веб-страниц существует множество разных модулей. Проблема с HTML в том, что большинство браузеров ведет себя “прощающе” относительно страниц, написанных не по стандартам HTML. Впрочем, обработка даже не полностью корректного HTML-кода не так сложна, если под рукой есть подходящие инструменты. Мы будем пользоваться модулем <code class="highlighter-rouge">Beautiful Soup 4</code>.</p>
 
 <blockquote>
   <p><strong>Замечание</strong>: если у вас не установлен модуль <code class="highlighter-rouge">bs4</code>, то вы можете установить его командой <code class="highlighter-rouge">pip install bs4</code> или <code class="highlighter-rouge">python -m pip install bs4</code>.</p>
@@ -448,6 +448,10 @@
 <p>На текущий момент вашей задачей является сохранение не менее 1000 записей с новостного сайта в БД (на каждой странице по 30 новостей). Просмотреть содержимое файла <code class="highlighter-rouge">news.db</code> можно с помощью программы <a href="http://sqlitebrowser.org">DB Browser for SQLite</a>:</p>
 
 <p><img src="/assets/images/06-hn/hn4.png" alt="" /></p>
+
+<blockquote>
+  <p>Подробную статью по работе с SQLAlchemy можно найти <a href="https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/">тут</a>.</p>
+</blockquote>
 
 <h3 id="разметка-данных">Разметка данных</h3>
 
@@ -684,6 +688,10 @@
 <span class="p">[</span><span class="s">'go until jurong point crazy available only in bugis n great world la e buffet cine there got amore wat'</span><span class="p">,</span> <span class="s">'ok lar joking wif u oni'</span><span class="p">,</span> <span class="s">'free entry in 2 a wkly comp to win fa cup final tkts 21st may 2005 text fa to 87121 to receive entry questionstd txt ratetcs apply 08452810075over18s'</span><span class="p">]</span>
 </code></pre></div></div>
 
+<blockquote>
+  <p><em>TODO</em>: <code class="highlighter-rouge">nltk</code></p>
+</blockquote>
+
 <p>Разобьем набор данных на обучабщую и тестовую выборки в соотношении 70%/30%. Обучающая выборка используется для построения модели (обучения классификатора), а тестовая выборка для оценки работы классификатора на новых данных (притворимся, что 30% данных мы раньше не видели):</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:</span><span class="mi">3900</span><span class="p">],</span> <span class="n">y</span><span class="p">[:</span><span class="mi">3900</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">3900</span><span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="mi">3900</span><span class="p">:]</span>
@@ -714,6 +722,17 @@
 </code></pre></div></div>
 
 <p>Мы получили в точности тоже значение, что говорит нам о правильности работы нашего классификатора.</p>
+
+<p>Теперь постройте модель на собранных вами данных с новостного сайта HackerNews и добавьте обработчик запроса для вывода ранжированной таблицы новостей:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@route</span><span class="p">(</span><span class="s">'/recommendations'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">recommendations</span><span class="p">():</span>
+    <span class="c"># 1. Получить список неразмеченных новостей из БД</span>
+    <span class="c"># 2. Получить прогнозы для каждой новости</span>
+    <span class="c"># 3. Вывести ранжированную таблицу с новостями</span>
+    <span class="k">return</span> <span class="n">template</span><span class="p">(</span><span class="s">'news_recommendations'</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="n">classified_news</span><span class="p">)</span>
+</code></pre></div></div>
+
 
   </div>
 
