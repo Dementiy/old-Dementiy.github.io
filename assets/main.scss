@@ -3,11 +3,12 @@
 @charset "utf-8";
 
 @import url('https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic');
+//@import url('https://fonts.googleapis.com/css?family=Alegreya:400,400i,700,700i&amp;subset=cyrillic|Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic');
 
 // Our variables
 $base-font-family: "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif;
 $monospace-font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace;
-$base-font-size:   24px;
+$base-font-size:   18px; // 24px;
 $base-font-weight: 400;
 $small-font-size:  $base-font-size * 0.875;
 $base-line-height: 1.5;
@@ -23,7 +24,7 @@ $grey-color-light: lighten($grey-color, 40%);
 $grey-color-dark:  darken($grey-color, 25%);
 
 // Width of the content area
-$content-width:    1000px;
+$content-width:    900px; // 1000px;
 
 $on-palm:          600px;
 $on-laptop:        800px;
@@ -49,14 +50,14 @@ $on-laptop:        800px;
 
 pre, code {
     font-family: $monospace-font-family;
-    font-size: 16px;
+    font-size: 14px; // 16px;
     border: 1px solid $grey-color-light;
     border-radius: 0;
     background-color: lighten($grey-color-light, 5%);
 }
 
 blockquote {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -76,10 +77,102 @@ h1 {
     padding-top: 60px;
 }
 
+p {
+    margin: 1em 0;
+    text-align: justify;
+}
+
+.site-footer p {
+    text-align: center;
+}
+
 .site-header {
     font-size: 18px;
 }
 
 .site-title {
     font-size: 18px;
+}
+
+/* --- Admonitions --------------------------------------------------------- */
+.note {
+    font-size: 65%;
+    line-height: 125%;
+    float: left;
+    width: 290px; // 240px;
+    padding: 0;
+    margin-left: -320px; // -270px;
+}
+
+.note code {
+    font-size: 64%;
+}
+
+.note p {
+    text-align: left;
+    padding: 0;
+    margin:0;
+    padding-top: 0.5em;
+}
+.note p.first {
+    padding: 0;
+    padding-bottom: .5em;
+    font-weight: 400;
+    border-bottom: 1px solid #000;
+}
+
+.legend {
+    font-family: "Alegreya Sans";
+    font-size: 75%;
+    line-height: 125%;
+    padding: 0;
+    float: right;
+    width: 290px; // 240px;
+    margin-right: -320px; // 270px;
+}
+.legend p {
+    text-align: left;
+    padding: 0;
+    margin:0;
+    padding-top: 0.5em;
+}
+.legend p.first {
+    padding: 0;
+    padding-bottom: .5em;
+    font-weight: 400;
+    border-bottom: 1px solid #000;
+}
+
+.legend code {
+    font-size: 64%;
+}
+
+@media all and (max-width: 1400px) {
+    .note,
+    .legend {
+        box-sizing: border-box;
+        width: 80%;
+        margin: 10px auto;
+        float: none;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        border-radius: 5px;
+        padding: 10px;
+    }
+}
+
+@media all and (max-width: 870px) {
+    pre.code,
+    pre.output {
+        padding-left: 0.5em;
+    }
+
+    body {
+        font-size: 16px;
+    }
+}
+
+@media all and (max-width: 500px) {
+    body {
+        font-size: 14px;
+    }
 }
