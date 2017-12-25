@@ -42,6 +42,7 @@ pytz==2017.2
 (elevennote-env) $ django-admin startproject config .
 (elevennote-env) $ ls
 config manage.py
+(elevennote-env) $ cd ..
 ```
 
 В результате вы должны получить следующую структуру проекта:
@@ -164,7 +165,7 @@ DB_PORT=
 
 > **Замечание**: Не добавляйте `settings.ini` в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в `.gitignore`.
 
-`manage.py`
+В файле `manage.py` необходимо заменить имеющйся путь к конфигурации проекта на следующий:
 ```python
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 ```
@@ -173,7 +174,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 
 > Для знакомства с докером можно почитать статью [What is docker and how to use it with python](http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/), а также занимательную статью в [блоге](http://grishaev.me/docker) Ивана Гришаева.
 
-Установите докер для вашей системы (инструкции можно получить [тут](https://docs.docker.com/engine/installation/)) и создайте `Dokerfile` в корне вашего проекта:
+Установите докер для вашей системы (инструкции можно получить [тут](https://docs.docker.com/engine/installation/)) и создайте `Dockerfile` в корне вашего проекта:
 
 ```bash
 FROM python:3.6
