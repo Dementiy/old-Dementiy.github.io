@@ -60,7 +60,7 @@ elevennote/
     └── manage.py
 ```
 
-Можете проверить, что проект запускается командой `python manage.py runserver` (если после запуска была создана БД `db.sqlite3`, а какие-то файлы закешированы `__pycache__`, то можете смело удалить их).
+Можете проверить, что проект запускается командой `python manage.py runserver` (если после запуска была создана БД `db.sqlite3`, а какие-то файлы закешированы `__pycache__`, то можете смело удалить их. Также их можно смело добавить в `.gitignore`).
 
 Конфигурацию нашего проекта разделим на:
 - `base.py` - общая конфигурация для всех развертываний проекта;
@@ -89,7 +89,7 @@ config/
 
 > **Замечание**: Если по каким-либо причинам приложение `tree` не найдено, <a href="https://superuser.com/a/359727" target="_blank">здесь</a> вы найдете информацию по его установке.
 
-`config/settings/base.py`
+Содержимое файла `config/settings/base.py`
 ```python
 import os
 from decouple import config
@@ -131,7 +131,7 @@ USE_L10N = True
 USE_TZ = True
 ```
 
-`configs/settings/local.py`
+Содержимое файла `configs/settings/local.py`
 ```python
 from .base import *
 
@@ -166,7 +166,7 @@ DB_PORT=
 
 > **Замечание**: Не добавляйте `settings.ini` в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в `.gitignore`.
 
-`manage.py`
+В файле `manage.py` замените имеющуюся строчку с конфигурированием на строчку ниже.
 ```python
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 ```
