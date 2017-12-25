@@ -68,13 +68,13 @@ elevennote/
 - `production.py` - настройки, которые используются для production-сервера.
 
 ```bash
-(elevennote-env) $ mkdir src/config/settings
-(elevennote-env) $ mv src/config/settings.py src/config/settings/base.py
-(elevennote-env) $ touch src/config/settings/__init__.py
-(elevennote-env) $ touch src/config/settings/local.py
-(elevennote-env) $ touch src/config/settings/production.py
-(elevennote-env) $ touch src/config/settings/settings.ini
-(elevennote-env) $ tree src/config
+(elevennote-env) $ mkdir config/settings
+(elevennote-env) $ mv config/settings.py config/settings/base.py
+(elevennote-env) $ touch config/settings/__init__.py
+(elevennote-env) $ touch config/settings/local.py
+(elevennote-env) $ touch config/settings/production.py
+(elevennote-env) $ touch config/settings/settings.ini
+(elevennote-env) $ tree config
 config/
 ├── __init__.py
 ├── settings
@@ -86,6 +86,8 @@ config/
 ├── urls.py
 └── wsgi.py
 ```
+
+> **Замечание**: Если по каким-либо причинам приложение `tree` не найдено, <a href="https://superuser.com/a/359727" target="_blank">здесь</a> вы найдете информацию по его установке.
 
 `config/settings/base.py`
 ```python
