@@ -177,7 +177,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 
 > Для знакомства с докером можно почитать статью [What is docker and how to use it with python](http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/), а также занимательную статью в [блоге](http://grishaev.me/docker) Ивана Гришаева.
 
-Установите докер для вашей системы (инструкции можно получить [тут](https://docs.docker.com/engine/installation/)) и создайте `Dokerfile` в корне вашего проекта:
+Установите докер для вашей системы (инструкции можно получить [тут](https://docs.docker.com/engine/installation/)) и создайте `Dockerfile` в корне вашего проекта:
 
 ```bash
 FROM python:3.6
