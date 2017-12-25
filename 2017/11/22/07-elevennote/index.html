@@ -240,6 +240,7 @@
 <span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>django-admin startproject config <span class="nb">.</span>
 <span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span><span class="nb">ls
 </span>config manage.py
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span><span class="nb">cd</span> ..
 </code></pre></div></div>
 
 <p>В результате вы должны получить следующую структуру проекта:</p>
@@ -361,7 +362,7 @@ config/
   <p><strong>Замечание</strong>: Не добавляйте <code class="highlighter-rouge">settings.ini</code> в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в <code class="highlighter-rouge">.gitignore</code>.</p>
 </blockquote>
 
-<p><code class="highlighter-rouge">manage.py</code></p>
+<p>В файле <code class="highlighter-rouge">manage.py</code> необходимо заменить имеющйся путь к конфигурации проекта на следующий:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">"DJANGO_SETTINGS_MODULE"</span><span class="p">,</span> <span class="s">"config.settings.local"</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -371,7 +372,7 @@ config/
   <p>Для знакомства с докером можно почитать статью <a href="http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/">What is docker and how to use it with python</a>, а также занимательную статью в <a href="http://grishaev.me/docker">блоге</a> Ивана Гришаева.</p>
 </blockquote>
 
-<p>Установите докер для вашей системы (инструкции можно получить <a href="https://docs.docker.com/engine/installation/">тут</a>) и создайте <code class="highlighter-rouge">Dokerfile</code> в корне вашего проекта:</p>
+<p>Установите докер для вашей системы (инструкции можно получить <a href="https://docs.docker.com/engine/installation/">тут</a>) и создайте <code class="highlighter-rouge">Dockerfile</code> в корне вашего проекта:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM python:3.6
 ENV PYTHONUNBUFFERED 1

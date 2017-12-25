@@ -237,6 +237,11 @@
 
 <p>Далее представлен листинг, который позволяет создать игровое поле:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Подробное описание всех используемых функций из <code>pygame</code> читайте в официальной <a href="http://www.pygame.org/docs/ref/pygame.html">документации</a>.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pygame</span>
 <span class="kn">from</span> <span class="nn">pygame.locals</span> <span class="kn">import</span> <span class="o">*</span>
 
@@ -291,11 +296,7 @@
     <span class="n">game</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p>Подробное описание всех используемых функций из <code class="highlighter-rouge">pygame</code> читайте в официальной <a href="http://www.pygame.org/docs/ref/pygame.html">документации</a></p>
-</blockquote>
-
-<p>Каждая клетка может находиться в двух состояниях: “<em>живая</em>” или “<em>мертвая</em>”. Нам нужно создать список (матрицу) клеток размером <code class="highlighter-rouge">cell_height</code> <script type="math/tex">\times</script> <code class="highlighter-rouge">cell_width</code>, которые в дальнейшем мы будем отображать на нашем поле, окрашивая их в зеленый и белый цвета, для “живых” и “мертвых” клеток соответственно.</p>
+<p>Каждая клетка может находиться в двух состояниях: «живая» или «мертвая». Нам нужно создать список (матрицу) клеток размером <code class="highlighter-rouge">cell_height</code> <script type="math/tex">\times</script> <code class="highlighter-rouge">cell_width</code>, которые в дальнейшем мы будем отображать на нашем поле, окрашивая их в зеленый и белый цвета, для «живых» и «мертвых» клеток соответственно.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">cell_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">randomize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="s">"""
@@ -331,6 +332,11 @@
   <li><code class="highlighter-rouge">Rect</code> - координаты прямоугольника в формате <code class="highlighter-rouge">(x, y, длина стороны a, длина стороны b)</code>.</li>
 </ul>
 
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Добавьте вызовы метода <code>draw_cell_list()</code> в метод <code>run()</code> перед обновлением поля <code>pygame.display.flip()</code>.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">draw_cell_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rects</span><span class="p">):</span>
     <span class="s">"""
     Отображение списка клеток 'rects' с закрашиванием их в 
@@ -338,10 +344,6 @@
     """</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p>Добавьте вызовы метода <code class="highlighter-rouge">draw_cell_list()</code> в метод <code class="highlighter-rouge">run()</code> перед обновлением поля <code class="highlighter-rouge">pygame.display.flip()</code>.</p>
-</blockquote>
 
 <p><img src="/assets/images/03-life/life_grid_colored.png" alt="" /></p>
 
@@ -360,16 +362,17 @@
 
 <p>Теперь нужно написать функцию для обновления состояния всех клеток:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Важно помнить, что обновление всего поля должно происходить за один раз, если состояние клеток менять последовательно, то это повлияет на результат игры.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">update_cell_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_list</span><span class="p">):</span>
     <span class="s">"""
     Обновление состояния клеток
     """</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p>Важно помнить, что обновление всего поля должно происходить за один раз, если состояние клеток менять последовательно, то это повлияет на результат игры.</p>
-</blockquote>
 
 <p>Теперь у вас должна быть полностью рабочая игра.</p>
 

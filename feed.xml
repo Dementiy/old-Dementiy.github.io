@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2017-12-24T19:28:36+03:00</updated>
+  <updated>2017-12-25T14:47:31+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -3196,6 +3196,7 @@ if __name__ == &quot;__main__&quot;:
 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;elevennote-env&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;django-admin startproject config &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;elevennote-env&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls
 &lt;/span&gt;config manage.py
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;elevennote-env&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ..
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;В результате вы должны получить следующую структуру проекта:&lt;/p&gt;
@@ -3317,7 +3318,7 @@ config/
   &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Не добавляйте &lt;code class=&quot;highlighter-rouge&quot;&gt;settings.ini&lt;/code&gt; в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в &lt;code class=&quot;highlighter-rouge&quot;&gt;.gitignore&lt;/code&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;manage.py&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;В файле &lt;code class=&quot;highlighter-rouge&quot;&gt;manage.py&lt;/code&gt; необходимо заменить имеющйся путь к конфигурации проекта на следующий:&lt;/p&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;environ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setdefault&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;DJANGO_SETTINGS_MODULE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;config.settings.local&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -3327,7 +3328,7 @@ config/
   &lt;p&gt;Для знакомства с докером можно почитать статью &lt;a href=&quot;http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/&quot;&gt;What is docker and how to use it with python&lt;/a&gt;, а также занимательную статью в &lt;a href=&quot;http://grishaev.me/docker&quot;&gt;блоге&lt;/a&gt; Ивана Гришаева.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Установите докер для вашей системы (инструкции можно получить &lt;a href=&quot;https://docs.docker.com/engine/installation/&quot;&gt;тут&lt;/a&gt;) и создайте &lt;code class=&quot;highlighter-rouge&quot;&gt;Dokerfile&lt;/code&gt; в корне вашего проекта:&lt;/p&gt;
+&lt;p&gt;Установите докер для вашей системы (инструкции можно получить &lt;a href=&quot;https://docs.docker.com/engine/installation/&quot;&gt;тут&lt;/a&gt;) и создайте &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; в корне вашего проекта:&lt;/p&gt;
 
 &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;FROM python:3.6
 ENV PYTHONUNBUFFERED 1
@@ -4773,7 +4774,7 @@ unzip static-elevennote-ch16.zip
       <published>2017-11-22T00:00:00+03:00</published>
       <updated>2017-11-22T00:00:00+03:00</updated>
       <id>https://dementiy.github.io/2017/11/22/05-telegram-bot</id>
-      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/05-telegram-bot/">&lt;p&gt;Эта работа посвящена созданию бота для социальной сети &lt;a href=&quot;https://telegram.org&quot;&gt;Telegram&lt;/a&gt;. Для ее выполнения вам понадобится зарегистрироваться на сайте https://telegram.org (если вы ранее этого не сделали).&lt;/p&gt;
+      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/05-telegram-bot/">&lt;p&gt;Эта работа посвящена созданию бота для социальной сети &lt;a href=&quot;https://telegram.org&quot;&gt;Telegram&lt;/a&gt;. Для ее выполнения вам понадобится зарегистрироваться на сайте &lt;a href=&quot;https://telegram.org&quot;&gt;https://telegram.org&lt;/a&gt; (если вы ранее этого не сделали).&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;&lt;strong&gt;Мотивация&lt;/strong&gt;: 18 апреля 2016 года появилась &lt;a href=&quot;https://telegram.org/blog/botprize&quot;&gt;новость&lt;/a&gt;, что выделенен призовой фонд в размере одного миллиона долларов для всех желающих поучаствовать в разработке собственного бота для сети Telegram. Гранты выдаваемые участникам начинаются от 25 тысяч долларов. Конкурс продлён до 2017 года включительно.&lt;/p&gt;
@@ -4785,13 +4786,14 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/05-telegram/tele_bot.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;У вас будет свой токен доступа, которым не следует делиться с другими.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;p&gt;Обратите внимание, что последним ответом &lt;code class=&quot;highlighter-rouge&quot;&gt;BotFather&lt;/code&gt; был токен доступа (&lt;code class=&quot;highlighter-rouge&quot;&gt;access_token&lt;/code&gt;), который нам понадобится в дальнейшей работе.&lt;/p&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Внимание&lt;/strong&gt;: У вас будет свой токен доступа, которым не следует делиться с другими.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;На текущем этапе созданный нами бот ничего не умеет делать и не знает ни одной команды. Для “обучения” бота мы будем использовать &lt;a href=&quot;https://core.telegram.org/bots/api&quot;&gt;API&lt;/a&gt;, который предоставляет телеграмм:&lt;/p&gt;
+&lt;p&gt;На текущем этапе созданный нами бот ничего не умеет делать и не знает ни одной команды. Для «обучения» бота мы будем использовать &lt;a href=&quot;https://core.telegram.org/bots/api&quot;&gt;API&lt;/a&gt;, который предоставляет телеграмм:&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;The Bot API is an HTTP-based interface created for developers keen on building bots for Telegram&lt;/p&gt;
@@ -4846,10 +4848,9 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;Разберем пример с выводом расписания на понедельник. Для этого нам нужно получить код html-страницы для соответствующей группы, а затем из этой страницы выделить интересующую нас информацию.&lt;/p&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Чтобы вам было проще ориентироваться в работе -  рекомендуется скачать пример любой страницы с расписанием:
-&lt;img src=&quot;/assets/images/05-telegram/html_schedule.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;Чтобы вам было проще ориентироваться в работе -  рекомендуется скачать пример любой страницы с расписанием:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/05-telegram/html_schedule.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Чтобы получить исходный код страницы достаточно выполнить &lt;code class=&quot;highlighter-rouge&quot;&gt;GET&lt;/code&gt; запрос. &lt;code class=&quot;highlighter-rouge&quot;&gt;URL&lt;/code&gt;, к которому мы будем обращаться, имеет следующий формат:&lt;/p&gt;
 
@@ -4857,6 +4858,11 @@ unzip static-elevennote-ch16.zip
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Где &lt;code class=&quot;highlighter-rouge&quot;&gt;WEEK&lt;/code&gt; это неделя (четная-нечетная), если неделя не указана, то расписание включает и четную и нечетную недели; &lt;code class=&quot;highlighter-rouge&quot;&gt;GROUP&lt;/code&gt; - номер группы.&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Сайт Университета ИТМО не приветствует большого числа обращений. Поэтому подумайте о возможности сохранения страниц с расписанием локально или их хранение в памяти на время работы бота, чтобы при повторном обращении к той же страницы вам не пришлось делать новый запрос к серверу университета.&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;requests&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;config&lt;/span&gt;
@@ -4873,10 +4879,6 @@ unzip static-elevennote-ch16.zip
     &lt;span class=&quot;n&quot;&gt;web_page&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;web_page&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Сайт Университета ИТМО не приветствует большого числа обращений. Поэтому подумайте о возможности сохранения страниц с расписанием локально или их хранение в памяти на время работы бота, чтобы при повторном обращении к той же страницы вам не пришлось делать новый запрос к серверу университета.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Теперь из этой страницы нам нужно извлечь время занятий, место проведения, аудиторию и название дисциплины. Для этого нам понадобится HTML-парсер. В этой работе предлогается использовать модуль &lt;a href=&quot;https://www.crummy.com/software/BeautifulSoup/bs4/doc/&quot;&gt;BeautifulSoup&lt;/a&gt;.&lt;/p&gt;
 
@@ -4909,6 +4911,11 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;Таким образом, мы получили время, место и название дисциплины (получение номера аудитории остается для самостоятельного выполнения). Наконец добавим нашему боту возможность вывода расписания на понедельник:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Вы можете легко обобщить функции &lt;code&gt;get_monday&lt;/code&gt; и &lt;code&gt;get_schedule&lt;/code&gt; на любой день недели.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@bot.message_handler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'monday'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_monday&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;group&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
@@ -4923,10 +4930,6 @@ unzip static-elevennote-ch16.zip
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/05-telegram/monday.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Вы можете легко обобщить функции &lt;code class=&quot;highlighter-rouge&quot;&gt;get_monday&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;get_schedule&lt;/code&gt; на любой день недели.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;h3 id=&quot;размещаем-бота-в-сети&quot;&gt;Размещаем бота в Сети&lt;/h3&gt;
 &lt;p&gt;Последняя часть работы посвящена размещению бота на облачной платформе &lt;a href=&quot;https://www.heroku.com&quot;&gt;Heroku&lt;/a&gt;.&lt;/p&gt;
@@ -5009,9 +5012,10 @@ web: python3 bot.py
       <id>https://dementiy.github.io/2017/11/22/04-vk-api</id>
       <content type="html" xml:base="https://dementiy.github.io/2017/11/22/04-vk-api/">&lt;p&gt;Эта работа посвящена взаимодействию с &lt;a href=&quot;https://vk.com/dev/manuals&quot;&gt;API ВКонтакте&lt;/a&gt;.&lt;/p&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Замечание: Если вы не знакомы с термином “API”, то рекомендую прочитать статью: &lt;a href=&quot;https://medium.freecodecamp.org/what-is-an-api-in-english-please-b880a3214a82&quot;&gt;What is an API? In English, please&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Если вы не знакомы с термином «API», то рекомендую прочитать статью &lt;a href=&quot;https://medium.freecodecamp.org/what-is-an-api-in-english-please-b880a3214a82&quot;&gt;What is an API? In English, please&lt;/a&gt;.&lt;/p&gt;.
+&lt;/div&gt;
 
 &lt;p&gt;Чтобы начать работать с API от вас требуется зарегистрировать новое приложение. Для этого зайдите на форму создания нового Standalone приложения &lt;a href=&quot;https://vk.com/editapp?act=create&quot;&gt;https://vk.com/editapp?act=create&lt;/a&gt; и следуйте инструкциям. Вашему приложению будет назначен идентификатор, который потребуется для выполнения работы.&lt;/p&gt;
 
@@ -5030,12 +5034,13 @@ web: python3 bot.py
 
 &lt;p&gt;Например, чтобы получить список друзей, с указанием их пола, нужно выполнить следующий запрос:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Токен доступа ненастоящий, поэтому этот запрос работать не будет.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://api.vk.com/method/friends.get?fields=sex&amp;amp;access_token=0394a2ede332c9a13eb82e9b24631604c31df978b4e2f0fbd2c549944f9d79a5bc866455623bd560732ab&amp;amp;v=5.53
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Внимание&lt;/strong&gt;: Токен доступа ненастоящий, поэтому этот запрос работать не будет.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Чтобы получить токен доступа вы можете воспользоваться написанным для вас скриптом &lt;code class=&quot;highlighter-rouge&quot;&gt;access_token.py&lt;/code&gt; следующим образом:&lt;/p&gt;
 
@@ -5046,11 +5051,12 @@ web: python3 bot.py
 
 &lt;p&gt;После выполнения команды откроется новая вкладка браузера, из адресной строки которого вам необходимо скопировать токен доступа.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/04-vkapi/access_token.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;На этом этапе вы можете повторить ранее представленный пример запроса, чтобы убедиться, что вы делаете все верно.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Внимание&lt;/strong&gt;: На этом этапе вы можете повторить ранее представленный пример запроса, чтобы убедиться, что вы делаете все верно.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/04-vkapi/access_token.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Далее приведено содержимое файла &lt;code class=&quot;highlighter-rouge&quot;&gt;access_token.py&lt;/code&gt;:&lt;/p&gt;
 
@@ -5086,7 +5092,7 @@ web: python3 bot.py
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №1&lt;/strong&gt;. Требуется написать функцию прогнозирования возраста пользователя по возрасту его друзей.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание:&lt;/strong&gt; Требуется написать функцию прогнозирования возраста пользователя по возрасту его друзей.&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_friends&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fields&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Returns a list of user IDs or detailed information about a user's friends &quot;&quot;&quot;&lt;/span&gt;
@@ -5165,11 +5171,12 @@ web: python3 bot.py
   &lt;li&gt;мы слишком долго ждем ответ от сервера.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;В таких случаях необходимо попробовать повторить запрос. При этом повторные запросы желательно посылать не через константные промежутки времени, а по алгоритму экспоненциальной задержки.&lt;/p&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Описание алгоритма с примерами можно найти в статье &lt;a href=&quot;https://habrahabr.ru/post/227225/&quot;&gt;Exponential Backoff или как «не завалить сервер»&lt;/a&gt;. Почитать про обработку исключений при работе с библиотекой &lt;code&gt;requests&lt;/code&gt; можно &lt;a href=&quot;https://khashtamov.com/ru/python-requests/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Описание алгоритма с примерами можно найти в статье &lt;a href=&quot;https://habrahabr.ru/post/227225/&quot;&gt;Exponential Backoff или как «не завалить сервер»&lt;/a&gt;. Почитать про обработку исключений при работе с библиотекой &lt;code class=&quot;highlighter-rouge&quot;&gt;requests&lt;/code&gt; можно &lt;a href=&quot;https://khashtamov.com/ru/python-requests/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;В таких случаях необходимо попробовать повторить запрос. При этом повторные запросы желательно посылать не через константные промежутки времени, а по алгоритму экспоненциальной задержки.&lt;/p&gt;
 
 &lt;p&gt;Напишите функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;get()&lt;/code&gt;, которая будет выполнять GET-запрос к указанному адресу, а при необходимости повторять запрос указанное число раз по алгоритму экспоненциальной задержки:&lt;/p&gt;
 
@@ -5203,6 +5210,11 @@ web: python3 bot.py
 
 &lt;p&gt;Теперь мы можем написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;age_predict&lt;/code&gt; для “наивного” прогнозирования возраста пользователя с идентификатором &lt;code class=&quot;highlighter-rouge&quot;&gt;user_id&lt;/code&gt; (под “наивным” прогнозированием подразумевается вычисление среднего арифметического или медианы):&lt;/p&gt;
 
+&lt;div class=&quot;admonition note&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Так как дата рождения пользователя может быть не указана или указаны только день и месяц, то для обработки таких ситуаций вы можете использовать конструкцию &lt;code&gt;try...except&lt;/code&gt;, где &lt;code&gt;except&lt;/code&gt; будет содержать только &lt;code&gt;pass&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;age_predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
     &amp;gt;&amp;gt;&amp;gt; age_predict(???)
@@ -5214,13 +5226,14 @@ web: python3 bot.py
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Так как дата рождения пользователя может быть не указана или указаны только день и месяц, то для обработки таких ситуаций вы можете использовать конструкцию &lt;code class=&quot;highlighter-rouge&quot;&gt;try...except&lt;/code&gt;, где &lt;code class=&quot;highlighter-rouge&quot;&gt;except&lt;/code&gt; будет содержать только &lt;code class=&quot;highlighter-rouge&quot;&gt;pass&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;strong&gt;Задание №2:&lt;/strong&gt; Требуется написать функцию, которая бы выводила график частоты переписки с указанным пользователем.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание:&lt;/strong&gt; Требуется написать функцию, которая бы выводила график частоты переписки с указанным пользователем.&lt;/p&gt;
 
 &lt;p&gt;Давайте начнем с того, что получим всю или часть переписки с указанным пользователем. Для этого вам потребуется реализовать метод API &lt;a href=&quot;https://vk.com/dev/messages.getHistory&quot;&gt;messages.getHistory&lt;/a&gt; по аналогии с тем, как вы реализовывали получение списка друзей пользователя:&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;В реализации функции &lt;code&gt;messages_get_history&lt;/code&gt; нужно учитывать, что API ВКонтакте устанавливает ограничение на число запросов в одну секунду (на сегодняшний день это три запроса). Число сообщений, которое вы можете получить за одно запрос - 200.&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;messages_get_history&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;isinstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user_id must be positive integer&quot;&lt;/span&gt;
@@ -5231,10 +5244,6 @@ web: python3 bot.py
     &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: В реализации функции &lt;code class=&quot;highlighter-rouge&quot;&gt;messages_get_history&lt;/code&gt; нужно учитывать, что API ВКонтакте устанавливает ограничение на число запросов в одну секунду (на сегодняшний день это три запроса). Число сообщений, которое вы можете получить за одно запрос - 200.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Далее приведен пример использования функции &lt;code class=&quot;highlighter-rouge&quot;&gt;messages_get_history&lt;/code&gt;:&lt;/p&gt;
 
@@ -5274,14 +5283,15 @@ web: python3 bot.py
 
 &lt;p&gt;На данный момент вашей задачей является написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;count_dates_from_messages&lt;/code&gt;, которая возвращает два списка: список дат и список частоты каждой даты, а принимает список сообщений:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;При большом количестве сообщений вы их можете разбить по неделям или месяцам.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;count_dates_from_messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;c&quot;&gt;#PUT YOUR CODE HERE&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: При большом количестве сообщений вы их можете разбить по неделям или месяцам.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Далее мы воспользуемся сервисом &lt;a href=&quot;https://plot.ly/&quot;&gt;Plot.ly&lt;/a&gt;, который предоставляет API для рисования графиков. Запрос содержит информацию о точках, которые нужно отобразить на графике. Вам нужно зарегистрироваться и получить ключ доступа (&lt;code class=&quot;highlighter-rouge&quot;&gt;API KEY&lt;/code&gt;). Для более простого взаимодействия с Plot.ly мы воспользуемся готовым модулем (существуют решения и для других языков):&lt;/p&gt;
 
@@ -5312,7 +5322,7 @@ web: python3 bot.py
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/04-vkapi/plotly.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №3&lt;/strong&gt;: Требуется написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;get_network()&lt;/code&gt;,   которая для указанного списка пользователей &lt;code class=&quot;highlighter-rouge&quot;&gt;users_ids&lt;/code&gt; строит граф и представляет его либо в виде матрицы смежности (&lt;code class=&quot;highlighter-rouge&quot;&gt;as_edgelist=False&lt;/code&gt;), либо в виде списка ребер (&lt;code class=&quot;highlighter-rouge&quot;&gt;as_edgelist=True&lt;/code&gt;). В полученном графе необходимо выделить сообщества и визуализировать результат.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Требуется написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;get_network()&lt;/code&gt;, которая для указанного списка пользователей &lt;code class=&quot;highlighter-rouge&quot;&gt;users_ids&lt;/code&gt; строит граф и представляет его либо в виде матрицы смежности (&lt;code class=&quot;highlighter-rouge&quot;&gt;as_edgelist=False&lt;/code&gt;), либо в виде списка ребер (&lt;code class=&quot;highlighter-rouge&quot;&gt;as_edgelist=True&lt;/code&gt;). В полученном графе необходимо выделить сообщества и визуализировать результат.&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_network&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;users_ids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as_edgelist&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Building a friend graph for an arbitrary list of users &quot;&quot;&quot;&lt;/span&gt;
@@ -5328,9 +5338,12 @@ web: python3 bot.py
 &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;brew install cairo    &lt;span class=&quot;c&quot;&gt;# Только для MacOS X. Для других ОС см. https://www.cairographics.org/download/&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;Рассмотрим пример создания и визуализации графа состоящего из 6 узлов и 10 ребер:&lt;/p&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;igraph&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Graph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
 
+&lt;span class=&quot;c&quot;&gt;# Создание вершин и ребер&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;edges&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
@@ -5342,9 +5355,11 @@ web: python3 bot.py
     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 
+&lt;span class=&quot;c&quot;&gt;# Создание графа&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Graph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertex_attrs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;edges&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;edges&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;directed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
+&lt;span class=&quot;c&quot;&gt;# Задаем стиль отображения графа&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;visual_style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;visual_style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;layout&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;layout_fruchterman_reingold&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
@@ -5352,10 +5367,13 @@ web: python3 bot.py
     &lt;span class=&quot;n&quot;&gt;area&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;repulserad&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
+&lt;span class=&quot;c&quot;&gt;# Отрисовываем граф&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;visual_style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/04-vkapi/graph1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Теперь удалим из графа петли и повторяющиеся ребра:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;simplify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loops&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -5449,6 +5467,11 @@ web: python3 bot.py
 
 &lt;p&gt;Далее представлен листинг, который позволяет создать игровое поле:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Подробное описание всех используемых функций из &lt;code&gt;pygame&lt;/code&gt; читайте в официальной &lt;a href=&quot;http://www.pygame.org/docs/ref/pygame.html&quot;&gt;документации&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pygame&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pygame.locals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;
 
@@ -5503,11 +5526,7 @@ web: python3 bot.py
     &lt;span class=&quot;n&quot;&gt;game&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Подробное описание всех используемых функций из &lt;code class=&quot;highlighter-rouge&quot;&gt;pygame&lt;/code&gt; читайте в официальной &lt;a href=&quot;http://www.pygame.org/docs/ref/pygame.html&quot;&gt;документации&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Каждая клетка может находиться в двух состояниях: “&lt;em&gt;живая&lt;/em&gt;” или “&lt;em&gt;мертвая&lt;/em&gt;”. Нам нужно создать список (матрицу) клеток размером &lt;code class=&quot;highlighter-rouge&quot;&gt;cell_height&lt;/code&gt; &lt;script type=&quot;math/tex&quot;&gt;\times&lt;/script&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;cell_width&lt;/code&gt;, которые в дальнейшем мы будем отображать на нашем поле, окрашивая их в зеленый и белый цвета, для “живых” и “мертвых” клеток соответственно.&lt;/p&gt;
+&lt;p&gt;Каждая клетка может находиться в двух состояниях: «живая» или «мертвая». Нам нужно создать список (матрицу) клеток размером &lt;code class=&quot;highlighter-rouge&quot;&gt;cell_height&lt;/code&gt; &lt;script type=&quot;math/tex&quot;&gt;\times&lt;/script&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;cell_width&lt;/code&gt;, которые в дальнейшем мы будем отображать на нашем поле, окрашивая их в зеленый и белый цвета, для «живых» и «мертвых» клеток соответственно.&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cell_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;randomize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
@@ -5543,6 +5562,11 @@ web: python3 bot.py
   &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Rect&lt;/code&gt; - координаты прямоугольника в формате &lt;code class=&quot;highlighter-rouge&quot;&gt;(x, y, длина стороны a, длина стороны b)&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;div class=&quot;admonition note&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Добавьте вызовы метода &lt;code&gt;draw_cell_list()&lt;/code&gt; в метод &lt;code&gt;run()&lt;/code&gt; перед обновлением поля &lt;code&gt;pygame.display.flip()&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;draw_cell_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
     Отображение списка клеток 'rects' с закрашиванием их в 
@@ -5550,10 +5574,6 @@ web: python3 bot.py
     &quot;&quot;&quot;&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Добавьте вызовы метода &lt;code class=&quot;highlighter-rouge&quot;&gt;draw_cell_list()&lt;/code&gt; в метод &lt;code class=&quot;highlighter-rouge&quot;&gt;run()&lt;/code&gt; перед обновлением поля &lt;code class=&quot;highlighter-rouge&quot;&gt;pygame.display.flip()&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/03-life/life_grid_colored.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -5572,16 +5592,17 @@ web: python3 bot.py
 
 &lt;p&gt;Теперь нужно написать функцию для обновления состояния всех клеток:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Важно помнить, что обновление всего поля должно происходить за один раз, если состояние клеток менять последовательно, то это повлияет на результат игры.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;update_cell_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cell_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
     Обновление состояния клеток
     &quot;&quot;&quot;&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Важно помнить, что обновление всего поля должно происходить за один раз, если состояние клеток менять последовательно, то это повлияет на результат игры.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Теперь у вас должна быть полностью рабочая игра.&lt;/p&gt;
 
@@ -5723,11 +5744,17 @@ web: python3 bot.py
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;grid&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Процесс выполнения работы такой же как и предыдущей, поэтому не забудьте активировать виртуальное окружение, создавать ветви функциональности и делать коммиты.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: На текущий момент вашей задачей является написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;group()&lt;/code&gt;, которая принимает пазл и размер доски &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;, а в качестве результата работы возвращает матрицу размера &lt;code class=&quot;highlighter-rouge&quot;&gt;n*n&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №1&lt;/strong&gt;: На текущий момент вашей задачей является написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;group()&lt;/code&gt;, которая принимает пазл и размер доски &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;, а в качестве результата работы возвращает матрицу размера &lt;code class=&quot;highlighter-rouge&quot;&gt;n*n&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Процесс выполнения работы такой же как и предыдущей, поэтому не забудьте активировать виртуальное окружение, создавать ветви функциональности и делать коммиты.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;admonition note&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Для решения ряда задач используйте списковые включения (list comprehensions/генераторы списков). Например, чтобы создать список из четных элементов в диапазоне от 0 до 10 можно использовать такую конструкцию:&lt;br /&gt;&lt;code&gt;L = [i for i in range(10) if i % 2 == 0]&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
@@ -5741,10 +5768,6 @@ web: python3 bot.py
     &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;: Для решения ряда задач используйте списковые включения (list comprehensions, в русскоязычной литературе их часто называют генераторами списков). Простой пример, чтобы создать список из четных элементов в диапазоне от 0 до 10 можно использовать такую конструкцию: &lt;code class=&quot;highlighter-rouge&quot;&gt;L = [i for i in range(10) if i % 2 == 0]&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Чтобы убедиться в том, что вы верно написали функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;group()&lt;/code&gt; воспользуйтесь доктестом:&lt;/p&gt;
 
@@ -5810,7 +5833,7 @@ Got nothing
 &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|.&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|.&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №2&lt;/strong&gt;: Так как при решении Судоку ставятся условия, что значения не могут повторяться ни в строке, ни в столбце, ни в квадрате, то следовательно нам эти значения нужно получить. Для этого от вас требуется написать три функции &lt;code class=&quot;highlighter-rouge&quot;&gt;get_row()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;get_col()&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;get_block()&lt;/code&gt;, каждая из которых принимает два аргумента: пазл (&lt;code class=&quot;highlighter-rouge&quot;&gt;values&lt;/code&gt;) и позицию (&lt;code class=&quot;highlighter-rouge&quot;&gt;pos&lt;/code&gt;), для которой мы пытаемся найти верное число.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Так как при решении Судоку ставятся условия, что значения не могут повторяться ни в строке, ни в столбце, ни в квадрате, то следовательно нам эти значения нужно получить. Для этого от вас требуется написать три функции &lt;code class=&quot;highlighter-rouge&quot;&gt;get_row()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;get_col()&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;get_block()&lt;/code&gt;, каждая из которых принимает два аргумента: пазл (&lt;code class=&quot;highlighter-rouge&quot;&gt;values&lt;/code&gt;) и позицию (&lt;code class=&quot;highlighter-rouge&quot;&gt;pos&lt;/code&gt;), для которой мы пытаемся найти верное число.&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Возвращает все значения для номера строки, указанной в pos
@@ -5866,7 +5889,7 @@ Got nothing
 
 &lt;p&gt;Для функций &lt;code class=&quot;highlighter-rouge&quot;&gt;get_row()&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;get_col()&lt;/code&gt; приведены доктесты, но они предназначены для доски размером &lt;code class=&quot;highlighter-rouge&quot;&gt;3*3&lt;/code&gt;. У нас же доска &lt;code class=&quot;highlighter-rouge&quot;&gt;9*9&lt;/code&gt;. Вы можете написать эти функции так, чтобы их можно было использовать для доски любого размера, а можете написать только для доски размером &lt;code class=&quot;highlighter-rouge&quot;&gt;9*9&lt;/code&gt;, но тогда вы всегда будете получать ошибку в доктестах. Функция &lt;code class=&quot;highlighter-rouge&quot;&gt;get_block()&lt;/code&gt; возвращает все значения из квадрата, в который попадает позиция &lt;code class=&quot;highlighter-rouge&quot;&gt;pos&lt;/code&gt; (всего &lt;code class=&quot;highlighter-rouge&quot;&gt;9&lt;/code&gt; квадратов размером &lt;code class=&quot;highlighter-rouge&quot;&gt;3*3&lt;/code&gt;).&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №3.1&lt;/strong&gt;: Давайте наконец перейдем к решению самого Судоку. В шаблоне вы найдете функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;solve()&lt;/code&gt;, которая принимает один аргумент - пазл, а возвращает заполненную значениями доску:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Давайте наконец перейдем к решению самого Судоку. В шаблоне вы найдете функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;solve()&lt;/code&gt;, которая принимает один аргумент - пазл, а возвращает заполненную значениями доску:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Решение пазла, заданного в grid
@@ -5886,17 +5909,17 @@ Got nothing
 
 &lt;p&gt;В комментарии приведен алгоритм решения Судоку. Обратите внимание, что он рекурсивный. Решение Судоку очень похоже на задачу о возможных комбинациях:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def permutations(L, result):
-    if len(L) == 0:
-        print(result)
-    else:
-        for i in range(len(L)):
-            permutations(L[0:i] + L[i+1:], result + [L[i]])
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;permutations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;permutations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
 
-&amp;gt;&amp;gt;&amp;gt; permutations([1,2,3], [])
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;permutations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Каждый раз мы удерживаем один элемент и перебираем все остальные. В Судоку все происходит точно также, сначала мы подставляем одно из возможных значений (пункт 2) для свободной позиции (пункт 1) и перебираем все остальные (пункт 3.2), то есть решаем более простую задачу. Например, вот простейшее “Судоку” (это не совсем Судоку конечно), которое мы можем заполнять значениями 1 или 2:&lt;/p&gt;
+&lt;p&gt;Каждый раз мы удерживаем один элемент и перебираем все остальные. В Судоку все происходит точно также, сначала мы подставляем одно из возможных значений (пункт 2) для свободной позиции (пункт 1) и перебираем все остальные (пункт 3.2), то есть решаем более простую задачу. Например, вот простейшее «Судоку» (это не совсем Судоку конечно), которое мы можем заполнять значениями 1 или 2:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.
 .1
@@ -5917,7 +5940,7 @@ Got nothing
   &lt;li&gt;Всегда ли есть возможные значения?&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №3.2&lt;/strong&gt;: Нам нужно находить свободные позиции (то есть те, на которых стоит &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt; - точка). Для этого требуется написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;find_empty_positons()&lt;/code&gt;, которая принимает один аргумент - пазл и возвращает первую попавшуюся свободную позицию:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Нам нужно находить свободные позиции (то есть те, на которых стоит &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt; - точка). Для этого требуется написать функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;find_empty_positons()&lt;/code&gt;, которая принимает один аргумент - пазл и возвращает первую попавшуюся свободную позицию:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;find_empty_positions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Найти первую свободную позицию в пазле
@@ -5933,7 +5956,12 @@ Got nothing
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №3.3&lt;/strong&gt;: Кроме поиска свободных позиций, также необходимо искать значения, которые на эту позицию можно поставить:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Кроме поиска свободных позиций, также необходимо искать значения, которые на эту позицию можно поставить:&lt;/p&gt;
+
+&lt;div class=&quot;admonition note&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Для решения этого задания используйте множества &lt;code&gt;set&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;find_possible_values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Вернуть множество всех возможных значения для указанной позиции
@@ -5948,10 +5976,6 @@ Got nothing
     &lt;span class=&quot;c&quot;&gt;# PUT YOUR CODE HERE&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;: Для решения этого задания используйте множества &lt;code class=&quot;highlighter-rouge&quot;&gt;set&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Помните, что всего значений, которые мы можем поставить на указанную позицию, ровно &lt;code class=&quot;highlighter-rouge&quot;&gt;9&lt;/code&gt;, это числа &lt;code class=&quot;highlighter-rouge&quot;&gt;1,2,3,4,5,6,7,8,9&lt;/code&gt;. Но не каждое из этих чисел мы можем использовать (см. правила Судоку). В этой функции вы можете пользоваться написанными ранее функциями &lt;code class=&quot;highlighter-rouge&quot;&gt;get_row()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;get_col()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;get_block()&lt;/code&gt;.&lt;/p&gt;
 
@@ -5987,7 +6011,7 @@ Got nothing
 &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание №4&lt;/strong&gt;: Мы получили решение, но является ли оно верным? Давайте напишем функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;check_solution()&lt;/code&gt;, которая проверяет наше решение:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Мы получили решение, но является ли оно верным? Давайте напишем функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;check_solution()&lt;/code&gt;, которая проверяет наше решение:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;check_solution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Если решение solution верно, то вернуть True, в противном случае False &quot;&quot;&quot;&lt;/span&gt;
@@ -6003,6 +6027,11 @@ Got nothing
 
 &lt;p&gt;Когда вы закончите работать над этой функцией, то запустите программу следующим образом:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Вывод пазлов и их решений опущен.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;python sudoku.py
 ...
 Solution is correct
@@ -6012,13 +6041,9 @@ Solution is correct
 Solution is correct
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Примечание&lt;/strong&gt;: Вывод пазлов и их решений опущен.&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;p&gt;Если вы встретили сообщение &lt;code class=&quot;highlighter-rouge&quot;&gt;Ooops&lt;/code&gt;, то значит, что одно или все ваши решения оказались не верны. Если же вы уверены в своем решении, то проверьте корректность функции &lt;code class=&quot;highlighter-rouge&quot;&gt;check_solution()&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Задание 4&lt;/strong&gt;: Напишите функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;generate_sudoku(N)&lt;/code&gt;, которая создает новый судоку, заполненный на &lt;code class=&quot;highlighter-rouge&quot;&gt;N&lt;/code&gt; элементов:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Задание&lt;/strong&gt;: Напишите функцию &lt;code class=&quot;highlighter-rouge&quot;&gt;generate_sudoku(N)&lt;/code&gt;, которая создает новый судоку, заполненный на &lt;code class=&quot;highlighter-rouge&quot;&gt;N&lt;/code&gt; элементов:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;generate_sudoku&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Генерация судоку заполненного на N элементов

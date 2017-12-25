@@ -206,9 +206,10 @@
   <div class="post-content" itemprop="articleBody">
     <p>Эта работа посвящена взаимодействию с <a href="https://vk.com/dev/manuals">API ВКонтакте</a>.</p>
 
-<blockquote>
-  <p>Замечание: Если вы не знакомы с термином “API”, то рекомендую прочитать статью: <a href="https://medium.freecodecamp.org/what-is-an-api-in-english-please-b880a3214a82">What is an API? In English, please</a>.</p>
-</blockquote>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Если вы не знакомы с термином «API», то рекомендую прочитать статью <a href="https://medium.freecodecamp.org/what-is-an-api-in-english-please-b880a3214a82">What is an API? In English, please</a>.</p>.
+</div>
 
 <p>Чтобы начать работать с API от вас требуется зарегистрировать новое приложение. Для этого зайдите на форму создания нового Standalone приложения <a href="https://vk.com/editapp?act=create">https://vk.com/editapp?act=create</a> и следуйте инструкциям. Вашему приложению будет назначен идентификатор, который потребуется для выполнения работы.</p>
 
@@ -227,12 +228,13 @@
 
 <p>Например, чтобы получить список друзей, с указанием их пола, нужно выполнить следующий запрос:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Токен доступа ненастоящий, поэтому этот запрос работать не будет.</p>
+</div>
+
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://api.vk.com/method/friends.get?fields=sex&amp;access_token=0394a2ede332c9a13eb82e9b24631604c31df978b4e2f0fbd2c549944f9d79a5bc866455623bd560732ab&amp;v=5.53
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Внимание</strong>: Токен доступа ненастоящий, поэтому этот запрос работать не будет.</p>
-</blockquote>
 
 <p>Чтобы получить токен доступа вы можете воспользоваться написанным для вас скриптом <code class="highlighter-rouge">access_token.py</code> следующим образом:</p>
 
@@ -243,11 +245,12 @@
 
 <p>После выполнения команды откроется новая вкладка браузера, из адресной строки которого вам необходимо скопировать токен доступа.</p>
 
-<p><img src="/assets/images/04-vkapi/access_token.png" alt="" /></p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">На этом этапе вы можете повторить ранее представленный пример запроса, чтобы убедиться, что вы делаете все верно.</p>
+</div>
 
-<blockquote>
-  <p><strong>Внимание</strong>: На этом этапе вы можете повторить ранее представленный пример запроса, чтобы убедиться, что вы делаете все верно.</p>
-</blockquote>
+<p><img src="/assets/images/04-vkapi/access_token.png" alt="" /></p>
 
 <p>Далее приведено содержимое файла <code class="highlighter-rouge">access_token.py</code>:</p>
 
@@ -283,7 +286,7 @@
 
 </code></pre></div></div>
 
-<p><strong>Задание №1</strong>. Требуется написать функцию прогнозирования возраста пользователя по возрасту его друзей.</p>
+<p><strong>Задание:</strong> Требуется написать функцию прогнозирования возраста пользователя по возрасту его друзей.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_friends</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
     <span class="s">""" Returns a list of user IDs or detailed information about a user's friends """</span>
@@ -362,11 +365,12 @@
   <li>мы слишком долго ждем ответ от сервера.</li>
 </ul>
 
-<p>В таких случаях необходимо попробовать повторить запрос. При этом повторные запросы желательно посылать не через константные промежутки времени, а по алгоритму экспоненциальной задержки.</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Описание алгоритма с примерами можно найти в статье <a href="https://habrahabr.ru/post/227225/">Exponential Backoff или как «не завалить сервер»</a>. Почитать про обработку исключений при работе с библиотекой <code>requests</code> можно <a href="https://khashtamov.com/ru/python-requests/">тут</a>.</p>
+</div>
 
-<blockquote>
-  <p>Описание алгоритма с примерами можно найти в статье <a href="https://habrahabr.ru/post/227225/">Exponential Backoff или как «не завалить сервер»</a>. Почитать про обработку исключений при работе с библиотекой <code class="highlighter-rouge">requests</code> можно <a href="https://khashtamov.com/ru/python-requests/">тут</a>.</p>
-</blockquote>
+<p>В таких случаях необходимо попробовать повторить запрос. При этом повторные запросы желательно посылать не через константные промежутки времени, а по алгоритму экспоненциальной задержки.</p>
 
 <p>Напишите функцию <code class="highlighter-rouge">get()</code>, которая будет выполнять GET-запрос к указанному адресу, а при необходимости повторять запрос указанное число раз по алгоритму экспоненциальной задержки:</p>
 
@@ -400,6 +404,11 @@
 
 <p>Теперь мы можем написать функцию <code class="highlighter-rouge">age_predict</code> для “наивного” прогнозирования возраста пользователя с идентификатором <code class="highlighter-rouge">user_id</code> (под “наивным” прогнозированием подразумевается вычисление среднего арифметического или медианы):</p>
 
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Так как дата рождения пользователя может быть не указана или указаны только день и месяц, то для обработки таких ситуаций вы можете использовать конструкцию <code>try...except</code>, где <code>except</code> будет содержать только <code>pass</code>.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">age_predict</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
     <span class="s">"""
     &gt;&gt;&gt; age_predict(???)
@@ -411,13 +420,14 @@
     <span class="k">pass</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>Замечание</strong>: Так как дата рождения пользователя может быть не указана или указаны только день и месяц, то для обработки таких ситуаций вы можете использовать конструкцию <code class="highlighter-rouge">try...except</code>, где <code class="highlighter-rouge">except</code> будет содержать только <code class="highlighter-rouge">pass</code>.</p>
-</blockquote>
-
-<p><strong>Задание №2:</strong> Требуется написать функцию, которая бы выводила график частоты переписки с указанным пользователем.</p>
+<p><strong>Задание:</strong> Требуется написать функцию, которая бы выводила график частоты переписки с указанным пользователем.</p>
 
 <p>Давайте начнем с того, что получим всю или часть переписки с указанным пользователем. Для этого вам потребуется реализовать метод API <a href="https://vk.com/dev/messages.getHistory">messages.getHistory</a> по аналогии с тем, как вы реализовывали получение списка друзей пользователя:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">В реализации функции <code>messages_get_history</code> нужно учитывать, что API ВКонтакте устанавливает ограничение на число запросов в одну секунду (на сегодняшний день это три запроса). Число сообщений, которое вы можете получить за одно запрос - 200.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">messages_get_history</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s">"user_id must be positive integer"</span>
@@ -428,10 +438,6 @@
     <span class="c"># PUT YOUR CODE HERE</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Замечание</strong>: В реализации функции <code class="highlighter-rouge">messages_get_history</code> нужно учитывать, что API ВКонтакте устанавливает ограничение на число запросов в одну секунду (на сегодняшний день это три запроса). Число сообщений, которое вы можете получить за одно запрос - 200.</p>
-</blockquote>
 
 <p>Далее приведен пример использования функции <code class="highlighter-rouge">messages_get_history</code>:</p>
 
@@ -471,14 +477,15 @@
 
 <p>На данный момент вашей задачей является написать функцию <code class="highlighter-rouge">count_dates_from_messages</code>, которая возвращает два списка: список дат и список частоты каждой даты, а принимает список сообщений:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">При большом количестве сообщений вы их можете разбить по неделям или месяцам.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">count_dates_from_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">):</span>
     <span class="c">#PUT YOUR CODE HERE</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Замечание</strong>: При большом количестве сообщений вы их можете разбить по неделям или месяцам.</p>
-</blockquote>
 
 <p>Далее мы воспользуемся сервисом <a href="https://plot.ly/">Plot.ly</a>, который предоставляет API для рисования графиков. Запрос содержит информацию о точках, которые нужно отобразить на графике. Вам нужно зарегистрироваться и получить ключ доступа (<code class="highlighter-rouge">API KEY</code>). Для более простого взаимодействия с Plot.ly мы воспользуемся готовым модулем (существуют решения и для других языков):</p>
 
@@ -509,7 +516,7 @@
 
 <p><img src="/assets/images/04-vkapi/plotly.png" alt="" /></p>
 
-<p><strong>Задание №3</strong>: Требуется написать функцию <code class="highlighter-rouge">get_network()</code>,   которая для указанного списка пользователей <code class="highlighter-rouge">users_ids</code> строит граф и представляет его либо в виде матрицы смежности (<code class="highlighter-rouge">as_edgelist=False</code>), либо в виде списка ребер (<code class="highlighter-rouge">as_edgelist=True</code>). В полученном графе необходимо выделить сообщества и визуализировать результат.</p>
+<p><strong>Задание</strong>: Требуется написать функцию <code class="highlighter-rouge">get_network()</code>, которая для указанного списка пользователей <code class="highlighter-rouge">users_ids</code> строит граф и представляет его либо в виде матрицы смежности (<code class="highlighter-rouge">as_edgelist=False</code>), либо в виде списка ребер (<code class="highlighter-rouge">as_edgelist=True</code>). В полученном графе необходимо выделить сообщества и визуализировать результат.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_network</span><span class="p">(</span><span class="n">users_ids</span><span class="p">,</span> <span class="n">as_edgelist</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="s">""" Building a friend graph for an arbitrary list of users """</span>
@@ -525,9 +532,12 @@
 <span class="nv">$ </span>brew install cairo    <span class="c"># Только для MacOS X. Для других ОС см. https://www.cairographics.org/download/</span>
 </code></pre></div></div>
 
+<p>Рассмотрим пример создания и визуализации графа состоящего из 6 узлов и 10 ребер:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">igraph</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">plot</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 
+<span class="c"># Создание вершин и ребер</span>
 <span class="n">vertices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span>
 <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span>
@@ -539,9 +549,11 @@
     <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
 <span class="p">]</span>
 
+<span class="c"># Создание графа</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">vertex_attrs</span><span class="o">=</span><span class="p">{</span><span class="s">"label"</span><span class="p">:</span><span class="n">vertices</span><span class="p">},</span>
     <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
+<span class="c"># Задаем стиль отображения графа</span>
 <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
 <span class="n">visual_style</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">visual_style</span><span class="p">[</span><span class="s">"layout"</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_fruchterman_reingold</span><span class="p">(</span>
@@ -549,10 +561,13 @@
     <span class="n">area</span><span class="o">=</span><span class="n">N</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">repulserad</span><span class="o">=</span><span class="n">N</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
 
+<span class="c"># Отрисовываем граф</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">visual_style</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p><img src="/assets/images/04-vkapi/graph1.png" alt="" /></p>
+
+<p>Теперь удалим из графа петли и повторяющиеся ребра:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">g</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">loops</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </code></pre></div></div>

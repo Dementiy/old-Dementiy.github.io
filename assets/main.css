@@ -197,7 +197,7 @@ p { margin: 1em 0; text-align: justify; }
 .site-title { font-size: 18px; }
 
 /* --- Admonitions --------------------------------------------------------- */
-.note { font-size: 65%; line-height: 125%; float: left; width: 240px; padding: 0; margin-left: -270px; }
+.note { font-family: "Alegreya Sans"; font-size: 75%; line-height: 125%; float: left; width: 240px; padding: 0; margin-left: -270px; }
 
 .note code { font-size: 64%; }
 

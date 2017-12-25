@@ -204,7 +204,7 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>Эта работа посвящена созданию бота для социальной сети <a href="https://telegram.org">Telegram</a>. Для ее выполнения вам понадобится зарегистрироваться на сайте https://telegram.org (если вы ранее этого не сделали).</p>
+    <p>Эта работа посвящена созданию бота для социальной сети <a href="https://telegram.org">Telegram</a>. Для ее выполнения вам понадобится зарегистрироваться на сайте <a href="https://telegram.org">https://telegram.org</a> (если вы ранее этого не сделали).</p>
 
 <blockquote>
   <p><strong>Мотивация</strong>: 18 апреля 2016 года появилась <a href="https://telegram.org/blog/botprize">новость</a>, что выделенен призовой фонд в размере одного миллиона долларов для всех желающих поучаствовать в разработке собственного бота для сети Telegram. Гранты выдаваемые участникам начинаются от 25 тысяч долларов. Конкурс продлён до 2017 года включительно.</p>
@@ -216,13 +216,14 @@
 
 <p><img src="/assets/images/05-telegram/tele_bot.png" alt="" /></p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">У вас будет свой токен доступа, которым не следует делиться с другими.</p>
+</div>
+
 <p>Обратите внимание, что последним ответом <code class="highlighter-rouge">BotFather</code> был токен доступа (<code class="highlighter-rouge">access_token</code>), который нам понадобится в дальнейшей работе.</p>
 
-<blockquote>
-  <p><strong>Внимание</strong>: У вас будет свой токен доступа, которым не следует делиться с другими.</p>
-</blockquote>
-
-<p>На текущем этапе созданный нами бот ничего не умеет делать и не знает ни одной команды. Для “обучения” бота мы будем использовать <a href="https://core.telegram.org/bots/api">API</a>, который предоставляет телеграмм:</p>
+<p>На текущем этапе созданный нами бот ничего не умеет делать и не знает ни одной команды. Для «обучения» бота мы будем использовать <a href="https://core.telegram.org/bots/api">API</a>, который предоставляет телеграмм:</p>
 
 <blockquote>
   <p>The Bot API is an HTTP-based interface created for developers keen on building bots for Telegram</p>
@@ -277,10 +278,9 @@
 
 <p>Разберем пример с выводом расписания на понедельник. Для этого нам нужно получить код html-страницы для соответствующей группы, а затем из этой страницы выделить интересующую нас информацию.</p>
 
-<blockquote>
-  <p><strong>Замечание</strong>: Чтобы вам было проще ориентироваться в работе -  рекомендуется скачать пример любой страницы с расписанием:
-<img src="/assets/images/05-telegram/html_schedule.png" alt="" /></p>
-</blockquote>
+<p>Чтобы вам было проще ориентироваться в работе -  рекомендуется скачать пример любой страницы с расписанием:</p>
+
+<p><img src="/assets/images/05-telegram/html_schedule.png" alt="" /></p>
 
 <p>Чтобы получить исходный код страницы достаточно выполнить <code class="highlighter-rouge">GET</code> запрос. <code class="highlighter-rouge">URL</code>, к которому мы будем обращаться, имеет следующий формат:</p>
 
@@ -288,6 +288,11 @@
 </code></pre></div></div>
 
 <p>Где <code class="highlighter-rouge">WEEK</code> это неделя (четная-нечетная), если неделя не указана, то расписание включает и четную и нечетную недели; <code class="highlighter-rouge">GROUP</code> - номер группы.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Сайт Университета ИТМО не приветствует большого числа обращений. Поэтому подумайте о возможности сохранения страниц с расписанием локально или их хранение в памяти на время работы бота, чтобы при повторном обращении к той же страницы вам не пришлось делать новый запрос к серверу университета.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">config</span>
@@ -304,10 +309,6 @@
     <span class="n">web_page</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
     <span class="k">return</span> <span class="n">web_page</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Замечание</strong>: Сайт Университета ИТМО не приветствует большого числа обращений. Поэтому подумайте о возможности сохранения страниц с расписанием локально или их хранение в памяти на время работы бота, чтобы при повторном обращении к той же страницы вам не пришлось делать новый запрос к серверу университета.</p>
-</blockquote>
 
 <p>Теперь из этой страницы нам нужно извлечь время занятий, место проведения, аудиторию и название дисциплины. Для этого нам понадобится HTML-парсер. В этой работе предлогается использовать модуль <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a>.</p>
 
@@ -340,6 +341,11 @@
 
 <p>Таким образом, мы получили время, место и название дисциплины (получение номера аудитории остается для самостоятельного выполнения). Наконец добавим нашему боту возможность вывода расписания на понедельник:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Вы можете легко обобщить функции <code>get_monday</code> и <code>get_schedule</code> на любой день недели.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@bot.message_handler</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s">'monday'</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">get_monday</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
@@ -354,10 +360,6 @@
 </code></pre></div></div>
 
 <p><img src="/assets/images/05-telegram/monday.png" alt="" /></p>
-
-<blockquote>
-  <p><strong>Замечание</strong>: Вы можете легко обобщить функции <code class="highlighter-rouge">get_monday</code> и <code class="highlighter-rouge">get_schedule</code> на любой день недели.</p>
-</blockquote>
 
 <h3 id="размещаем-бота-в-сети">Размещаем бота в Сети</h3>
 <p>Последняя часть работы посвящена размещению бота на облачной платформе <a href="https://www.heroku.com">Heroku</a>.</p>

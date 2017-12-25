@@ -239,11 +239,17 @@
     <span class="k">return</span> <span class="n">grid</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p>Процесс выполнения работы такой же как и предыдущей, поэтому не забудьте активировать виртуальное окружение, создавать ветви функциональности и делать коммиты.</p>
-</blockquote>
+<p><strong>Задание</strong>: На текущий момент вашей задачей является написать функцию <code class="highlighter-rouge">group()</code>, которая принимает пазл и размер доски <code class="highlighter-rouge">n</code>, а в качестве результата работы возвращает матрицу размера <code class="highlighter-rouge">n*n</code>:</p>
 
-<p><strong>Задание №1</strong>: На текущий момент вашей задачей является написать функцию <code class="highlighter-rouge">group()</code>, которая принимает пазл и размер доски <code class="highlighter-rouge">n</code>, а в качестве результата работы возвращает матрицу размера <code class="highlighter-rouge">n*n</code>:</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Процесс выполнения работы такой же как и предыдущей, поэтому не забудьте активировать виртуальное окружение, создавать ветви функциональности и делать коммиты.</p>
+</div>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Для решения ряда задач используйте списковые включения (list comprehensions/генераторы списков). Например, чтобы создать список из четных элементов в диапазоне от 0 до 10 можно использовать такую конструкцию:<br /><code>L = [i for i in range(10) if i % 2 == 0]</code></p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="s">"""
@@ -257,10 +263,6 @@
     <span class="c"># PUT YOUR CODE HERE</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Подсказка</strong>: Для решения ряда задач используйте списковые включения (list comprehensions, в русскоязычной литературе их часто называют генераторами списков). Простой пример, чтобы создать список из четных элементов в диапазоне от 0 до 10 можно использовать такую конструкцию: <code class="highlighter-rouge">L = [i for i in range(10) if i % 2 == 0]</code></p>
-</blockquote>
 
 <p>Чтобы убедиться в том, что вы верно написали функцию <code class="highlighter-rouge">group()</code> воспользуйтесь доктестом:</p>
 
@@ -326,7 +328,7 @@ Got nothing
 <span class="o">.</span> <span class="o">.</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">8</span> <span class="o">.</span> <span class="o">|.</span> <span class="mi">7</span> <span class="mi">9</span>
 </code></pre></div></div>
 
-<p><strong>Задание №2</strong>: Так как при решении Судоку ставятся условия, что значения не могут повторяться ни в строке, ни в столбце, ни в квадрате, то следовательно нам эти значения нужно получить. Для этого от вас требуется написать три функции <code class="highlighter-rouge">get_row()</code>, <code class="highlighter-rouge">get_col()</code> и <code class="highlighter-rouge">get_block()</code>, каждая из которых принимает два аргумента: пазл (<code class="highlighter-rouge">values</code>) и позицию (<code class="highlighter-rouge">pos</code>), для которой мы пытаемся найти верное число.</p>
+<p><strong>Задание</strong>: Так как при решении Судоку ставятся условия, что значения не могут повторяться ни в строке, ни в столбце, ни в квадрате, то следовательно нам эти значения нужно получить. Для этого от вас требуется написать три функции <code class="highlighter-rouge">get_row()</code>, <code class="highlighter-rouge">get_col()</code> и <code class="highlighter-rouge">get_block()</code>, каждая из которых принимает два аргумента: пазл (<code class="highlighter-rouge">values</code>) и позицию (<code class="highlighter-rouge">pos</code>), для которой мы пытаемся найти верное число.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_row</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
     <span class="s">""" Возвращает все значения для номера строки, указанной в pos
@@ -382,7 +384,7 @@ Got nothing
 
 <p>Для функций <code class="highlighter-rouge">get_row()</code> и <code class="highlighter-rouge">get_col()</code> приведены доктесты, но они предназначены для доски размером <code class="highlighter-rouge">3*3</code>. У нас же доска <code class="highlighter-rouge">9*9</code>. Вы можете написать эти функции так, чтобы их можно было использовать для доски любого размера, а можете написать только для доски размером <code class="highlighter-rouge">9*9</code>, но тогда вы всегда будете получать ошибку в доктестах. Функция <code class="highlighter-rouge">get_block()</code> возвращает все значения из квадрата, в который попадает позиция <code class="highlighter-rouge">pos</code> (всего <code class="highlighter-rouge">9</code> квадратов размером <code class="highlighter-rouge">3*3</code>).</p>
 
-<p><strong>Задание №3.1</strong>: Давайте наконец перейдем к решению самого Судоку. В шаблоне вы найдете функцию <code class="highlighter-rouge">solve()</code>, которая принимает один аргумент - пазл, а возвращает заполненную значениями доску:</p>
+<p><strong>Задание</strong>: Давайте наконец перейдем к решению самого Судоку. В шаблоне вы найдете функцию <code class="highlighter-rouge">solve()</code>, которая принимает один аргумент - пазл, а возвращает заполненную значениями доску:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
     <span class="s">""" Решение пазла, заданного в grid
@@ -402,17 +404,17 @@ Got nothing
 
 <p>В комментарии приведен алгоритм решения Судоку. Обратите внимание, что он рекурсивный. Решение Судоку очень похоже на задачу о возможных комбинациях:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def permutations(L, result):
-    if len(L) == 0:
-        print(result)
-    else:
-        for i in range(len(L)):
-            permutations(L[0:i] + L[i+1:], result + [L[i]])
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">permutations</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="p">)):</span>
+            <span class="n">permutations</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:],</span> <span class="n">result</span> <span class="o">+</span> <span class="p">[</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
 
-&gt;&gt;&gt; permutations([1,2,3], [])
+<span class="o">&gt;&gt;&gt;</span> <span class="n">permutations</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[])</span>
 </code></pre></div></div>
 
-<p>Каждый раз мы удерживаем один элемент и перебираем все остальные. В Судоку все происходит точно также, сначала мы подставляем одно из возможных значений (пункт 2) для свободной позиции (пункт 1) и перебираем все остальные (пункт 3.2), то есть решаем более простую задачу. Например, вот простейшее “Судоку” (это не совсем Судоку конечно), которое мы можем заполнять значениями 1 или 2:</p>
+<p>Каждый раз мы удерживаем один элемент и перебираем все остальные. В Судоку все происходит точно также, сначала мы подставляем одно из возможных значений (пункт 2) для свободной позиции (пункт 1) и перебираем все остальные (пункт 3.2), то есть решаем более простую задачу. Например, вот простейшее «Судоку» (это не совсем Судоку конечно), которое мы можем заполнять значениями 1 или 2:</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.
 .1
@@ -433,7 +435,7 @@ Got nothing
   <li>Всегда ли есть возможные значения?</li>
 </ul>
 
-<p><strong>Задание №3.2</strong>: Нам нужно находить свободные позиции (то есть те, на которых стоит <code class="highlighter-rouge">.</code> - точка). Для этого требуется написать функцию <code class="highlighter-rouge">find_empty_positons()</code>, которая принимает один аргумент - пазл и возвращает первую попавшуюся свободную позицию:</p>
+<p><strong>Задание</strong>: Нам нужно находить свободные позиции (то есть те, на которых стоит <code class="highlighter-rouge">.</code> - точка). Для этого требуется написать функцию <code class="highlighter-rouge">find_empty_positons()</code>, которая принимает один аргумент - пазл и возвращает первую попавшуюся свободную позицию:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">find_empty_positions</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
     <span class="s">""" Найти первую свободную позицию в пазле
@@ -449,7 +451,12 @@ Got nothing
     <span class="k">pass</span>
 </code></pre></div></div>
 
-<p><strong>Задание №3.3</strong>: Кроме поиска свободных позиций, также необходимо искать значения, которые на эту позицию можно поставить:</p>
+<p><strong>Задание</strong>: Кроме поиска свободных позиций, также необходимо искать значения, которые на эту позицию можно поставить:</p>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Для решения этого задания используйте множества <code>set</code>.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">find_possible_values</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
     <span class="s">""" Вернуть множество всех возможных значения для указанной позиции
@@ -464,10 +471,6 @@ Got nothing
     <span class="c"># PUT YOUR CODE HERE</span>
     <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Подсказка</strong>: Для решения этого задания используйте множества <code class="highlighter-rouge">set</code>.</p>
-</blockquote>
 
 <p>Помните, что всего значений, которые мы можем поставить на указанную позицию, ровно <code class="highlighter-rouge">9</code>, это числа <code class="highlighter-rouge">1,2,3,4,5,6,7,8,9</code>. Но не каждое из этих чисел мы можем использовать (см. правила Судоку). В этой функции вы можете пользоваться написанными ранее функциями <code class="highlighter-rouge">get_row()</code>, <code class="highlighter-rouge">get_col()</code>, <code class="highlighter-rouge">get_block()</code>.</p>
 
@@ -503,7 +506,7 @@ Got nothing
 <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="o">|</span><span class="mi">2</span> <span class="mi">8</span> <span class="mi">6</span> <span class="o">|</span><span class="mi">1</span> <span class="mi">7</span> <span class="mi">9</span>
 </code></pre></div></div>
 
-<p><strong>Задание №4</strong>: Мы получили решение, но является ли оно верным? Давайте напишем функцию <code class="highlighter-rouge">check_solution()</code>, которая проверяет наше решение:</p>
+<p><strong>Задание</strong>: Мы получили решение, но является ли оно верным? Давайте напишем функцию <code class="highlighter-rouge">check_solution()</code>, которая проверяет наше решение:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">check_solution</span><span class="p">(</span><span class="n">solution</span><span class="p">):</span>
     <span class="s">""" Если решение solution верно, то вернуть True, в противном случае False """</span>
@@ -519,6 +522,11 @@ Got nothing
 
 <p>Когда вы закончите работать над этой функцией, то запустите программу следующим образом:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Вывод пазлов и их решений опущен.</p>
+</div>
+
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python sudoku.py
 ...
 Solution is correct
@@ -528,13 +536,9 @@ Solution is correct
 Solution is correct
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>Примечание</strong>: Вывод пазлов и их решений опущен.</p>
-</blockquote>
-
 <p>Если вы встретили сообщение <code class="highlighter-rouge">Ooops</code>, то значит, что одно или все ваши решения оказались не верны. Если же вы уверены в своем решении, то проверьте корректность функции <code class="highlighter-rouge">check_solution()</code>.</p>
 
-<p><strong>Задание 4</strong>: Напишите функцию <code class="highlighter-rouge">generate_sudoku(N)</code>, которая создает новый судоку, заполненный на <code class="highlighter-rouge">N</code> элементов:</p>
+<p><strong>Задание</strong>: Напишите функцию <code class="highlighter-rouge">generate_sudoku(N)</code>, которая создает новый судоку, заполненный на <code class="highlighter-rouge">N</code> элементов:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">generate_sudoku</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
     <span class="s">""" Генерация судоку заполненного на N элементов
