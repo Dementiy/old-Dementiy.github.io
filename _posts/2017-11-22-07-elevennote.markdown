@@ -325,6 +325,8 @@ root@67a3bcc5c881:/src# exit
 $ docker-compose run web python manage.py startapp notes
 ```
 
+> Убедитесь, что в папке `src` появилась папка `notes`, в которой нужно располагать все файлы, касающиеся приложения `notes`.
+
 `src/config/settings/base.py`
 ```python
 INSTALLED_APPS = [
