@@ -292,6 +292,8 @@ $ docker-compose build
 $ docker-compose up
 ```
 
+> **Замечание**: Если на данном этапе возникнет ошибка `UnicodeDecodeError`, выполните команду `rm -rf ~/.docker/config.json` для ее устранения
+
 Теперь приложение запущено и вы можете обратиться к нему по адресу [http://localhost:8000](http://localhost:8000), где должны увидеть стандартное приветствие Django:
 
 <img src="/assets/images/07-elevennote/elevennote1.png">
