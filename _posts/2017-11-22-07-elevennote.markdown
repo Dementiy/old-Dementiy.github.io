@@ -363,6 +363,8 @@ $ docker-compose run web python manage.py makemigrations notes
 $ docker-compose run web python manage.py migrate
 ```
 
+> **Замечание**. Миграцию необходимо выполнять всякий раз, когда изменяется структура базы данных (добавление/удаление полей, редактирование их свойств и т.д.)
+
 Теперь откройте панель администратора [http://localhost:8000/admin](http://localhost:8000/admin). Вы должны увидеть, что появился новый раздел `Notes`, в котором вы можете создавать, редактировать и удалять заметки.
 
 <img src="/assets/images/07-elevennote/elevennote3.png">
