@@ -237,13 +237,18 @@
 
 <p>В предыдущих работах вы уже сталкивались с модулем <code class="highlighter-rouge">requests</code>, который позволяет отправлять запросы по HTTP-протоколу.
 Вспомним, что есть два распространенных типа запросов: <code class="highlighter-rouge">GET</code> и <code class="highlighter-rouge">POST</code> (в действительности их гораздо <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.9C.D0.B5.D1.82.D0.BE.D0.B4.D1.8B">больше</a>). 
-В запросе типа <strong>GET</strong> информация, передаваемая серверу, расположена в ссылке, которую в случае использования веб-браузера вы можете видеть в адресной строке. 
+В запросе типа <code class="highlighter-rouge">GET</code> информация, передаваемая серверу, расположена в ссылке, которую в случае использования веб-браузера вы можете видеть в адресной строке. 
 Например, если вы перейдёте по адресу <a href="https://translate.google.com/?hl=ru#en/ru/python">https://translate.google.com/?hl=ru#en/ru/python</a>, то тем самым вы запросите у сервиса Google Translate перевод слова <em>python</em> с английского языка на русский (параметры запроса указываются после символа <code class="highlighter-rouge">?</code>).
-<strong>POST</strong>-запрос используется в случаях отправки каких-либо форм (авторизация на сайте), больших объемов данных, загрузки файлов на сервер. В таком случае параметры запроса не будут отображаться в адресной строке, а будут расположены в теле запроса. Подробнее о структуре http-запросов можно узнать <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.A1.D1.82.D1.80.D1.83.D0.BA.D1.82.D1.83.D1.80.D0.B0_.D0.BF.D1.80.D0.BE.D1.82.D0.BE.D0.BA.D0.BE.D0.BB.D0.B0">здесь</a></p>
+<code class="highlighter-rouge">POST</code>-запрос используется в случаях отправки каких-либо форм (авторизация на сайте), больших объемов данных, загрузки файлов на сервер. В таком случае параметры запроса не будут отображаться в адресной строке, а будут расположены в теле запроса. Подробнее о структуре http-запросов можно узнать <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.A1.D1.82.D1.80.D1.83.D0.BA.D1.82.D1.83.D1.80.D0.B0_.D0.BF.D1.80.D0.BE.D1.82.D0.BE.D0.BA.D0.BE.D0.BB.D0.B0">здесь</a></p>
 
 <p>Мы пока будем использовать запросы только типа <code class="highlighter-rouge">GET</code>.</p>
 
-<p>Давайте выполним два разных <strong>GET</strong>-запроса к новостному сайту:</p>
+<p>Давайте выполним два разных <code class="highlighter-rouge">GET</code>-запроса к новостному сайту:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Если у вас не установлен модуль <code>requests</code>, то вы можете установить его командой <code>pip install requests</code> или <code>python -m pip install requests</code>.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">requests</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://news.ycombinator.com/newest"</span><span class="p">)</span>
@@ -258,13 +263,9 @@
 <span class="mi">404</span> 
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>Замечание</strong>: если у вас не установлен модуль <code class="highlighter-rouge">requests</code>, то вы можете установить его командой <code class="highlighter-rouge">pip install requests</code> или <code class="highlighter-rouge">python -m pip install requests</code>.</p>
-</blockquote>
-
 <p>Первый запрос был выполнен успешно, о чем говорит значение <code class="highlighter-rouge">True</code> свойства <code class="highlighter-rouge">r.ok</code> и значение <code class="highlighter-rouge">200</code> свойства <code class="highlighter-rouge">r.status_code</code>. Возвращаемый код запроса (status_code) может содержать много полезной информации о доступности или расположении запрошенного ресурса, о состоянии сервера или возникших в процессе выполнения запроса ошибках. Подробнее о кодах ответов и их значениях можно узнать <a href="https://ru.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%BA%D0%BE%D0%B4%D0%BE%D0%B2_%D1%81%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D1%8F_HTTP#.D0.9E.D0.B1.D0.B7.D0.BE.D1.80.D0.BD.D1.8B.D0.B9_.D1.81.D0.BF.D0.B8.D1.81.D0.BE.D0.BA">здесь</a></p>
 
-<p>Второй запрос был выполнен к несуществующей странице, что привело к ошибке 404 - <em>Не найдено</em>.</p>
+<p>Второй запрос был выполнен к несуществующей странице, что привело к ошибке «404 - Не найдено».</p>
 
 <p>Доступ к содержимому страницы можно получить с помощью атрибута <code class="highlighter-rouge">text</code> (для примера выведены первые 100 символов):</p>
 
@@ -278,25 +279,27 @@
   <li>автора новости;</li>
   <li>ссылку на новость;</li>
   <li>количество комментариев;</li>
-  <li>количество “лайков”, которое набрала статья.</li>
+  <li>количество «лайков», которое набрала статья.</li>
 </ul>
 
-<p>Например, в следующей новости:
-<img src="/assets/images/06-hn/hn1.png" alt="" /></p>
+<p>Например, в следующей новости:</p>
+
+<p><img src="/assets/images/06-hn/hn1.png" alt="" /></p>
 
 <ul>
   <li><strong>заголовок</strong> - Show HN: Pydb – a lightweight database with Python syntax queries, using ZeroMQ;</li>
   <li><strong>автор</strong> - asrp;</li>
   <li><strong>ссылка</strong> - https://github.com;</li>
   <li><strong>количество комментариев</strong> - 11;</li>
-  <li><strong>количество “лайков”</strong> - 63.</li>
+  <li><strong>количество «лайков»</strong> - 63.</li>
 </ul>
 
-<p>Для извлечения данных с веб-страниц существует множество разных модулей. Проблема с HTML в том, что большинство браузеров ведет себя “прощающе” относительно страниц, написанных не по стандартам HTML. Впрочем, обработка даже не полностью корректного HTML-кода не так сложна, если под рукой есть подходящие инструменты. Мы будем пользоваться модулем <code class="highlighter-rouge">Beautiful Soup 4</code>.</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Если у вас не установлен модуль <code>bs4</code>, то вы можете установить его командой <code>pip install bs4</code> или <code>python -m pip install bs4</code>.</p>
+</div>
 
-<blockquote>
-  <p><strong>Замечание</strong>: если у вас не установлен модуль <code class="highlighter-rouge">bs4</code>, то вы можете установить его командой <code class="highlighter-rouge">pip install bs4</code> или <code class="highlighter-rouge">python -m pip install bs4</code>.</p>
-</blockquote>
+<p>Для извлечения данных с веб-страниц существует множество разных модулей. Проблема с HTML в том, что большинство браузеров ведет себя «прощающе» относительно страниц, написанных не по стандартам HTML. Впрочем, обработка даже не полностью корректного HTML-кода не так сложна, если под рукой есть подходящие инструменты. Мы будем пользоваться модулем <code class="highlighter-rouge">Beautiful Soup 4</code>.</p>
 
 <p>Для использования <code class="highlighter-rouge">Beautiful Soup</code> нужно передать текст веб-страницы (в виде одной строки) функции <code class="highlighter-rouge">BeautifulSoup</code>. Чтобы он не “ругался”, также следует указывать название парсера (той программы, которая осуществляет обработку HTML). С целью совместимости я использую <code class="highlighter-rouge">html.parser</code> (он входит в пакет Python и не требует дополнительной установки), но вы можете также попробовать использовать <code class="highlighter-rouge">html5lib</code>, если он у вас установлен.</p>
 
@@ -326,7 +329,7 @@
 
 <p><img src="/assets/images/06-hn/hn3.png" alt="" /></p>
 
-<p>Возникает вопрос: <em>как обратиться к внутренним таблицам?</em>. Если мы дважды обратимся к атрибуту <code class="highlighter-rouge">table</code>, то получим заголовок:</p>
+<p>Возникает вопрос: «Как обратиться к внутренним таблицам?». Если мы дважды обратимся к атрибуту <code class="highlighter-rouge">table</code>, то получим заголовок:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">page</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">table</span>
 <span class="o">&lt;</span><span class="n">table</span> <span class="n">border</span><span class="o">=</span><span class="s">"0"</span> <span class="n">cellpadding</span><span class="o">=</span><span class="s">"0"</span> <span class="n">cellspacing</span><span class="o">=</span><span class="s">"0"</span> <span class="n">style</span><span class="o">=</span><span class="s">"padding:2px"</span> <span class="n">width</span><span class="o">=</span><span class="s">"100</span><span class="si">%</span><span class="s">"</span><span class="o">&gt;&lt;</span><span class="n">tr</span><span class="o">&gt;&lt;</span><span class="n">td</span> <span class="n">style</span><span class="o">=</span><span class="s">"width:18px;p</span><span class="err">
@@ -381,10 +384,20 @@
 
 <p>ORM (англ. object-relational mapping, рус. объектно-реляционное отображение) — технология программирования, которая связывает базы данных с концепциями объектно-ориентированных языков программирования, создавая “виртуальную объектную базу данных”.</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Подробную статью по работе с SQLAlchemy можно найти <a href="https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/">тут</a></p>.
+</div>
+
 <p><code class="highlighter-rouge">SQLAlchemy</code> — библиотека на языке Python для работы с <a href="https://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%BB%D1%8F%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F\_%D0%B1%D0%B0%D0%B7%D0%B0_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85">реляционными</a> СУБД с применением технологии ORM. Использлуется для синхронизации объектов Python и записей реляционной базы данных. SQLAlchemy позволяет описывать структуры баз данных и способы взаимодействия с ними на языке Python без использования SQL.</p>
 
 <p>Каждая таблица описывается классом, который должен наследоваться от базового класса, создаваемого функцией <code class="highlighter-rouge">sqlalchemy.ext.declarative.declarative_base()</code>.
 В рассматриваемом нами примере будет только один класс <code class="highlighter-rouge">News</code> с следующими атрибутами: заголовок, автор, ссылка, количество комментариев и число лайков.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Обратите внимание на поле <code>label</code>, оно нам понадобится в разделе «Разметка данных».</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Integer</span>
@@ -408,21 +421,17 @@
 <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p>Обратите внимание на поле <code class="highlighter-rouge">label</code>, оно нам понадобится в разделе “<em>Разметка данных</em>”.</p>
-</blockquote>
-
 <p>Функция <code class="highlighter-rouge">sqlalchemy.create_engine()</code> создает новый экземпляр класса <code class="highlighter-rouge">sqlalchemy.engine.Engine</code>, который отвечает за подключение к базе данных.</p>
 
 <p>Что касается создаваемой сессии, то вот небольшая выдержка о назначении сессиий из официальной документации:</p>
 <blockquote>
-  <p>In the most general sense, the Session establishes all conversations with the database and represents a “holding zone” for all the objects which you’ve loaded or associated with it during its lifespan. It provides the entrypoint to acquire a Query object, which sends queries to the database using the Session object’s current database connection, populating result rows into objects that are then stored in the Session, inside a structure called the Identity Map - a data structure that maintains unique copies of each object, where “unique” means “only one object with a particular primary key”.</p>
+  <p>In the most general sense, the Session establishes all conversations with the database and represents a «holding zone» for all the objects which you’ve loaded or associated with it during its lifespan. It provides the entrypoint to acquire a Query object, which sends queries to the database using the Session object’s current database connection, populating result rows into objects that are then stored in the Session, inside a structure called the Identity Map - a data structure that maintains unique copies of each object, where «unique» means «only one object with a particular primary key».</p>
 
   <p>The Session begins in an essentially stateless form. Once queries are issued or other objects are persisted with it, it requests a connection resource from an Engine that is associated either with the Session itself or with the mapped Table objects being operated upon. This connection represents an ongoing transaction, which remains in effect until the Session is instructed to commit or roll back its pending state.</p>
 
   <p>All changes to objects maintained by a Session are tracked - before the database is queried again or before the current transaction is committed, it flushes all pending changes to the database. This is known as the Unit of Work pattern.</p>
 
-  <p>When using a Session, it’s important to note that the objects which are associated with it are proxy objects to the transaction being held by the Session - there are a variety of events that will cause objects to re-access the database in order to keep synchronized. It is possible to “detach” objects from a Session, and to continue using them, though this practice has its caveats. It’s intended that usually, you’d re-associate detached objects with another Session when you want to work with them again, so that they can resume their normal task of representing database state.</p>
+  <p>When using a Session, it’s important to note that the objects which are associated with it are proxy objects to the transaction being held by the Session - there are a variety of events that will cause objects to re-access the database in order to keep synchronized. It is possible to «detach» objects from a Session, and to continue using them, though this practice has its caveats. It’s intended that usually, you’d re-associate detached objects with another Session when you want to work with them again, so that they can resume their normal task of representing database state.</p>
 </blockquote>
 
 <p>Более подробно о сессиях можно прочитать <a href="http://docs.sqlalchemy.org/en/latest/orm/session_basics.html">тут</a>.</p>
@@ -449,22 +458,20 @@
 
 <p><img src="/assets/images/06-hn/hn4.png" alt="" /></p>
 
-<blockquote>
-  <p>Подробную статью по работе с SQLAlchemy можно найти <a href="https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/">тут</a>.</p>
-</blockquote>
-
 <h3 id="разметка-данных">Разметка данных</h3>
 
 <p>Как разметить имеющиеся данные? Давайте создадим простую HTML-страницу, на которой будем выводить список неразмеченных новостей, а рядом с каждой новостью будет несколько кнопок со следующими метками:</p>
-<ul>
-  <li>“<em>Интересно</em>” эта новость вам показалась интересной, и вы ее прочитали;</li>
-  <li>“<em>Не интересно</em>” - эта новость вас не интересует;</li>
-  <li>“<em>Возможно прочитаю</em>” - вы сомневаетесь - интересна вам эта новость или нет.</li>
-</ul>
 
-<blockquote>
-  <p>Меток может быть больше. Кроме того мы можем использовать численное значение для оценки нашего отношения к новости, например, от 0 до 5.</p>
-</blockquote>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Меток может быть больше. Кроме того мы можем использовать численное значение для оценки нашего отношения к новости, например, от 0 до 5.</p>
+</div>
+
+<ul>
+  <li>«Интересно» - эта новость вам показалась интересной, и вы ее прочитали;</li>
+  <li>«Не интересно» - эта новость вас не интересует;</li>
+  <li>«Возможно прочитаю» - вы сомневаетесь - интересна вам эта новость или нет.</li>
+</ul>
 
 <p>По нажатию на кнопку должно происходить добавление метки в БД к соответствующей новости и удаления новости из списка неразмеченных новостей, так как мы ее уже разметили.</p>
 
@@ -536,14 +543,14 @@
 <p>Обратите внимание на запрос к БД: 
 <code class="highlighter-rouge">s.query(News).filter(News.label == None).all()</code></p>
 <ol>
-  <li>мы обращаемся к таблице <code class="highlighter-rouge">News</code> с помощью <code class="highlighter-rouge">query(News)</code></li>
-  <li>фильтруем записи. Нам нужны только те, которые не имеют метки: <code class="highlighter-rouge">filter(News.label == None)</code></li>
-  <li>все полученные через <code class="highlighter-rouge">all()</code> записи передаем в шаблон</li>
+  <li>Мы обращаемся к таблице <code class="highlighter-rouge">News</code> с помощью <code class="highlighter-rouge">query(News)</code></li>
+  <li>Фильтруем записи. Нам нужны только те, которые не имеют метки: <code class="highlighter-rouge">filter(News.label == None)</code></li>
+  <li>Все полученные через <code class="highlighter-rouge">all()</code> записи передаем в шаблон</li>
 </ol>
 
 <p>В шаблоне мы формируем таблицу со списком неразмеченных новостей. Вы можете заметить, что в шаблоне допустимо использовать управляющие конструкции, такие как цикл <code class="highlighter-rouge">for</code> (<code class="highlighter-rouge">end</code> указывает на завершение тела цикла).</p>
 
-<p>И последнее на что стоит обратить внимание: у нас есть три ссылки “<em>Интересно</em>”, “<em>Не интересно</em>” и “<em>Возможно</em>”. Переход по каждой из которых должен обрабатываться функцией, связанной с маршрутом <code class="highlighter-rouge">add_label</code>. Также происходит передача двух параметров <code class="highlighter-rouge">label</code> (нашей метки, со значениями <code class="highlighter-rouge">good</code>, <code class="highlighter-rouge">maybe</code>, <code class="highlighter-rouge">never</code>) и идентификатора новости <code class="highlighter-rouge">id</code> (вспомним, что каждая новость имеет уникальный числовой идентификатор, который она получает при добавлении в БД).</p>
+<p>И последнее на что стоит обратить внимание: у нас есть три ссылки «Интересно», «Не интересно» и «Возможно». Переход по каждой из которых должен обрабатываться функцией, связанной с маршрутом <code class="highlighter-rouge">add_label</code>. Также происходит передача двух параметров <code class="highlighter-rouge">label</code> (нашей метки, со значениями <code class="highlighter-rouge">good</code>, <code class="highlighter-rouge">maybe</code>, <code class="highlighter-rouge">never</code>) и идентификатора новости <code class="highlighter-rouge">id</code> (вспомним, что каждая новость имеет уникальный числовой идентификатор, который она получает при добавлении в БД).</p>
 
 <p>Вашей задачей является написание функции, которая бы добавляла метку к указанной новости и затем возвращала бы нас на страницу <code class="highlighter-rouge">news</code>:</p>
 
@@ -572,10 +579,6 @@
 
 <p>Также, добавьте в конец шаблона следующую строчку: <code class="highlighter-rouge">&lt;a href="/update_news"&gt;I Wanna more HACKER NEWS!&lt;/a&gt;</code>.</p>
 
-<blockquote>
-  <p>В одной из последующих работ вы напишете web scraper, который будет автоматически собирать новые новости.</p>
-</blockquote>
-
 <h3 id="классификация-данных">Классификация данных</h3>
 
 <script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
@@ -583,13 +586,13 @@
 
 <p>В этом разделе вашей задачей является написание простого классификатора, который бы выводил неразмеченные новости в следующем порядке: сначала идут интересные для нас новости, затем те, которые мы бы возможно прочитали, и в конце  - неинтересные новости.</p>
 
-<p>Итак, у нас есть корпус, состоящий из размеченных и неразмеченных документов (новостей). Возникает два вопроса: “<em>Каким образом каждой свежей новости присвоить одну из меток (классов)?</em>” и “<em>Как оценить нашу классификацию?</em>”.</p>
+<p>Итак, у нас есть корпус, состоящий из размеченных и неразмеченных документов (новостей). Возникает два вопроса: «Каким образом каждой свежей новости присвоить одну из меток (классов)?» и «Как оценить нашу классификацию?».</p>
 
 <p>Для более качественной классификации мы будем использовать <strong>наивный байесовский классификатор</strong>. Если вы не знакомы с теоремой Байеса, то можете прочитать исчерпывающее объяснение от <a href="http://yudkowsky.net/rational/bayes">Юдковски</a> (есть перевод и на русский язык). Также, для пояснения работы наивного байесовского классификатора я буду ссылаться на статью в <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Википедии</a>.</p>
 
-<p>Итак, вопрос на который мы отвечаем: “Какова вероятность, что документ <script type="math/tex">D</script> принадлежит классу <script type="math/tex">C</script>?” или в более строгой записи: чему равно <script type="math/tex">P(D \mid C)</script>? Документом <script type="math/tex">D</script> у нас является новость, а классом <script type="math/tex">C</script> - одна из трех возможных меток: <em>“Интересно”</em>, <em>“Не интересно”</em>, <em>“Возможно”</em>.</p>
+<p>Итак, вопрос на который мы отвечаем: «Какова вероятность, что документ <script type="math/tex">D</script> принадлежит классу <script type="math/tex">C</script>?» или в более строгой записи: чему равно <script type="math/tex">P(D \mid C)</script>? Документом <script type="math/tex">D</script> у нас является новость, а классом <script type="math/tex">C</script> - одна из трех возможных меток: «Интересно», «Не интересно», «Возможно».</p>
 
-<p>Документ представляется множеством независимых слов (это лишь предположение, которого мы придерживаемся. В действительности слова не являются независимыми, например, слово “Петербург” имеет более высокую вероятность идти в паре со словом “Санкт”), где вероятность того, что <script type="math/tex">i</script>-ое слово данного документа принадлежит классу <script type="math/tex">C</script> равна <script type="math/tex">P(w_i \mid C)</script>. Таким образом, вероятность для данного документа и класса <script type="math/tex">C</script> равна:</p>
+<p>Документ представляется множеством независимых слов (это лишь предположение, которого мы придерживаемся. В действительности слова не являются независимыми, например, слово «Петербург» имеет более высокую вероятность идти в паре со словом «Санкт»), где вероятность того, что <script type="math/tex">i</script>-ое слово данного документа принадлежит классу <script type="math/tex">C</script> равна <script type="math/tex">P(w_i \mid C)</script>. Таким образом, вероятность для данного документа и класса <script type="math/tex">C</script> равна:</p>
 
 <script type="math/tex; mode=display">P(D|C) = \prod_{i} P(w_i|C)</script>
 
@@ -599,16 +602,17 @@
 
 <p>Можно заметить, что знаменатель не зависит от <script type="math/tex">C</script>, поэтому получим:</p>
 
-<script type="math/tex; mode=display">P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)</script>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.</p>
+</div>
 
-<blockquote>
-  <p>Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.</p>
-</blockquote>
+<script type="math/tex; mode=display">P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)</script>
 
 <p>Вы можете догадаться, что если появится слово, которого мы раньше не встречали, то <script type="math/tex">\prod_{i}P(w_i \mid C) = 0</script>, а следовательно и <script type="math/tex">P(C \mid D) = 0</script>.</p>
 
 <p>Одним из типичных решений является использование Lidstone smoothing (<script type="math/tex">% <![CDATA[
-\alpha < 1 %]]></script>) и Laplacian smoothing (<script type="math/tex">\alpha = 1</script>):</p>
+\alpha < 1 %]]></script>) или Laplacian smoothing (<script type="math/tex">\alpha = 1</script>):</p>
 
 <script type="math/tex; mode=display">P(w_i \mid C = c) = \frac{n_{i,c} + \alpha}{n_c + \alpha d}</script>
 
@@ -620,7 +624,7 @@
   <li><script type="math/tex">d</script> - размерность вектора признаков <script type="math/tex">W = \left \langle w_1,...,w_d \right \rangle</script>.</li>
 </ul>
 
-<p>Еще одним “техническим” трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:</p>
+<p>Еще одним «техническим» трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:</p>
 
 <script type="math/tex; mode=display">P(C|D) = \ln P(C) + \sum_i \ln P(w_i|C)</script>
 
@@ -631,7 +635,7 @@
 <h3 id="пример"><em>Пример</em></h3>
 <p>…</p>
 
-<h3 id="задание"><em>Задание</em></h3>
+<h3 id="построение-классификатора">Построение классификатора</h3>
 
 <p>Вашей задачей является написать наивный байесовский классификатор:</p>
 

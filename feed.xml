@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2017-12-25T14:47:31+03:00</updated>
+  <updated>2017-12-25T15:35:36+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -4238,13 +4238,18 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;В предыдущих работах вы уже сталкивались с модулем &lt;code class=&quot;highlighter-rouge&quot;&gt;requests&lt;/code&gt;, который позволяет отправлять запросы по HTTP-протоколу.
 Вспомним, что есть два распространенных типа запросов: &lt;code class=&quot;highlighter-rouge&quot;&gt;GET&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;POST&lt;/code&gt; (в действительности их гораздо &lt;a href=&quot;https://ru.wikipedia.org/wiki/HTTP#.D0.9C.D0.B5.D1.82.D0.BE.D0.B4.D1.8B&quot;&gt;больше&lt;/a&gt;). 
-В запросе типа &lt;strong&gt;GET&lt;/strong&gt; информация, передаваемая серверу, расположена в ссылке, которую в случае использования веб-браузера вы можете видеть в адресной строке. 
+В запросе типа &lt;code class=&quot;highlighter-rouge&quot;&gt;GET&lt;/code&gt; информация, передаваемая серверу, расположена в ссылке, которую в случае использования веб-браузера вы можете видеть в адресной строке. 
 Например, если вы перейдёте по адресу &lt;a href=&quot;https://translate.google.com/?hl=ru#en/ru/python&quot;&gt;https://translate.google.com/?hl=ru#en/ru/python&lt;/a&gt;, то тем самым вы запросите у сервиса Google Translate перевод слова &lt;em&gt;python&lt;/em&gt; с английского языка на русский (параметры запроса указываются после символа &lt;code class=&quot;highlighter-rouge&quot;&gt;?&lt;/code&gt;).
-&lt;strong&gt;POST&lt;/strong&gt;-запрос используется в случаях отправки каких-либо форм (авторизация на сайте), больших объемов данных, загрузки файлов на сервер. В таком случае параметры запроса не будут отображаться в адресной строке, а будут расположены в теле запроса. Подробнее о структуре http-запросов можно узнать &lt;a href=&quot;https://ru.wikipedia.org/wiki/HTTP#.D0.A1.D1.82.D1.80.D1.83.D0.BA.D1.82.D1.83.D1.80.D0.B0_.D0.BF.D1.80.D0.BE.D1.82.D0.BE.D0.BA.D0.BE.D0.BB.D0.B0&quot;&gt;здесь&lt;/a&gt;&lt;/p&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;POST&lt;/code&gt;-запрос используется в случаях отправки каких-либо форм (авторизация на сайте), больших объемов данных, загрузки файлов на сервер. В таком случае параметры запроса не будут отображаться в адресной строке, а будут расположены в теле запроса. Подробнее о структуре http-запросов можно узнать &lt;a href=&quot;https://ru.wikipedia.org/wiki/HTTP#.D0.A1.D1.82.D1.80.D1.83.D0.BA.D1.82.D1.83.D1.80.D0.B0_.D0.BF.D1.80.D0.BE.D1.82.D0.BE.D0.BA.D0.BE.D0.BB.D0.B0&quot;&gt;здесь&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Мы пока будем использовать запросы только типа &lt;code class=&quot;highlighter-rouge&quot;&gt;GET&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;Давайте выполним два разных &lt;strong&gt;GET&lt;/strong&gt;-запроса к новостному сайту:&lt;/p&gt;
+&lt;p&gt;Давайте выполним два разных &lt;code class=&quot;highlighter-rouge&quot;&gt;GET&lt;/code&gt;-запроса к новостному сайту:&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Если у вас не установлен модуль &lt;code&gt;requests&lt;/code&gt;, то вы можете установить его командой &lt;code&gt;pip install requests&lt;/code&gt; или &lt;code&gt;python -m pip install requests&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;requests&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requests&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;https://news.ycombinator.com/newest&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -4259,13 +4264,9 @@ unzip static-elevennote-ch16.zip
 &lt;span class=&quot;mi&quot;&gt;404&lt;/span&gt; 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: если у вас не установлен модуль &lt;code class=&quot;highlighter-rouge&quot;&gt;requests&lt;/code&gt;, то вы можете установить его командой &lt;code class=&quot;highlighter-rouge&quot;&gt;pip install requests&lt;/code&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;python -m pip install requests&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;p&gt;Первый запрос был выполнен успешно, о чем говорит значение &lt;code class=&quot;highlighter-rouge&quot;&gt;True&lt;/code&gt; свойства &lt;code class=&quot;highlighter-rouge&quot;&gt;r.ok&lt;/code&gt; и значение &lt;code class=&quot;highlighter-rouge&quot;&gt;200&lt;/code&gt; свойства &lt;code class=&quot;highlighter-rouge&quot;&gt;r.status_code&lt;/code&gt;. Возвращаемый код запроса (status_code) может содержать много полезной информации о доступности или расположении запрошенного ресурса, о состоянии сервера или возникших в процессе выполнения запроса ошибках. Подробнее о кодах ответов и их значениях можно узнать &lt;a href=&quot;https://ru.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%BA%D0%BE%D0%B4%D0%BE%D0%B2_%D1%81%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D1%8F_HTTP#.D0.9E.D0.B1.D0.B7.D0.BE.D1.80.D0.BD.D1.8B.D0.B9_.D1.81.D0.BF.D0.B8.D1.81.D0.BE.D0.BA&quot;&gt;здесь&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;Второй запрос был выполнен к несуществующей странице, что привело к ошибке 404 - &lt;em&gt;Не найдено&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Второй запрос был выполнен к несуществующей странице, что привело к ошибке «404 - Не найдено».&lt;/p&gt;
 
 &lt;p&gt;Доступ к содержимому страницы можно получить с помощью атрибута &lt;code class=&quot;highlighter-rouge&quot;&gt;text&lt;/code&gt; (для примера выведены первые 100 символов):&lt;/p&gt;
 
@@ -4279,25 +4280,27 @@ unzip static-elevennote-ch16.zip
   &lt;li&gt;автора новости;&lt;/li&gt;
   &lt;li&gt;ссылку на новость;&lt;/li&gt;
   &lt;li&gt;количество комментариев;&lt;/li&gt;
-  &lt;li&gt;количество “лайков”, которое набрала статья.&lt;/li&gt;
+  &lt;li&gt;количество «лайков», которое набрала статья.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Например, в следующей новости:
-&lt;img src=&quot;/assets/images/06-hn/hn1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Например, в следующей новости:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/06-hn/hn1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;strong&gt;заголовок&lt;/strong&gt; - Show HN: Pydb – a lightweight database with Python syntax queries, using ZeroMQ;&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;автор&lt;/strong&gt; - asrp;&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;ссылка&lt;/strong&gt; - https://github.com;&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;количество комментариев&lt;/strong&gt; - 11;&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;количество “лайков”&lt;/strong&gt; - 63.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;количество «лайков»&lt;/strong&gt; - 63.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Для извлечения данных с веб-страниц существует множество разных модулей. Проблема с HTML в том, что большинство браузеров ведет себя “прощающе” относительно страниц, написанных не по стандартам HTML. Впрочем, обработка даже не полностью корректного HTML-кода не так сложна, если под рукой есть подходящие инструменты. Мы будем пользоваться модулем &lt;code class=&quot;highlighter-rouge&quot;&gt;Beautiful Soup 4&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Если у вас не установлен модуль &lt;code&gt;bs4&lt;/code&gt;, то вы можете установить его командой &lt;code&gt;pip install bs4&lt;/code&gt; или &lt;code&gt;python -m pip install bs4&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: если у вас не установлен модуль &lt;code class=&quot;highlighter-rouge&quot;&gt;bs4&lt;/code&gt;, то вы можете установить его командой &lt;code class=&quot;highlighter-rouge&quot;&gt;pip install bs4&lt;/code&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;python -m pip install bs4&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;Для извлечения данных с веб-страниц существует множество разных модулей. Проблема с HTML в том, что большинство браузеров ведет себя «прощающе» относительно страниц, написанных не по стандартам HTML. Впрочем, обработка даже не полностью корректного HTML-кода не так сложна, если под рукой есть подходящие инструменты. Мы будем пользоваться модулем &lt;code class=&quot;highlighter-rouge&quot;&gt;Beautiful Soup 4&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Для использования &lt;code class=&quot;highlighter-rouge&quot;&gt;Beautiful Soup&lt;/code&gt; нужно передать текст веб-страницы (в виде одной строки) функции &lt;code class=&quot;highlighter-rouge&quot;&gt;BeautifulSoup&lt;/code&gt;. Чтобы он не “ругался”, также следует указывать название парсера (той программы, которая осуществляет обработку HTML). С целью совместимости я использую &lt;code class=&quot;highlighter-rouge&quot;&gt;html.parser&lt;/code&gt; (он входит в пакет Python и не требует дополнительной установки), но вы можете также попробовать использовать &lt;code class=&quot;highlighter-rouge&quot;&gt;html5lib&lt;/code&gt;, если он у вас установлен.&lt;/p&gt;
 
@@ -4327,7 +4330,7 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/06-hn/hn3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Возникает вопрос: &lt;em&gt;как обратиться к внутренним таблицам?&lt;/em&gt;. Если мы дважды обратимся к атрибуту &lt;code class=&quot;highlighter-rouge&quot;&gt;table&lt;/code&gt;, то получим заголовок:&lt;/p&gt;
+&lt;p&gt;Возникает вопрос: «Как обратиться к внутренним таблицам?». Если мы дважды обратимся к атрибуту &lt;code class=&quot;highlighter-rouge&quot;&gt;table&lt;/code&gt;, то получим заголовок:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;page&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;border&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;0&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cellpadding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;0&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cellspacing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;0&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;padding:2px&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;100&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;td&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;width:18px;p&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;
@@ -4382,10 +4385,20 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;ORM (англ. object-relational mapping, рус. объектно-реляционное отображение) — технология программирования, которая связывает базы данных с концепциями объектно-ориентированных языков программирования, создавая “виртуальную объектную базу данных”.&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Подробную статью по работе с SQLAlchemy можно найти &lt;a href=&quot;https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/&quot;&gt;тут&lt;/a&gt;&lt;/p&gt;.
+&lt;/div&gt;
+
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;SQLAlchemy&lt;/code&gt; — библиотека на языке Python для работы с &lt;a href=&quot;https://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%BB%D1%8F%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F\_%D0%B1%D0%B0%D0%B7%D0%B0_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85&quot;&gt;реляционными&lt;/a&gt; СУБД с применением технологии ORM. Использлуется для синхронизации объектов Python и записей реляционной базы данных. SQLAlchemy позволяет описывать структуры баз данных и способы взаимодействия с ними на языке Python без использования SQL.&lt;/p&gt;
 
 &lt;p&gt;Каждая таблица описывается классом, который должен наследоваться от базового класса, создаваемого функцией &lt;code class=&quot;highlighter-rouge&quot;&gt;sqlalchemy.ext.declarative.declarative_base()&lt;/code&gt;.
 В рассматриваемом нами примере будет только один класс &lt;code class=&quot;highlighter-rouge&quot;&gt;News&lt;/code&gt; с следующими атрибутами: заголовок, автор, ссылка, количество комментариев и число лайков.&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Обратите внимание на поле &lt;code&gt;label&lt;/code&gt;, оно нам понадобится в разделе «Разметка данных».&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sqlalchemy.ext.declarative&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;declarative_base&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sqlalchemy&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Column&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;
@@ -4409,21 +4422,17 @@ unzip static-elevennote-ch16.zip
 &lt;span class=&quot;n&quot;&gt;Base&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;engine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Обратите внимание на поле &lt;code class=&quot;highlighter-rouge&quot;&gt;label&lt;/code&gt;, оно нам понадобится в разделе “&lt;em&gt;Разметка данных&lt;/em&gt;”.&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;p&gt;Функция &lt;code class=&quot;highlighter-rouge&quot;&gt;sqlalchemy.create_engine()&lt;/code&gt; создает новый экземпляр класса &lt;code class=&quot;highlighter-rouge&quot;&gt;sqlalchemy.engine.Engine&lt;/code&gt;, который отвечает за подключение к базе данных.&lt;/p&gt;
 
 &lt;p&gt;Что касается создаваемой сессии, то вот небольшая выдержка о назначении сессиий из официальной документации:&lt;/p&gt;
 &lt;blockquote&gt;
-  &lt;p&gt;In the most general sense, the Session establishes all conversations with the database and represents a “holding zone” for all the objects which you’ve loaded or associated with it during its lifespan. It provides the entrypoint to acquire a Query object, which sends queries to the database using the Session object’s current database connection, populating result rows into objects that are then stored in the Session, inside a structure called the Identity Map - a data structure that maintains unique copies of each object, where “unique” means “only one object with a particular primary key”.&lt;/p&gt;
+  &lt;p&gt;In the most general sense, the Session establishes all conversations with the database and represents a «holding zone» for all the objects which you’ve loaded or associated with it during its lifespan. It provides the entrypoint to acquire a Query object, which sends queries to the database using the Session object’s current database connection, populating result rows into objects that are then stored in the Session, inside a structure called the Identity Map - a data structure that maintains unique copies of each object, where «unique» means «only one object with a particular primary key».&lt;/p&gt;
 
   &lt;p&gt;The Session begins in an essentially stateless form. Once queries are issued or other objects are persisted with it, it requests a connection resource from an Engine that is associated either with the Session itself or with the mapped Table objects being operated upon. This connection represents an ongoing transaction, which remains in effect until the Session is instructed to commit or roll back its pending state.&lt;/p&gt;
 
   &lt;p&gt;All changes to objects maintained by a Session are tracked - before the database is queried again or before the current transaction is committed, it flushes all pending changes to the database. This is known as the Unit of Work pattern.&lt;/p&gt;
 
-  &lt;p&gt;When using a Session, it’s important to note that the objects which are associated with it are proxy objects to the transaction being held by the Session - there are a variety of events that will cause objects to re-access the database in order to keep synchronized. It is possible to “detach” objects from a Session, and to continue using them, though this practice has its caveats. It’s intended that usually, you’d re-associate detached objects with another Session when you want to work with them again, so that they can resume their normal task of representing database state.&lt;/p&gt;
+  &lt;p&gt;When using a Session, it’s important to note that the objects which are associated with it are proxy objects to the transaction being held by the Session - there are a variety of events that will cause objects to re-access the database in order to keep synchronized. It is possible to «detach» objects from a Session, and to continue using them, though this practice has its caveats. It’s intended that usually, you’d re-associate detached objects with another Session when you want to work with them again, so that they can resume their normal task of representing database state.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Более подробно о сессиях можно прочитать &lt;a href=&quot;http://docs.sqlalchemy.org/en/latest/orm/session_basics.html&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
@@ -4450,22 +4459,20 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/06-hn/hn4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Подробную статью по работе с SQLAlchemy можно найти &lt;a href=&quot;https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;h3 id=&quot;разметка-данных&quot;&gt;Разметка данных&lt;/h3&gt;
 
 &lt;p&gt;Как разметить имеющиеся данные? Давайте создадим простую HTML-страницу, на которой будем выводить список неразмеченных новостей, а рядом с каждой новостью будет несколько кнопок со следующими метками:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;“&lt;em&gt;Интересно&lt;/em&gt;” эта новость вам показалась интересной, и вы ее прочитали;&lt;/li&gt;
-  &lt;li&gt;“&lt;em&gt;Не интересно&lt;/em&gt;” - эта новость вас не интересует;&lt;/li&gt;
-  &lt;li&gt;“&lt;em&gt;Возможно прочитаю&lt;/em&gt;” - вы сомневаетесь - интересна вам эта новость или нет.&lt;/li&gt;
-&lt;/ul&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Меток может быть больше. Кроме того мы можем использовать численное значение для оценки нашего отношения к новости, например, от 0 до 5.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Меток может быть больше. Кроме того мы можем использовать численное значение для оценки нашего отношения к новости, например, от 0 до 5.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;«Интересно» - эта новость вам показалась интересной, и вы ее прочитали;&lt;/li&gt;
+  &lt;li&gt;«Не интересно» - эта новость вас не интересует;&lt;/li&gt;
+  &lt;li&gt;«Возможно прочитаю» - вы сомневаетесь - интересна вам эта новость или нет.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;По нажатию на кнопку должно происходить добавление метки в БД к соответствующей новости и удаления новости из списка неразмеченных новостей, так как мы ее уже разметили.&lt;/p&gt;
 
@@ -4537,14 +4544,14 @@ unzip static-elevennote-ch16.zip
 &lt;p&gt;Обратите внимание на запрос к БД: 
 &lt;code class=&quot;highlighter-rouge&quot;&gt;s.query(News).filter(News.label == None).all()&lt;/code&gt;&lt;/p&gt;
 &lt;ol&gt;
-  &lt;li&gt;мы обращаемся к таблице &lt;code class=&quot;highlighter-rouge&quot;&gt;News&lt;/code&gt; с помощью &lt;code class=&quot;highlighter-rouge&quot;&gt;query(News)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;фильтруем записи. Нам нужны только те, которые не имеют метки: &lt;code class=&quot;highlighter-rouge&quot;&gt;filter(News.label == None)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;все полученные через &lt;code class=&quot;highlighter-rouge&quot;&gt;all()&lt;/code&gt; записи передаем в шаблон&lt;/li&gt;
+  &lt;li&gt;Мы обращаемся к таблице &lt;code class=&quot;highlighter-rouge&quot;&gt;News&lt;/code&gt; с помощью &lt;code class=&quot;highlighter-rouge&quot;&gt;query(News)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Фильтруем записи. Нам нужны только те, которые не имеют метки: &lt;code class=&quot;highlighter-rouge&quot;&gt;filter(News.label == None)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Все полученные через &lt;code class=&quot;highlighter-rouge&quot;&gt;all()&lt;/code&gt; записи передаем в шаблон&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;В шаблоне мы формируем таблицу со списком неразмеченных новостей. Вы можете заметить, что в шаблоне допустимо использовать управляющие конструкции, такие как цикл &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;end&lt;/code&gt; указывает на завершение тела цикла).&lt;/p&gt;
 
-&lt;p&gt;И последнее на что стоит обратить внимание: у нас есть три ссылки “&lt;em&gt;Интересно&lt;/em&gt;”, “&lt;em&gt;Не интересно&lt;/em&gt;” и “&lt;em&gt;Возможно&lt;/em&gt;”. Переход по каждой из которых должен обрабатываться функцией, связанной с маршрутом &lt;code class=&quot;highlighter-rouge&quot;&gt;add_label&lt;/code&gt;. Также происходит передача двух параметров &lt;code class=&quot;highlighter-rouge&quot;&gt;label&lt;/code&gt; (нашей метки, со значениями &lt;code class=&quot;highlighter-rouge&quot;&gt;good&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;maybe&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;never&lt;/code&gt;) и идентификатора новости &lt;code class=&quot;highlighter-rouge&quot;&gt;id&lt;/code&gt; (вспомним, что каждая новость имеет уникальный числовой идентификатор, который она получает при добавлении в БД).&lt;/p&gt;
+&lt;p&gt;И последнее на что стоит обратить внимание: у нас есть три ссылки «Интересно», «Не интересно» и «Возможно». Переход по каждой из которых должен обрабатываться функцией, связанной с маршрутом &lt;code class=&quot;highlighter-rouge&quot;&gt;add_label&lt;/code&gt;. Также происходит передача двух параметров &lt;code class=&quot;highlighter-rouge&quot;&gt;label&lt;/code&gt; (нашей метки, со значениями &lt;code class=&quot;highlighter-rouge&quot;&gt;good&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;maybe&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;never&lt;/code&gt;) и идентификатора новости &lt;code class=&quot;highlighter-rouge&quot;&gt;id&lt;/code&gt; (вспомним, что каждая новость имеет уникальный числовой идентификатор, который она получает при добавлении в БД).&lt;/p&gt;
 
 &lt;p&gt;Вашей задачей является написание функции, которая бы добавляла метку к указанной новости и затем возвращала бы нас на страницу &lt;code class=&quot;highlighter-rouge&quot;&gt;news&lt;/code&gt;:&lt;/p&gt;
 
@@ -4573,10 +4580,6 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;Также, добавьте в конец шаблона следующую строчку: &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;a href=&quot;/update_news&quot;&amp;gt;I Wanna more HACKER NEWS!&amp;lt;/a&amp;gt;&lt;/code&gt;.&lt;/p&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;В одной из последующих работ вы напишете web scraper, который будет автоматически собирать новые новости.&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;h3 id=&quot;классификация-данных&quot;&gt;Классификация данных&lt;/h3&gt;
 
 &lt;script type=&quot;text/javascript&quot; async=&quot;&quot; src=&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML&quot;&gt;
@@ -4584,13 +4587,13 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;В этом разделе вашей задачей является написание простого классификатора, который бы выводил неразмеченные новости в следующем порядке: сначала идут интересные для нас новости, затем те, которые мы бы возможно прочитали, и в конце  - неинтересные новости.&lt;/p&gt;
 
-&lt;p&gt;Итак, у нас есть корпус, состоящий из размеченных и неразмеченных документов (новостей). Возникает два вопроса: “&lt;em&gt;Каким образом каждой свежей новости присвоить одну из меток (классов)?&lt;/em&gt;” и “&lt;em&gt;Как оценить нашу классификацию?&lt;/em&gt;”.&lt;/p&gt;
+&lt;p&gt;Итак, у нас есть корпус, состоящий из размеченных и неразмеченных документов (новостей). Возникает два вопроса: «Каким образом каждой свежей новости присвоить одну из меток (классов)?» и «Как оценить нашу классификацию?».&lt;/p&gt;
 
 &lt;p&gt;Для более качественной классификации мы будем использовать &lt;strong&gt;наивный байесовский классификатор&lt;/strong&gt;. Если вы не знакомы с теоремой Байеса, то можете прочитать исчерпывающее объяснение от &lt;a href=&quot;http://yudkowsky.net/rational/bayes&quot;&gt;Юдковски&lt;/a&gt; (есть перевод и на русский язык). Также, для пояснения работы наивного байесовского классификатора я буду ссылаться на статью в &lt;a href=&quot;https://en.wikipedia.org/wiki/Naive_Bayes_classifier&quot;&gt;Википедии&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Итак, вопрос на который мы отвечаем: “Какова вероятность, что документ &lt;script type=&quot;math/tex&quot;&gt;D&lt;/script&gt; принадлежит классу &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt;?” или в более строгой записи: чему равно &lt;script type=&quot;math/tex&quot;&gt;P(D \mid C)&lt;/script&gt;? Документом &lt;script type=&quot;math/tex&quot;&gt;D&lt;/script&gt; у нас является новость, а классом &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; - одна из трех возможных меток: &lt;em&gt;“Интересно”&lt;/em&gt;, &lt;em&gt;“Не интересно”&lt;/em&gt;, &lt;em&gt;“Возможно”&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Итак, вопрос на который мы отвечаем: «Какова вероятность, что документ &lt;script type=&quot;math/tex&quot;&gt;D&lt;/script&gt; принадлежит классу &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt;?» или в более строгой записи: чему равно &lt;script type=&quot;math/tex&quot;&gt;P(D \mid C)&lt;/script&gt;? Документом &lt;script type=&quot;math/tex&quot;&gt;D&lt;/script&gt; у нас является новость, а классом &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; - одна из трех возможных меток: «Интересно», «Не интересно», «Возможно».&lt;/p&gt;
 
-&lt;p&gt;Документ представляется множеством независимых слов (это лишь предположение, которого мы придерживаемся. В действительности слова не являются независимыми, например, слово “Петербург” имеет более высокую вероятность идти в паре со словом “Санкт”), где вероятность того, что &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;-ое слово данного документа принадлежит классу &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; равна &lt;script type=&quot;math/tex&quot;&gt;P(w_i \mid C)&lt;/script&gt;. Таким образом, вероятность для данного документа и класса &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; равна:&lt;/p&gt;
+&lt;p&gt;Документ представляется множеством независимых слов (это лишь предположение, которого мы придерживаемся. В действительности слова не являются независимыми, например, слово «Петербург» имеет более высокую вероятность идти в паре со словом «Санкт»), где вероятность того, что &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;-ое слово данного документа принадлежит классу &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; равна &lt;script type=&quot;math/tex&quot;&gt;P(w_i \mid C)&lt;/script&gt;. Таким образом, вероятность для данного документа и класса &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; равна:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;P(D|C) = \prod_{i} P(w_i|C)&lt;/script&gt;
 
@@ -4600,16 +4603,17 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;Можно заметить, что знаменатель не зависит от &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt;, поэтому получим:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)&lt;/script&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)&lt;/script&gt;
 
 &lt;p&gt;Вы можете догадаться, что если появится слово, которого мы раньше не встречали, то &lt;script type=&quot;math/tex&quot;&gt;\prod_{i}P(w_i \mid C) = 0&lt;/script&gt;, а следовательно и &lt;script type=&quot;math/tex&quot;&gt;P(C \mid D) = 0&lt;/script&gt;.&lt;/p&gt;
 
 &lt;p&gt;Одним из типичных решений является использование Lidstone smoothing (&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
-\alpha &lt; 1 %]]&gt;&lt;/script&gt;) и Laplacian smoothing (&lt;script type=&quot;math/tex&quot;&gt;\alpha = 1&lt;/script&gt;):&lt;/p&gt;
+\alpha &lt; 1 %]]&gt;&lt;/script&gt;) или Laplacian smoothing (&lt;script type=&quot;math/tex&quot;&gt;\alpha = 1&lt;/script&gt;):&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;P(w_i \mid C = c) = \frac{n_{i,c} + \alpha}{n_c + \alpha d}&lt;/script&gt;
 
@@ -4621,7 +4625,7 @@ unzip static-elevennote-ch16.zip
   &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;d&lt;/script&gt; - размерность вектора признаков &lt;script type=&quot;math/tex&quot;&gt;W = \left \langle w_1,...,w_d \right \rangle&lt;/script&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Еще одним “техническим” трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:&lt;/p&gt;
+&lt;p&gt;Еще одним «техническим» трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;P(C|D) = \ln P(C) + \sum_i \ln P(w_i|C)&lt;/script&gt;
 
@@ -4632,7 +4636,7 @@ unzip static-elevennote-ch16.zip
 &lt;h3 id=&quot;пример&quot;&gt;&lt;em&gt;Пример&lt;/em&gt;&lt;/h3&gt;
 &lt;p&gt;…&lt;/p&gt;
 
-&lt;h3 id=&quot;задание&quot;&gt;&lt;em&gt;Задание&lt;/em&gt;&lt;/h3&gt;
+&lt;h3 id=&quot;построение-классификатора&quot;&gt;Построение классификатора&lt;/h3&gt;
 
 &lt;p&gt;Вашей задачей является написать наивный байесовский классификатор:&lt;/p&gt;
 
