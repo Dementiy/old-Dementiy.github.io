@@ -395,7 +395,12 @@ urlpatterns = [
 ]
 ```
 
+Логи попыток входа:
 <img src="/assets/images/07-elevennote/elevennote4.png">
+
+---
+
+Внесём некоторые правки в имеющиеся модели.
 
 `notes/admin.py`
 ```python
@@ -414,6 +419,8 @@ def was_published_recently(self):
 ```
 
 <img src="/assets/images/07-elevennote/elevennote5.png">
+
+Хорошая практика - тестировать создаваемые модели. Напишем несколько тестов.
 
 ```bash
 $ mkdir notes/tests
