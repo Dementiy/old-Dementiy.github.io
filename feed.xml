@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2017-12-25T15:35:36+03:00</updated>
+  <updated>2017-12-25T20:03:03+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -4387,7 +4387,7 @@ unzip static-elevennote-ch16.zip
 
 &lt;div class=&quot;admonition legend&quot;&gt;
   &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
-  &lt;p class=&quot;last&quot;&gt;Подробную статью по работе с SQLAlchemy можно найти &lt;a href=&quot;https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/&quot;&gt;тут&lt;/a&gt;&lt;/p&gt;.
+  &lt;p class=&quot;last&quot;&gt;Подробную статью по работе с SQLAlchemy можно найти &lt;a href=&quot;https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;SQLAlchemy&lt;/code&gt; — библиотека на языке Python для работы с &lt;a href=&quot;https://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%BB%D1%8F%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F\_%D0%B1%D0%B0%D0%B7%D0%B0_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85&quot;&gt;реляционными&lt;/a&gt; СУБД с применением технологии ORM. Использлуется для синхронизации объектов Python и записей реляционной базы данных. SQLAlchemy позволяет описывать структуры баз данных и способы взаимодействия с ними на языке Python без использования SQL.&lt;/p&gt;
@@ -4538,8 +4538,9 @@ unzip static-elevennote-ch16.zip
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/table&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Пример таблицы:
-&lt;img src=&quot;/assets/images/06-hn/hn7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Пример таблицы:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/06-hn/hn7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Обратите внимание на запрос к БД: 
 &lt;code class=&quot;highlighter-rouge&quot;&gt;s.query(News).filter(News.label == None).all()&lt;/code&gt;&lt;/p&gt;
@@ -4693,10 +4694,6 @@ unzip static-elevennote-ch16.zip
 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'go until jurong point crazy available only in bugis n great world la e buffet cine there got amore wat'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'ok lar joking wif u oni'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'free entry in 2 a wkly comp to win fa cup final tkts 21st may 2005 text fa to 87121 to receive entry questionstd txt ratetcs apply 08452810075over18s'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;em&gt;TODO&lt;/em&gt;: &lt;code class=&quot;highlighter-rouge&quot;&gt;nltk&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;p&gt;Разобьем набор данных на обучабщую и тестовую выборки в соотношении 70%/30%. Обучающая выборка используется для построения модели (обучения классификатора), а тестовая выборка для оценки работы классификатора на новых данных (притворимся, что 30% данных мы раньше не видели):&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3900&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3900&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3900&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3900&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
@@ -4726,9 +4723,16 @@ unzip static-elevennote-ch16.zip
 &lt;span class=&quot;c&quot;&gt;# 0.982057416268&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Мы получили в точности тоже значение, что говорит нам о правильности работы нашего классификатора.&lt;/p&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Для построения хорошей модели может быть не достаточно удалить символы пунктуации и привести весь текст к нижнему регистру. Попробуйте провести лематизацию или стемминг, исопльзовать n-граммы, учитывать домен и автора статьи. О работе с текстом можно почитать &lt;a href=&quot;https://github.com/mephistopheies/mlworkshop39_042017/blob/master/2_nlp/Text_preprocessing.ipynb&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;p&gt;Теперь постройте модель на собранных вами данных с новостного сайта HackerNews и добавьте обработчик запроса для вывода ранжированной таблицы новостей:&lt;/p&gt;
+&lt;p&gt;Мы получили в точности тоже значение, что говорит нам о правильности работы нашего классификатора. Ваша задача теперь построить и оценить модель на собранных и размеченных ранее данных с новостного сайта HackerNews.&lt;/p&gt;
+
+&lt;h3 id=&quot;вывод-ранжированного-списка-новостей&quot;&gt;Вывод ранжированного списка новостей&lt;/h3&gt;
+
+&lt;p&gt;Добавьте обработчик запроса для вывода ранжированной таблицы новостей:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;@route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'/recommendations'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;recommendations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
