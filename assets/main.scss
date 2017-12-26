@@ -96,12 +96,13 @@ p {
 
 /* --- Admonitions --------------------------------------------------------- */
 .note {
-    font-size: 65%;
+    font-family: "Alegreya Sans";
+    font-size: 75%;
     line-height: 125%;
     float: left;
-    width: 290px; // 240px;
+    width: 240px; // 240px;
     padding: 0;
-    margin-left: -320px; // -270px;
+    margin-left: -270px; // -270px;
 }
 
 .note code {
@@ -127,8 +128,8 @@ p {
     line-height: 125%;
     padding: 0;
     float: right;
-    width: 290px; // 240px;
-    margin-right: -320px; // 270px;
+    width: 240px; // 240px;
+    margin-right: -270px; // 270px;
 }
 .legend p {
     text-align: left;

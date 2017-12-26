@@ -42,6 +42,7 @@ pytz==2017.2
 (elevennote-env) $ django-admin startproject config .
 (elevennote-env) $ ls
 config manage.py
+(elevennote-env) $ cd ..
 ```
 
 В результате вы должны получить следующую структуру проекта:
@@ -168,7 +169,7 @@ DB_PORT=5432
 
 > Если сгенерированный `SECRET_KEY` содержит символ `%`, и при этом на этапе запуска приложения возникает ошибка парсинга - продублируйте `%` везде в ключе, где этот символ встречается.
 
-В файле `manage.py` замените имеющуюся строчку с конфигурированием на строчку ниже.
+В файле `manage.py` необходимо заменить имеющийся путь к конфигурации проекта на следующий:
 ```python
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 ```

@@ -33,6 +33,11 @@ categories: python golang beginner практики
 
 Далее представлен листинг, который позволяет создать игровое поле:
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Подробное описание всех используемых функций из <code>pygame</code> читайте в официальной <a href="http://www.pygame.org/docs/ref/pygame.html">документации</a>.</p>
+</div>
+
 ```python
 import pygame
 from pygame.locals import *
@@ -88,10 +93,7 @@ if __name__ == '__main__':
     game.run()
 ```
 
-> Подробное описание всех используемых функций из `pygame` читайте в официальной [документации](http://www.pygame.org/docs/ref/pygame.html)
-
-Каждая клетка может находиться в двух состояниях: "*живая*" или "*мертвая*". Нам нужно создать список (матрицу) клеток размером `cell_height` $$\times$$ `cell_width`, которые в дальнейшем мы будем отображать на нашем поле, окрашивая их в зеленый и белый цвета, для "живых" и "мертвых" клеток соответственно.
-
+Каждая клетка может находиться в двух состояниях: «живая» или «мертвая». Нам нужно создать список (матрицу) клеток размером `cell_height` $$\times$$ `cell_width`, которые в дальнейшем мы будем отображать на нашем поле, окрашивая их в зеленый и белый цвета, для «живых» и «мертвых» клеток соответственно.
 
 ```python
 def cell_list(self, randomize=False):
@@ -127,6 +129,11 @@ def cell_list(self, randomize=False):
 * `color` - цвет, которым следует закрасить прямоугольник (`pygame.Color('white')` или `pygame.Color('green')`);
 * `Rect` - координаты прямоугольника в формате `(x, y, длина стороны a, длина стороны b)`.
 
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Добавьте вызовы метода <code>draw_cell_list()</code> в метод <code>run()</code> перед обновлением поля <code>pygame.display.flip()</code>.</p>
+</div>
+
 ```python
 def draw_cell_list(self, rects):
     """
@@ -135,8 +142,6 @@ def draw_cell_list(self, rects):
     """
     pass
 ```
-
-> Добавьте вызовы метода `draw_cell_list()` в метод `run()` перед обновлением поля `pygame.display.flip()`.
 
 ![](/assets/images/03-life/life_grid_colored.png)
 
@@ -156,6 +161,11 @@ def get_neighbours(self, cell):
 
 Теперь нужно написать функцию для обновления состояния всех клеток:
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Важно помнить, что обновление всего поля должно происходить за один раз, если состояние клеток менять последовательно, то это повлияет на результат игры.</p>
+</div>
+
 ```python
 def update_cell_list(self, cell_list):
     """
@@ -163,8 +173,6 @@ def update_cell_list(self, cell_list):
     """
     pass
 ```
-
-> Важно помнить, что обновление всего поля должно происходить за один раз, если состояние клеток менять последовательно, то это повлияет на результат игры.
 
 Теперь у вас должна быть полностью рабочая игра.
 
