@@ -173,7 +173,7 @@ DB_PORT=5432
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 ```
 
-Создадим docker-окружение для разработки и запуска нашего проекта. 
+Создадим docker-окружение для разработки и запуска нашего проекта.
 
 > Для знакомства с докером можно почитать статью [What is docker and how to use it with python](http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/), а также занимательную статью в [блоге](http://grishaev.me/docker) Ивана Гришаева.
 
@@ -292,7 +292,7 @@ $ docker-compose build
 $ docker-compose up
 ```
 
-> **Замечание**: Если на данном этапе возникнет ошибка `UnicodeDecodeError`, выполните команду `rm -rf ~/.docker/config.json` для ее устранения
+> **Замечание**: Если на данном этапе возникнет ошибка `UnicodeDecodeError`, выполните команду ```rm -rf ~/.docker/config.json``` для ее устранения
 
 Теперь приложение запущено и вы можете обратиться к нему по адресу [http://localhost:8000](http://localhost:8000), где должны увидеть стандартное приветствие Django:
 
@@ -311,10 +311,10 @@ $ docker-compose up
 ```sh
 $ docker exec -it dg01 bash
 $ root@67a3bcc5c881$ python manage.py createsuperuser
-Username (leave blank to use 'root'): 
-Email address: 
-Password: 
-Password (again): 
+Username (leave blank to use 'root'):
+Email address:
+Password:
+Password (again):
 Superuser created successfully.
 root@67a3bcc5c881:/src# exit
 ```
@@ -466,8 +466,14 @@ FAILED (failures=1)
 Destroying test database for alias 'default'...
 ```
 
+Корректируем файл моделей.
+
 `notes/models.py`
 ```python
+# ...
+from datetime import timedelta
+from django.utils import timezone
+
 def was_published_recently(self):
     now = timezone.now()
     return now - timedelta(days=1) <= self.pub_date <= now
@@ -485,7 +491,7 @@ $ touch notes/urls.py
 `notes/urls.py`
 ```python
 from django.conf.urls import url
- 
+
 from . import views
 
 urlpatterns = [
@@ -575,7 +581,7 @@ urlpatterns = [
 
     # Accounts app
     url(r'^accounts/', include('accounts.urls', namespace="accounts")),
- 
+
     # Notes app
     url(r'^notes/', include('note.urls', namespace="notes")),
 ]
@@ -673,15 +679,15 @@ class RegisterView(FormView):
     template_name = 'registration/register.html'
     form_class = UserCreationForm
     success_url='/'
-    
+
     def form_valid(self, form):
         #save the new user first
         form.save()
-        
+
         #get the username and password
         username = self.request.POST['username']
         password = self.request.POST['password1']
-        
+
         #authenticate user then login
         user = authenticate(username=username, password=password)
         login(self.request, user)
@@ -1020,7 +1026,7 @@ class NoteMixin(object):
        context.update({
           'notes': Note.objects.filter(owner=self.request.user).order_by('-pub_date'),
        })
-       
+
        return context
 ```
 
@@ -1035,7 +1041,7 @@ class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
     ...
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        
+
         if self.object.owner != self.request.user:
             raise PermissionDenied
 
@@ -1043,7 +1049,7 @@ class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        
+
         if self.object.owner != self.request.user:
             raise PermissionDenied
 
@@ -1075,7 +1081,7 @@ def check_user_or_403(self, user):
 class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
     model = Note
     success_url = reverse_lazy('notes:index')
- 
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.check_user_or_403(self.object.owner)
