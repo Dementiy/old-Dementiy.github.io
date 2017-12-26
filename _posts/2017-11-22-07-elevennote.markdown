@@ -742,6 +742,8 @@ LOGIN_REDIRECT_URL = '/'
 
 ```
 
+Добавим в модель заметки информацию об авторе - пользователе, создавшем ее - путем внесения внешнего ключа.
+
 `notes/models.py`
 ```python
 # ...
@@ -753,10 +755,14 @@ class Note(models.Model):
     owner = models.ForeignKey(User, related_name='notes', on_delete=models.CASCADE)
 ```
 
+Как говорилось ранее, вследствие изменения структуры базы данных необходимо выполнить миграцию.
+
 ```bash
 $ python manage.py makemigrations
 $ python manage.py migrate
 ```
+
+В выводимый список заметок добавим сортировку по убыванию даты публикации и ограничим выводимое количество (5 шт.). Позже можно убрать количественное ограничение для возможности постраничного просмотра имеющихся заметок.
 
 `notes/views.py`
 ```python
@@ -866,6 +872,8 @@ class NoteCreate(LoginRequiredMixin, CreateView):
 url(r'^new/$', NoteCreate.as_view(), name='create'),
 ```
 
+Добавляем шаблон формы, используемый для создания и редактирования заметок.
+
 `templates/notes/form.html`
 {% raw %}
 ```html
@@ -902,12 +910,16 @@ url(r'^new/$', NoteCreate.as_view(), name='create'),
 ```
 {% endraw %}
 
+Добавим возможность создания новой заметки в интерфейс общего списка заметок.
+
 `templates/notes/index.html`
 {% raw %}
 ```html
 <a href="{% url 'notes:create' %}">Create a new note</a>
 ```
 {% endraw %}
+
+Добавим возможность постраничного просмотра имеющихся заметок.
 
 `template/notes/index.html`
 {% raw %}
@@ -931,6 +943,8 @@ url(r'^new/$', NoteCreate.as_view(), name='create'),
 {% endif %}
 ```
 {% endraw %}
+
+Пользователь должен иметь доступ только к тем заметкам, автором которых является.
 
 `notes/views.py`
 ```python
