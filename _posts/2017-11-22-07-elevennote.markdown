@@ -957,6 +957,8 @@ return Note.objects.filter(owner=self.request.user)
 return Note.objects.filter(owner=self.request.user).order_by('-pub_date')
 ```
 
+Для возможности обширного редактирования заметок (функции для выделения текста, использование различных шрифтов, вставка ссылок, изображений и т. д.) предлагается к использованию модуль [django-wysiwyg](https://github.com/pydanny-archive/django-wysiwyg).
+
 ```bash
 $ python -m pip install django-wysiwyg
 ```
@@ -972,12 +974,16 @@ INSTALLED_APPS = [
 DJANGO_WYSIWYG_FLAVOR = 'ckeditor'
 ```
 
+Далее нужно загрузить предпочитаемый редактор текста.
+
 ```bash
 $ cd static
 $ wget https://download.cksource.com/CKEditor/CKEditor/CKEditor%204.7.2/ckeditor_4.7.2_full.zip
 $ unzip ckeditor_4.7.2_full.zip
 $ cd ..
 ```
+
+Предотвращение неправомерного доступа.
 
 `notes/views.py`
 ```python
@@ -1000,7 +1006,7 @@ def get(self, request, *args, **kwargs):
 
 `notes/views.py`
 ```python
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, NoteUpdate
 
 ...
 
@@ -1113,6 +1119,9 @@ def check_user_or_403(self, user):
 
 `notes/views.py`
 ```python
+
+# import ..., NoteDelete
+
 class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
     model = Note
     success_url = reverse_lazy('notes:index')
@@ -1127,6 +1136,8 @@ class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
 ```python
 url(r'^(?P<pk>[0-9]+)/delete/$', NoteDelete.as_view(), name='delete'),
 ```
+
+Предоставление возможности удаления заметки.
 
 `templates/notes/form.html`
 {% raw %}
