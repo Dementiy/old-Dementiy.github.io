@@ -1037,14 +1037,14 @@ url(r'^(?P<pk>[0-9]+)/edit/$', NoteUpdate.as_view(), name='update'),
 ```
 {% endraw %}
 
-`templates/notes/index.html`
+`templates/notes/detail.html`
 {% raw %}
 ```html
 <a href="{% url 'notes:update' note.id %}">Edit</a>
 ```
 {% endraw %}
 
-`templates/notes/index.html`
+`templates/notes/detail.html`
 {% raw %}
 ```html
 <p>
