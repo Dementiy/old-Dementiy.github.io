@@ -612,6 +612,8 @@ urlpatterns = [
 ]
 ```
 
+`login` - шаблон формы авторизации
+
 `templates/registration/login.html`
 {% raw %}
 ```html
@@ -629,6 +631,8 @@ urlpatterns = [
 </form>
 ```
 {% endraw %}
+
+Отмечаем соответствующие страницы доступными только после авторизации добавлением `@login_required`
 
 `notes/views.py`
 ```python
@@ -650,6 +654,7 @@ def detail(request):
 
 ```
 
+Далее предлагается загрузить набор стилевых компонентов [bootstrap](https://getbootstrap.com/) и поместить их в папку со статичными файлами. Это, в свою очередь, решит обозначенную в начале работы проблему и преобразит внешний вид формы входа.
 
 ```bash
 $ mkdir static
@@ -670,6 +675,8 @@ STATICFILES_DIRS = [
 ]
 ```
 
+Вы можете воспользоваться шаблонами sixfeetup. Убедитесь, что в них использованы корректные имена модулей (могут отличаться от предложенных в данной работе).
+
 ```bash
 # Fix me
 wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
@@ -677,6 +684,7 @@ unzip templates-ch6.zip   # If prompted to replace, say (Y)es
 cd ..
 ```
 
+Добавляем возможность регистрации.
 
 `accounts/views.py`
 ```python
@@ -719,6 +727,7 @@ urlpatterns = [
 ]
 ```
 
+Далее настраивается адрес, на который будет осуществлен переход по факту успешной авторизации/регистрации.
 
 `config/settings/base.py`
 ```python
