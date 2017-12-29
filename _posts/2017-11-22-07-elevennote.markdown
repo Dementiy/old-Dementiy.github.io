@@ -61,7 +61,7 @@ elevennote/
     └── manage.py
 ```
 
-Можете проверить, что проект запускается командой `python manage.py runserver` (если после запуска была создана БД `db.sqlite3`, а какие-то файлы закешированы `__pycache__`, то можете смело удалить их).
+Можете проверить, что проект запускается командой `python manage.py runserver` (если после запуска была создана БД `db.sqlite3`, а какие-то файлы закешированы `__pycache__`, то можете смело удалить их. Также их можно смело добавить в `.gitignore`).
 
 Конфигурацию нашего проекта разделим на:
 - `base.py` - общая конфигурация для всех развертываний проекта;
@@ -69,13 +69,13 @@ elevennote/
 - `production.py` - настройки, которые используются для production-сервера.
 
 ```bash
-(elevennote-env) $ mkdir src/config/settings
-(elevennote-env) $ mv src/config/settings.py src/config/settings/base.py
-(elevennote-env) $ touch src/config/settings/__init__.py
-(elevennote-env) $ touch src/config/settings/local.py
-(elevennote-env) $ touch src/config/settings/production.py
-(elevennote-env) $ touch src/config/settings/settings.ini
-(elevennote-env) $ tree src/config
+(elevennote-env) $ mkdir config/settings
+(elevennote-env) $ mv config/settings.py config/settings/base.py
+(elevennote-env) $ touch config/settings/__init__.py
+(elevennote-env) $ touch config/settings/local.py
+(elevennote-env) $ touch config/settings/production.py
+(elevennote-env) $ touch config/settings/settings.ini
+(elevennote-env) $ tree config
 config/
 ├── __init__.py
 ├── settings
@@ -88,7 +88,9 @@ config/
 └── wsgi.py
 ```
 
-`config/settings/base.py`
+> **Замечание**: Если по каким-либо причинам приложение `tree` не найдено, <a href="https://superuser.com/a/359727" target="_blank">здесь</a> вы найдете информацию по его установке.
+
+Содержимое файла `config/settings/base.py`
 ```python
 import os
 from decouple import config
@@ -130,7 +132,7 @@ USE_L10N = True
 USE_TZ = True
 ```
 
-`configs/settings/local.py`
+Содержимое файла `configs/settings/local.py`
 ```python
 from .base import *
 
@@ -152,25 +154,27 @@ DATABASES = {
 }
 ```
 
-В `config/settings/settings.ini` укажите секретный ключ для Django, имя БД, пользователя БД, его пароль, адрес хоста и порт, на котором будет запущена БД:
+В `config/settings/settings.ini` укажите секретный ключ для Django, имя БД, пользователя БД, его пароль, адрес хоста и порт, на котором будет запущена БД. Ниже представлены значения некоторых полей по умолчанию.
 ```python
 [settings]
 SECRET_KEY=
-DB_NAME=
-DB_USER=
+DB_NAME=postgres
+DB_USER=postgres
 DB_PASSWORD=
-DB_HOST=
-DB_PORT=
+DB_HOST=db
+DB_PORT=5432
 ```
 
 > **Замечание**: Не добавляйте `settings.ini` в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в `.gitignore`.
 
-В файле `manage.py` необходимо заменить имеющйся путь к конфигурации проекта на следующий:
+> Если сгенерированный `SECRET_KEY` содержит символ `%`, и при этом на этапе запуска приложения возникает ошибка парсинга - продублируйте `%` везде в ключе, где этот символ встречается.
+
+В файле `manage.py` необходимо заменить имеющийся путь к конфигурации проекта на следующий:
 ```python
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 ```
 
-Создадим docker-окружение для разработки и запуска нашего проекта. 
+Создадим docker-окружение для разработки и запуска нашего проекта.
 
 > Для знакомства с докером можно почитать статью [What is docker and how to use it with python](http://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/), а также занимательную статью в [блоге](http://grishaev.me/docker) Ивана Гришаева.
 
@@ -289,6 +293,8 @@ $ docker-compose build
 $ docker-compose up
 ```
 
+> **Замечание**: Если на данном этапе возникнет ошибка `UnicodeDecodeError`, выполните команду ```rm -rf ~/.docker/config.json``` для ее устранения
+
 Теперь приложение запущено и вы можете обратиться к нему по адресу [http://localhost:8000](http://localhost:8000), где должны увидеть стандартное приветствие Django:
 
 <img src="/assets/images/07-elevennote/elevennote1.png">
@@ -306,10 +312,10 @@ $ docker-compose up
 ```sh
 $ docker exec -it dg01 bash
 $ root@67a3bcc5c881$ python manage.py createsuperuser
-Username (leave blank to use 'root'): 
-Email address: 
-Password: 
-Password (again): 
+Username (leave blank to use 'root'):
+Email address:
+Password:
+Password (again):
 Superuser created successfully.
 root@67a3bcc5c881:/src# exit
 ```
@@ -319,6 +325,8 @@ root@67a3bcc5c881:/src# exit
 ```bash
 $ docker-compose run web python manage.py startapp notes
 ```
+
+> Убедитесь, что в папке `src` появилась папка `notes`, в которой нужно располагать все файлы, касающиеся приложения `notes`.
 
 `src/config/settings/base.py`
 ```python
@@ -356,9 +364,16 @@ $ docker-compose run web python manage.py makemigrations notes
 $ docker-compose run web python manage.py migrate
 ```
 
-Теперь откройте панель администратора [http://localhost:8000/admin](http://localhost:8000/admin). Вы должны увидеть, что появился новый раздел `Notes`, в котором вы можете создавать, редактировать и удалять заметки.
+> **Замечание**. Миграцию необходимо выполнять всякий раз, когда изменяется структура базы данных (добавление/удаление полей, редактирование их свойств и т.д.)
+
+Теперь откройте панель администратора [http://localhost:8000/admin](http://localhost:8000/admin). Вы должны увидеть новый раздел `Notes`, в котором вы можете создавать, редактировать и удалять заметки.
 
 <img src="/assets/images/07-elevennote/elevennote3.png">
+
+Вы могли заметить, что путь по умолчанию для входа в панель администратора - `/admin`.
+В случае, если вы хотите предотвратить потенциальные автоматизированные атаки на ваш ресурс путем подбора логина и пароля, или же есть любые иные причины ограничить доступ к панели администратора путем изменения адреса, по которому она будет доступна, вы можете обратить внимание на модуль [admin-honeypot](https://github.com/dmpayton/django-admin-honeypot).
+В то время, как лишь изменить путь к админке можно в `urls.py`, вышеобозначенный модуль вдобавок будет вести историю попыток входа на ваш сайт.
+Этот этап не обязателен, вы можете вернуться к нему позже.
 
 ```bash
 $ pip install django-admin-honeypot==1.0.0
@@ -381,7 +396,12 @@ urlpatterns = [
 ]
 ```
 
+Логи попыток входа:
 <img src="/assets/images/07-elevennote/elevennote4.png">
+
+---
+
+Внесём некоторые правки в имеющиеся модели.
 
 `notes/admin.py`
 ```python
@@ -400,6 +420,8 @@ def was_published_recently(self):
 ```
 
 <img src="/assets/images/07-elevennote/elevennote5.png">
+
+Хорошая практика - тестировать создаваемые модели. Напишем несколько тестов.
 
 ```bash
 $ mkdir notes/tests
@@ -445,8 +467,14 @@ FAILED (failures=1)
 Destroying test database for alias 'default'...
 ```
 
+Корректируем файл моделей.
+
 `notes/models.py`
 ```python
+# ...
+from datetime import timedelta
+from django.utils import timezone
+
 def was_published_recently(self):
     now = timezone.now()
     return now - timedelta(days=1) <= self.pub_date <= now
@@ -464,7 +492,7 @@ $ touch notes/urls.py
 `notes/urls.py`
 ```python
 from django.conf.urls import url
- 
+
 from . import views
 
 urlpatterns = [
@@ -507,7 +535,11 @@ TEMPLATES = [
 ]
 ```
 
-`templates/note/index.html`
+Создаем шаблоны для последующего использования во `views`
+
+`index` будет использоваться для вывода общего списка заметок.
+
+`templates/notes/index.html`
 {% raw %}
 ```html
 {% if latest_note_list %}
@@ -517,12 +549,14 @@ TEMPLATES = [
    {% endfor %}
    </ul>
 {% else %}
-  <p>No notes are available.</p>
+  <p>No notes available.</p>
 {% endif %}
 ```
 {% endraw %}
 
-`templates/note/detail.html`
+`detail` будет использоваться для просмотра конкретной заметки.
+
+`templates/notes/detail.html`
 ```html
 <h1>{{ note.title }}</h1>
 <p>{{ note.body }}</p>
@@ -535,9 +569,13 @@ TEMPLATES = [
 
 ```
 
+Следующим приложением добавленным приложением будет `accounts`, которое позволит хранить информацию о пользователях, авторстве заметок. Сами пользователи получат возможность регистрации и авторизации.
+
 ```bash
 $ python manage.py startapp accounts
 ```
+
+> **Замечание**: Не забудьте добавить созданное приложение в `INSTALLED_APPS` в файле `src/config/settings/base.py`
 
 `config/urls.py`
 ```python
@@ -554,7 +592,7 @@ urlpatterns = [
 
     # Accounts app
     url(r'^accounts/', include('accounts.urls', namespace="accounts")),
- 
+
     # Notes app
     url(r'^notes/', include('note.urls', namespace="notes")),
 ]
@@ -575,6 +613,8 @@ urlpatterns = [
 ]
 ```
 
+`login` - шаблон формы авторизации
+
 `templates/registration/login.html`
 {% raw %}
 ```html
@@ -592,6 +632,8 @@ urlpatterns = [
 </form>
 ```
 {% endraw %}
+
+Отмечаем соответствующие страницы доступными только после авторизации добавлением `@login_required`
 
 `notes/views.py`
 ```python
@@ -613,6 +655,7 @@ def detail(request):
 
 ```
 
+Далее предлагается загрузить набор стилевых компонентов [bootstrap](https://getbootstrap.com/) и поместить их в папку со статичными файлами. Это, в свою очередь, решит обозначенную в начале работы проблему и преобразит внешний вид формы входа.
 
 ```bash
 $ mkdir static
@@ -633,6 +676,8 @@ STATICFILES_DIRS = [
 ]
 ```
 
+Вы можете воспользоваться шаблонами sixfeetup. Убедитесь, что в них использованы корректные имена модулей (могут отличаться от предложенных в данной работе).
+
 ```bash
 # Fix me
 wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
@@ -640,6 +685,7 @@ unzip templates-ch6.zip   # If prompted to replace, say (Y)es
 cd ..
 ```
 
+Добавляем возможность регистрации.
 
 `accounts/views.py`
 ```python
@@ -652,15 +698,15 @@ class RegisterView(FormView):
     template_name = 'registration/register.html'
     form_class = UserCreationForm
     success_url='/'
-    
+
     def form_valid(self, form):
         #save the new user first
         form.save()
-        
+
         #get the username and password
         username = self.request.POST['username']
         password = self.request.POST['password1']
-        
+
         #authenticate user then login
         user = authenticate(username=username, password=password)
         login(self.request, user)
@@ -682,6 +728,7 @@ urlpatterns = [
 ]
 ```
 
+Далее настраивается адрес, на который будет осуществлен переход по факту успешной авторизации/регистрации.
 
 `config/settings/base.py`
 ```python
@@ -696,6 +743,8 @@ LOGIN_REDIRECT_URL = '/'
 
 ```
 
+Добавим в модель заметки информацию об авторе - пользователе, создавшем ее - путем внесения внешнего ключа.
+
 `notes/models.py`
 ```python
 # ...
@@ -707,10 +756,14 @@ class Note(models.Model):
     owner = models.ForeignKey(User, related_name='notes', on_delete=models.CASCADE)
 ```
 
+Как говорилось ранее, вследствие изменения структуры базы данных необходимо выполнить миграцию.
+
 ```bash
 $ python manage.py makemigrations
 $ python manage.py migrate
 ```
+
+В выводимый список заметок добавим сортировку по убыванию даты публикации и ограничим выводимое количество (5 шт.). Позже можно убрать количественное ограничение для возможности постраничного просмотра имеющихся заметок.
 
 `notes/views.py`
 ```python
@@ -820,6 +873,10 @@ class NoteCreate(LoginRequiredMixin, CreateView):
 url(r'^new/$', NoteCreate.as_view(), name='create'),
 ```
 
+Добавляем шаблон формы, используемый для создания и редактирования заметок.
+Убедитесь в наличии шаблона `base.html`, от которого ряд других шаблонов будет наследоваться.
+Используемая логика: `base.html` реализует базовый интерфейс в виде шапки ресурса, в которой отображается имя авторизованного пользователя и кнопка выхода, в то время как наследники реализуют интерфейс отдельного модуля в блоке `content`
+
 `templates/notes/form.html`
 {% raw %}
 ```html
@@ -856,12 +913,16 @@ url(r'^new/$', NoteCreate.as_view(), name='create'),
 ```
 {% endraw %}
 
+Добавим возможность создания новой заметки в интерфейс общего списка заметок.
+
 `templates/notes/index.html`
 {% raw %}
 ```html
 <a href="{% url 'notes:create' %}">Create a new note</a>
 ```
 {% endraw %}
+
+Добавим возможность постраничного просмотра имеющихся заметок.
 
 `template/notes/index.html`
 {% raw %}
@@ -886,6 +947,8 @@ url(r'^new/$', NoteCreate.as_view(), name='create'),
 ```
 {% endraw %}
 
+Пользователь должен иметь доступ только к тем заметкам, автором которых является.
+
 `notes/views.py`
 ```python
 return Note.objects.filter(owner=self.request.user)
@@ -894,6 +957,8 @@ return Note.objects.filter(owner=self.request.user)
 ```python
 return Note.objects.filter(owner=self.request.user).order_by('-pub_date')
 ```
+
+Для возможности обширного редактирования заметок (функции для выделения текста, использование различных шрифтов, вставка ссылок, изображений и т. д.) предлагается к использованию модуль [django-wysiwyg](https://github.com/pydanny-archive/django-wysiwyg).
 
 ```bash
 $ python -m pip install django-wysiwyg
@@ -910,12 +975,16 @@ INSTALLED_APPS = [
 DJANGO_WYSIWYG_FLAVOR = 'ckeditor'
 ```
 
+Далее нужно загрузить предпочитаемый редактор текста.
+
 ```bash
 $ cd static
 $ wget https://download.cksource.com/CKEditor/CKEditor/CKEditor%204.7.2/ckeditor_4.7.2_full.zip
 $ unzip ckeditor_4.7.2_full.zip
 $ cd ..
 ```
+
+Предотвращение неправомерного доступа.
 
 `notes/views.py`
 ```python
@@ -955,6 +1024,8 @@ class NoteUpdate(LoginRequiredMixin, UpdateView):
 
 `notes/urls.py`
 ```python
+# import ..., NoteUpdate
+
 url(r'^(?P<pk>[0-9]+)/edit/$', NoteUpdate.as_view(), name='update'),
 ```
 
@@ -969,14 +1040,14 @@ url(r'^(?P<pk>[0-9]+)/edit/$', NoteUpdate.as_view(), name='update'),
 ```
 {% endraw %}
 
-`templates/notes/index.html`
+`templates/notes/detail.html`
 {% raw %}
 ```html
 <a href="{% url 'notes:update' note.id %}">Edit</a>
 ```
 {% endraw %}
 
-`templates/notes/index.html`
+`templates/notes/detail.html`
 {% raw %}
 ```html
 <p>
@@ -999,7 +1070,7 @@ class NoteMixin(object):
        context.update({
           'notes': Note.objects.filter(owner=self.request.user).order_by('-pub_date'),
        })
-       
+
        return context
 ```
 
@@ -1014,7 +1085,7 @@ class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
     ...
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        
+
         if self.object.owner != self.request.user:
             raise PermissionDenied
 
@@ -1022,7 +1093,7 @@ class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        
+
         if self.object.owner != self.request.user:
             raise PermissionDenied
 
@@ -1051,10 +1122,14 @@ def check_user_or_403(self, user):
 
 `notes/views.py`
 ```python
+
+# import ..., DeleteView
+
+
 class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
     model = Note
     success_url = reverse_lazy('notes:index')
- 
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.check_user_or_403(self.object.owner)
@@ -1063,8 +1138,12 @@ class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
 
 `notes/urls.py`
 ```python
+# import ..., NoteDelete
+
 url(r'^(?P<pk>[0-9]+)/delete/$', NoteDelete.as_view(), name='delete'),
 ```
+
+Предоставление возможности удаления заметки.
 
 `templates/notes/form.html`
 {% raw %}
@@ -1091,7 +1170,7 @@ def get_success_url(self):
     })
 ```
 
-**Задание:** Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). Добавление и удаление тегов должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
+**Задание:** Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). Последующее редактирование заметок должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
 
 <img src="/assets/images/07-elevennote/elevennote8.png">
 
