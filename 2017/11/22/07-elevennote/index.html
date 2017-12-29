@@ -258,7 +258,7 @@
     └── manage.py
 </code></pre></div></div>
 
-<p>Можете проверить, что проект запускается командой <code class="highlighter-rouge">python manage.py runserver</code> (если после запуска была создана БД <code class="highlighter-rouge">db.sqlite3</code>, а какие-то файлы закешированы <code class="highlighter-rouge">__pycache__</code>, то можете смело удалить их).</p>
+<p>Можете проверить, что проект запускается командой <code class="highlighter-rouge">python manage.py runserver</code> (если после запуска была создана БД <code class="highlighter-rouge">db.sqlite3</code>, а какие-то файлы закешированы <code class="highlighter-rouge">__pycache__</code>, то можете смело удалить их. Также их можно смело добавить в <code class="highlighter-rouge">.gitignore</code>).</p>
 
 <p>Конфигурацию нашего проекта разделим на:</p>
 <ul>
@@ -267,13 +267,13 @@
   <li><code class="highlighter-rouge">production.py</code> - настройки, которые используются для production-сервера.</li>
 </ul>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>mkdir src/config/settings
-<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>mv src/config/settings.py src/config/settings/base.py
-<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch src/config/settings/__init__.py
-<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch src/config/settings/local.py
-<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch src/config/settings/production.py
-<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch src/config/settings/settings.ini
-<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>tree src/config
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>mkdir config/settings
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>mv config/settings.py config/settings/base.py
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch config/settings/__init__.py
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch config/settings/local.py
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch config/settings/production.py
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>touch config/settings/settings.ini
+<span class="o">(</span>elevennote-env<span class="o">)</span> <span class="nv">$ </span>tree config
 config/
 ├── __init__.py
 ├── settings
@@ -286,7 +286,11 @@ config/
 └── wsgi.py
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">config/settings/base.py</code></p>
+<blockquote>
+  <p><strong>Замечание</strong>: Если по каким-либо причинам приложение <code class="highlighter-rouge">tree</code> не найдено, <a href="https://superuser.com/a/359727" target="_blank">здесь</a> вы найдете информацию по его установке.</p>
+</blockquote>
+
+<p>Содержимое файла <code class="highlighter-rouge">config/settings/base.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">decouple</span> <span class="kn">import</span> <span class="n">config</span>
 
@@ -327,7 +331,7 @@ config/
 <span class="n">USE_TZ</span> <span class="o">=</span> <span class="bp">True</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">configs/settings/local.py</code></p>
+<p>Содержимое файла <code class="highlighter-rouge">configs/settings/local.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
@@ -348,21 +352,25 @@ config/
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>В <code class="highlighter-rouge">config/settings/settings.ini</code> укажите секретный ключ для Django, имя БД, пользователя БД, его пароль, адрес хоста и порт, на котором будет запущена БД:</p>
+<p>В <code class="highlighter-rouge">config/settings/settings.ini</code> укажите секретный ключ для Django, имя БД, пользователя БД, его пароль, адрес хоста и порт, на котором будет запущена БД. Ниже представлены значения некоторых полей по умолчанию.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">settings</span><span class="p">]</span>
 <span class="n">SECRET_KEY</span><span class="o">=</span>
-<span class="n">DB_NAME</span><span class="o">=</span>
-<span class="n">DB_USER</span><span class="o">=</span>
+<span class="n">DB_NAME</span><span class="o">=</span><span class="n">postgres</span>
+<span class="n">DB_USER</span><span class="o">=</span><span class="n">postgres</span>
 <span class="n">DB_PASSWORD</span><span class="o">=</span>
-<span class="n">DB_HOST</span><span class="o">=</span>
-<span class="n">DB_PORT</span><span class="o">=</span>
+<span class="n">DB_HOST</span><span class="o">=</span><span class="n">db</span>
+<span class="n">DB_PORT</span><span class="o">=</span><span class="mi">5432</span>
 </code></pre></div></div>
 
 <blockquote>
   <p><strong>Замечание</strong>: Не добавляйте <code class="highlighter-rouge">settings.ini</code> в ваш репозиторий, так как он содержит пароли и ключи. Чтобы случайно его не закоммитить добавьте соответствующую запись в <code class="highlighter-rouge">.gitignore</code>.</p>
 </blockquote>
 
-<p>В файле <code class="highlighter-rouge">manage.py</code> необходимо заменить имеющйся путь к конфигурации проекта на следующий:</p>
+<blockquote>
+  <p>Если сгенерированный <code class="highlighter-rouge">SECRET_KEY</code> содержит символ <code class="highlighter-rouge">%</code>, и при этом на этапе запуска приложения возникает ошибка парсинга - продублируйте <code class="highlighter-rouge">%</code> везде в ключе, где этот символ встречается.</p>
+</blockquote>
+
+<p>В файле <code class="highlighter-rouge">manage.py</code> необходимо заменить имеющийся путь к конфигурации проекта на следующий:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">"DJANGO_SETTINGS_MODULE"</span><span class="p">,</span> <span class="s">"config.settings.local"</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -479,6 +487,10 @@ server {
 <span class="nv">$ </span>docker-compose up
 </code></pre></div></div>
 
+<blockquote>
+  <p><strong>Замечание</strong>: Если на данном этапе возникнет ошибка <code class="highlighter-rouge">UnicodeDecodeError</code>, выполните команду <code class="highlighter-rouge">rm -rf ~/.docker/config.json</code> для ее устранения</p>
+</blockquote>
+
 <p>Теперь приложение запущено и вы можете обратиться к нему по адресу <a href="http://localhost:8000">http://localhost:8000</a>, где должны увидеть стандартное приветствие Django:</p>
 
 <p><img src="/assets/images/07-elevennote/elevennote1.png" /></p>
@@ -497,10 +509,10 @@ server {
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker <span class="nb">exec</span> <span class="nt">-it</span> dg01 bash
 <span class="nv">$ </span>root@67a3bcc5c881<span class="nv">$ </span>python manage.py createsuperuser
-Username <span class="o">(</span>leave blank to use <span class="s1">'root'</span><span class="o">)</span>: 
-Email address: 
-Password: 
-Password <span class="o">(</span>again<span class="o">)</span>: 
+Username <span class="o">(</span>leave blank to use <span class="s1">'root'</span><span class="o">)</span>:
+Email address:
+Password:
+Password <span class="o">(</span>again<span class="o">)</span>:
 Superuser created successfully.
 root@67a3bcc5c881:/src# <span class="nb">exit</span>
 </code></pre></div></div>
@@ -509,6 +521,10 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker-compose run web python manage.py startapp notes
 </code></pre></div></div>
+
+<blockquote>
+  <p>Убедитесь, что в папке <code class="highlighter-rouge">src</code> появилась папка <code class="highlighter-rouge">notes</code>, в которой нужно располагать все файлы, касающиеся приложения <code class="highlighter-rouge">notes</code>.</p>
+</blockquote>
 
 <p><code class="highlighter-rouge">src/config/settings/base.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
@@ -544,9 +560,18 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 <span class="nv">$ </span>docker-compose run web python manage.py migrate
 </code></pre></div></div>
 
-<p>Теперь откройте панель администратора <a href="http://localhost:8000/admin">http://localhost:8000/admin</a>. Вы должны увидеть, что появился новый раздел <code class="highlighter-rouge">Notes</code>, в котором вы можете создавать, редактировать и удалять заметки.</p>
+<blockquote>
+  <p><strong>Замечание</strong>. Миграцию необходимо выполнять всякий раз, когда изменяется структура базы данных (добавление/удаление полей, редактирование их свойств и т.д.)</p>
+</blockquote>
+
+<p>Теперь откройте панель администратора <a href="http://localhost:8000/admin">http://localhost:8000/admin</a>. Вы должны увидеть новый раздел <code class="highlighter-rouge">Notes</code>, в котором вы можете создавать, редактировать и удалять заметки.</p>
 
 <p><img src="/assets/images/07-elevennote/elevennote3.png" /></p>
+
+<p>Вы могли заметить, что путь по умолчанию для входа в панель администратора - <code class="highlighter-rouge">/admin</code>.
+В случае, если вы хотите предотвратить потенциальные автоматизированные атаки на ваш ресурс путем подбора логина и пароля, или же есть любые иные причины ограничить доступ к панели администратора путем изменения адреса, по которому она будет доступна, вы можете обратить внимание на модуль <a href="https://github.com/dmpayton/django-admin-honeypot">admin-honeypot</a>.
+В то время, как лишь изменить путь к админке можно в <code class="highlighter-rouge">urls.py</code>, вышеобозначенный модуль вдобавок будет вести историю попыток входа на ваш сайт.
+Этот этап не обязателен, вы можете вернуться к нему позже.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip install django-admin-honeypot<span class="o">==</span>1.0.0
 </code></pre></div></div>
@@ -566,7 +591,12 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 <span class="p">]</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/07-elevennote/elevennote4.png" /></p>
+<p>Логи попыток входа:
+<img src="/assets/images/07-elevennote/elevennote4.png" /></p>
+
+<hr />
+
+<p>Внесём некоторые правки в имеющиеся модели.</p>
 
 <p><code class="highlighter-rouge">notes/admin.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NoteAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
@@ -583,6 +613,8 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 </code></pre></div></div>
 
 <p><img src="/assets/images/07-elevennote/elevennote5.png" /></p>
+
+<p>Хорошая практика - тестировать создаваемые модели. Напишем несколько тестов.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir notes/tests
 <span class="nv">$ </span>mv notes/tests.py notes/tests/test_models.py
@@ -625,8 +657,14 @@ FAILED <span class="o">(</span><span class="nv">failures</span><span class="o">=
 Destroying <span class="nb">test </span>database <span class="k">for </span><span class="nb">alias</span> <span class="s1">'default'</span>...
 </code></pre></div></div>
 
+<p>Корректируем файл моделей.</p>
+
 <p><code class="highlighter-rouge">notes/models.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">was_published_recently</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ...</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="k">def</span> <span class="nf">was_published_recently</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">now</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">now</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pub_date</span> <span class="o">&lt;=</span> <span class="n">now</span>
 </code></pre></div></div>
@@ -640,7 +678,7 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 
 <p><code class="highlighter-rouge">notes/urls.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">url</span>
- 
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
 
 <span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
@@ -680,7 +718,11 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 <span class="p">]</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">templates/note/index.html</code></p>
+<p>Создаем шаблоны для последующего использования во <code class="highlighter-rouge">views</code></p>
+
+<p><code class="highlighter-rouge">index</code> будет использоваться для вывода общего списка заметок.</p>
+
+<p><code class="highlighter-rouge">templates/notes/index.html</code></p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% if latest_note_list %}
    <span class="nt">&lt;ul&gt;</span>
@@ -689,11 +731,13 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
    {% endfor %}
    <span class="nt">&lt;/ul&gt;</span>
 {% else %}
-  <span class="nt">&lt;p&gt;</span>No notes are available.<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;p&gt;</span>No notes available.<span class="nt">&lt;/p&gt;</span>
 {% endif %}
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">templates/note/detail.html</code></p>
+<p><code class="highlighter-rouge">detail</code> будет использоваться для просмотра конкретной заметки.</p>
+
+<p><code class="highlighter-rouge">templates/notes/detail.html</code></p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;h1&gt;&lt;/h1&gt;</span>
 <span class="nt">&lt;p&gt;&lt;/p&gt;</span>
 </code></pre></div></div>
@@ -706,8 +750,14 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 </code></pre></div></div>
 
+<p>Следующим приложением добавленным приложением будет <code class="highlighter-rouge">accounts</code>, которое позволит хранить информацию о пользователях, авторстве заметок. Сами пользователи получат возможность регистрации и авторизации.</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python manage.py startapp accounts
 </code></pre></div></div>
+
+<blockquote>
+  <p><strong>Замечание</strong>: Не забудьте добавить созданное приложение в <code class="highlighter-rouge">INSTALLED_APPS</code> в файле <code class="highlighter-rouge">src/config/settings/base.py</code></p>
+</blockquote>
 
 <p><code class="highlighter-rouge">config/urls.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#...</span>
@@ -723,7 +773,7 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 
     <span class="c"># Accounts app</span>
     <span class="n">url</span><span class="p">(</span><span class="s">r'^accounts/'</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s">'accounts.urls'</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s">"accounts"</span><span class="p">)),</span>
- 
+
     <span class="c"># Notes app</span>
     <span class="n">url</span><span class="p">(</span><span class="s">r'^notes/'</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s">'note.urls'</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s">"notes"</span><span class="p">)),</span>
 <span class="p">]</span>
@@ -742,6 +792,8 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 <span class="p">]</span>
 </code></pre></div></div>
 
+<p><code class="highlighter-rouge">login</code> - шаблон формы авторизации</p>
+
 <p><code class="highlighter-rouge">templates/registration/login.html</code></p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">"{% url 'accounts:login' %}"</span> <span class="na">method=</span><span class="s">"post"</span> <span class="na">accept-charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
@@ -757,6 +809,8 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
   <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"button small"</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Submit"</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/form&gt;</span>
 </code></pre></div></div>
+
+<p>Отмечаем соответствующие страницы доступными только после авторизации добавлением <code class="highlighter-rouge">@login_required</code></p>
 
 <p><code class="highlighter-rouge">notes/views.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ...</span>
@@ -776,6 +830,8 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 </code></pre></div></div>
 
+<p>Далее предлагается загрузить набор стилевых компонентов <a href="https://getbootstrap.com/">bootstrap</a> и поместить их в папку со статичными файлами. Это, в свою очередь, решит обозначенную в начале работы проблему и преобразит внешний вид формы входа.</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir static
 <span class="nv">$ </span><span class="nb">cd </span>static
 <span class="nv">$ </span>wget https://github.com/twbs/bootstrap/releases/download/v3.0.3/bootstrap-3.0.3-dist.zip
@@ -793,11 +849,15 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 <span class="p">]</span>
 </code></pre></div></div>
 
+<p>Вы можете воспользоваться шаблонами sixfeetup. Убедитесь, что в них использованы корректные имена модулей (могут отличаться от предложенных в данной работе).</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Fix me</span>
 wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
 unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</span>
 <span class="nb">cd</span> ..
 </code></pre></div></div>
+
+<p>Добавляем возможность регистрации.</p>
 
 <p><code class="highlighter-rouge">accounts/views.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">login</span>
@@ -809,15 +869,15 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
     <span class="n">template_name</span> <span class="o">=</span> <span class="s">'registration/register.html'</span>
     <span class="n">form_class</span> <span class="o">=</span> <span class="n">UserCreationForm</span>
     <span class="n">success_url</span><span class="o">=</span><span class="s">'/'</span>
-    
+
     <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
         <span class="c">#save the new user first</span>
         <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        
+
         <span class="c">#get the username and password</span>
         <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'username'</span><span class="p">]</span>
         <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'password1'</span><span class="p">]</span>
-        
+
         <span class="c">#authenticate user then login</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
         <span class="n">login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
@@ -838,6 +898,8 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 <span class="p">]</span>
 </code></pre></div></div>
 
+<p>Далее настраивается адрес, на который будет осуществлен переход по факту успешной авторизации/регистрации.</p>
+
 <p><code class="highlighter-rouge">config/settings/base.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ...</span>
 <span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s">'/'</span>
@@ -849,6 +911,8 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 </code></pre></div></div>
 
+<p>Добавим в модель заметки информацию об авторе - пользователе, создавшем ее - путем внесения внешнего ключа.</p>
+
 <p><code class="highlighter-rouge">notes/models.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ...</span>
 <span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
@@ -859,9 +923,13 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
     <span class="n">owner</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">'notes'</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
 </code></pre></div></div>
 
+<p>Как говорилось ранее, вследствие изменения структуры базы данных необходимо выполнить миграцию.</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python manage.py makemigrations
 <span class="nv">$ </span>python manage.py migrate
 </code></pre></div></div>
+
+<p>В выводимый список заметок добавим сортировку по убыванию даты публикации и ограничим выводимое количество (5 шт.). Позже можно убрать количественное ограничение для возможности постраничного просмотра имеющихся заметок.</p>
 
 <p><code class="highlighter-rouge">notes/views.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">latest_note_list</span> <span class="o">=</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'-pub_date'</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
@@ -964,6 +1032,10 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">url</span><span class="p">(</span><span class="s">r'^new/$'</span><span class="p">,</span> <span class="n">NoteCreate</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'create'</span><span class="p">),</span>
 </code></pre></div></div>
 
+<p>Добавляем шаблон формы, используемый для создания и редактирования заметок.
+Убедитесь в наличии шаблона <code class="highlighter-rouge">base.html</code>, от которого ряд других шаблонов будет наследоваться.
+Используемая логика: <code class="highlighter-rouge">base.html</code> реализует базовый интерфейс в виде шапки ресурса, в которой отображается имя авторизованного пользователя и кнопка выхода, в то время как наследники реализуют интерфейс отдельного модуля в блоке <code class="highlighter-rouge">content</code></p>
+
 <p><code class="highlighter-rouge">templates/notes/form.html</code></p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% extends "base.html" %}
@@ -998,10 +1070,14 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 {% endblock %}
 </code></pre></div></div>
 
+<p>Добавим возможность создания новой заметки в интерфейс общего списка заметок.</p>
+
 <p><code class="highlighter-rouge">templates/notes/index.html</code></p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'notes:create' %}"</span><span class="nt">&gt;</span>Create a new note<span class="nt">&lt;/a&gt;</span>
 </code></pre></div></div>
+
+<p>Добавим возможность постраничного просмотра имеющихся заметок.</p>
 
 <p><code class="highlighter-rouge">template/notes/index.html</code></p>
 
@@ -1024,12 +1100,16 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 {% endif %}
 </code></pre></div></div>
 
+<p>Пользователь должен иметь доступ только к тем заметкам, автором которых является.</p>
+
 <p><code class="highlighter-rouge">notes/views.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">return</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
 </code></pre></div></div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">return</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'-pub_date'</span><span class="p">)</span>
 </code></pre></div></div>
+
+<p>Для возможности обширного редактирования заметок (функции для выделения текста, использование различных шрифтов, вставка ссылок, изображений и т. д.) предлагается к использованию модуль <a href="https://github.com/pydanny-archive/django-wysiwyg">django-wysiwyg</a>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python <span class="nt">-m</span> pip install django-wysiwyg
 </code></pre></div></div>
@@ -1044,11 +1124,15 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 <span class="n">DJANGO_WYSIWYG_FLAVOR</span> <span class="o">=</span> <span class="s">'ckeditor'</span>
 </code></pre></div></div>
 
+<p>Далее нужно загрузить предпочитаемый редактор текста.</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>static
 <span class="nv">$ </span>wget https://download.cksource.com/CKEditor/CKEditor/CKEditor%204.7.2/ckeditor_4.7.2_full.zip
 <span class="nv">$ </span>unzip ckeditor_4.7.2_full.zip
 <span class="nv">$ </span><span class="nb">cd</span> ..
 </code></pre></div></div>
+
+<p>Предотвращение неправомерного доступа.</p>
 
 <p><code class="highlighter-rouge">notes/views.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">PermissionDenied</span>
@@ -1085,7 +1169,9 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">notes/urls.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">url</span><span class="p">(</span><span class="s">r'^(?P&lt;pk&gt;[0-9]+)/edit/$'</span><span class="p">,</span> <span class="n">NoteUpdate</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'update'</span><span class="p">),</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># import ..., NoteUpdate</span>
+
+<span class="n">url</span><span class="p">(</span><span class="s">r'^(?P&lt;pk&gt;[0-9]+)/edit/$'</span><span class="p">,</span> <span class="n">NoteUpdate</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'update'</span><span class="p">),</span>
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">templates/notes/form.html</code></p>
@@ -1097,12 +1183,12 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 {% endif %}
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">templates/notes/index.html</code></p>
+<p><code class="highlighter-rouge">templates/notes/detail.html</code></p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'notes:update' note.id %}"</span><span class="nt">&gt;</span>Edit<span class="nt">&lt;/a&gt;</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">templates/notes/index.html</code></p>
+<p><code class="highlighter-rouge">templates/notes/detail.html</code></p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;p&gt;</span>
    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'notes:update' note.id %}"</span><span class="nt">&gt;</span>{{ note.title }}<span class="nt">&lt;/a&gt;&lt;br</span> <span class="nt">/&gt;</span>
@@ -1122,7 +1208,7 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
        <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
           <span class="s">'notes'</span><span class="p">:</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'-pub_date'</span><span class="p">),</span>
        <span class="p">})</span>
-       
+
        <span class="k">return</span> <span class="n">context</span>
 </code></pre></div></div>
 
@@ -1135,7 +1221,7 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
     <span class="o">...</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="nb">object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="nb">object</span><span class="o">.</span><span class="n">owner</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PermissionDenied</span>
 
@@ -1143,7 +1229,7 @@ unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</s
 
     <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="nb">object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="nb">object</span><span class="o">.</span><span class="n">owner</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PermissionDenied</span>
 
@@ -1168,10 +1254,14 @@ unzip static-elevennote-ch16.zip
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">notes/views.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NoteDelete</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">NoteMixin</span><span class="p">,</span> <span class="n">DeleteView</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c"># import ..., DeleteView</span>
+
+
+<span class="k">class</span> <span class="nc">NoteDelete</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">NoteMixin</span><span class="p">,</span> <span class="n">DeleteView</span><span class="p">):</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">Note</span>
     <span class="n">success_url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s">'notes:index'</span><span class="p">)</span>
- 
+
     <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="nb">object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_user_or_403</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="nb">object</span><span class="o">.</span><span class="n">owner</span><span class="p">)</span>
@@ -1179,8 +1269,12 @@ unzip static-elevennote-ch16.zip
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">notes/urls.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">url</span><span class="p">(</span><span class="s">r'^(?P&lt;pk&gt;[0-9]+)/delete/$'</span><span class="p">,</span> <span class="n">NoteDelete</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'delete'</span><span class="p">),</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># import ..., NoteDelete</span>
+
+<span class="n">url</span><span class="p">(</span><span class="s">r'^(?P&lt;pk&gt;[0-9]+)/delete/$'</span><span class="p">,</span> <span class="n">NoteDelete</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'delete'</span><span class="p">),</span>
 </code></pre></div></div>
+
+<p>Предоставление возможности удаления заметки.</p>
 
 <p><code class="highlighter-rouge">templates/notes/form.html</code></p>
 
@@ -1203,7 +1297,7 @@ unzip static-elevennote-ch16.zip
     <span class="p">})</span>
 </code></pre></div></div>
 
-<p><strong>Задание:</strong> Добавьте возможность указывать теги у каждой заметки (можете использовать <a href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/">Bootstrap Tags Input</a> для отображения и управления тегами на стороне клиента, см. скриншот ниже). Добавление и удаление тегов должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.</p>
+<p><strong>Задание:</strong> Добавьте возможность указывать теги у каждой заметки (можете использовать <a href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/">Bootstrap Tags Input</a> для отображения и управления тегами на стороне клиента, см. скриншот ниже). Последующее редактирование заметок должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.</p>
 
 <p><img src="/assets/images/07-elevennote/elevennote8.png" /></p>
 
