@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Заметки по линейной регрессии</title>
+  <meta name="description" content="В этой заметке мы рассмотрим метод наименьших квадратов.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/notes-on-regression/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Заметки по линейной регрессии">
+  <meta name="twitter:description" content="В этой заметке мы рассмотрим метод наименьших квадратов.">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Заметки по линейной регрессии</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/r/">R</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/datascience/">datascience</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>В этой заметке мы рассмотрим метод наименьших квадратов.</p>
+
+<h3 id="понятия-ковариации-и-корреляции">Понятия ковариации и корреляции</h3>
+
+<p>Для примера будем использовать набор данных <code class="highlighter-rouge">Animals</code> из пакета <code class="highlighter-rouge">MASS</code>, описание которого можно получить с помощью команды <code class="highlighter-rouge">?Animals</code>:</p>
+
+<script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="n">Animals</span><span class="p">)</span><span class="w">
+</span><span class="n">body</span><span class="w"> </span><span class="n">brain</span><span class="w">
+</span><span class="n">Mountain</span><span class="w"> </span><span class="n">beaver</span><span class="w"> </span><span class="m">1.35</span><span class="w"> </span><span class="m">8.1</span><span class="w">
+</span><span class="n">Cow</span><span class="w"> </span><span class="m">465.00</span><span class="w"> </span><span class="m">423.0</span><span class="w">
+</span><span class="n">Grey</span><span class="w"> </span><span class="n">wolf</span><span class="w"> </span><span class="m">36.33</span><span class="w"> </span><span class="m">119.5</span><span class="w">
+</span><span class="n">Goat</span><span class="w"> </span><span class="m">27.66</span><span class="w"> </span><span class="m">115.0</span><span class="w">
+</span><span class="n">Guinea</span><span class="w"> </span><span class="n">pig</span><span class="w"> </span><span class="m">1.04</span><span class="w"> </span><span class="m">5.5</span><span class="w">
+</span><span class="n">Dipliodocus</span><span class="w"> </span><span class="m">11700.00</span><span class="w"> </span><span class="m">50.0</span><span class="w">
+
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nrow</span><span class="p">(</span><span class="n">Animals</span><span class="p">)</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">28</span><span class="w">
+</span></code></pre></div></div>
+
+<p>У нас имеется <script type="math/tex">n=28</script> наблюдений и мы хотим проверить «силу связи» (и есть ли такая связь вообще) между весом мозга (переменная <script type="math/tex">brain</script>) и весом тела (переменная <script type="math/tex">body</script>). Хорошим правилом считается <em>посмотреть на данные</em>, с которыми мы работаем, поэтому отобразим точки на диаграмме рассеяния:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot_animals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">animals</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span><span class="w"> </span><span class="n">main_label</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">plot</span><span class="p">(</span><span class="n">animals</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">animals</span><span class="o">$</span><span class="n">brain</span><span class="p">,</span><span class="w">
+         </span><span class="n">xlab</span><span class="o">=</span><span class="n">xlab</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="n">ylab</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="n">main_label</span><span class="p">,</span><span class="w">
+         </span><span class="n">col</span><span class="o">=</span><span class="s1">'royal blue'</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">plot_animals</span><span class="p">(</span><span class="n">Animals</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'body weight'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'brain weight'</span><span class="p">,</span><span class="w">
+             </span><span class="n">main</span><span class="o">=</span><span class="s1">'Brain and Body Weights for 28 Species'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/animals.png" alt="" /></p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Иногда трудно понять какие именно преобразования нужно провести над имеющимися данными, поэтому эта задача полностью ложится на интуицию аналитика.</p>
+</div>
+
+<p>Из полученного графика может показаться, что между наблюдениями (парами <script type="math/tex">x_i</script> и <script type="math/tex">y_i</script>) нет никакой взаимосвязи, поэтому попробуем преобразовать наши данные к <code class="highlighter-rouge">log-log</code> шкале:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">animals.log</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="nf">log</span><span class="p">(</span><span class="n">Animals</span><span class="o">$</span><span class="n">body</span><span class="p">),</span><span class="w"> </span><span class="n">brain</span><span class="o">=</span><span class="nf">log</span><span class="p">(</span><span class="n">Animals</span><span class="o">$</span><span class="n">brain</span><span class="p">))</span><span class="w">
+
+</span><span class="n">plot_animals</span><span class="p">(</span><span class="n">animals.log</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">,</span><span class="w">
+             </span><span class="n">main</span><span class="o">=</span><span class="s1">'Brain and Body Weights for 28 Species'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/animals-log.png" alt="" /></p>
+
+<p>Теперь стало более очевидно, что имеется линейная связь между наблюдениями. Возникает вопрос: «На сколько сильная эта связь?» Чтобы ответить на этот вопрос мы можем посчитать так называемый <strong>коэффициент корреляции</strong>. Для этого сначала найдем выборочные средние и отобразим их соответствующими линиями на диаграмме рассеяния:</p>
+
+<script type="math/tex; mode=display">\bar{y} = \frac{\sum_{i=1}^{n}y_{i}}{n}</script>
+
+<script type="math/tex; mode=display">\bar{x} = \frac{\sum_{i=1}^{n}x_{i}}{n}</script>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot_animals</span><span class="p">(</span><span class="n">animals.log</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">,</span><span class="w">
+             </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Brain and Body Weights for 28 Species'</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># Номера четвертей</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"1"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"4"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">-3</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"2"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">-3</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"3"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># Знаки в четвертях</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"+/+"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"dark red"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"+/-"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"dark red"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"-/+"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"dark red"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="s2">"-/-"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"dark red"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+
+</span><span class="p">(</span><span class="n">body.mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">3.771306</span><span class="w">
+</span><span class="p">(</span><span class="n">brain.mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">4.425446</span><span class="w">
+
+</span><span class="n">abline</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">body.mean</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"dark red"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">brain.mean</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"dark red"</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/animals_signs.png" alt="" /></p>
+
+<p>Две линии делят диаграмму на четыре квадранта. Для каждой <script type="math/tex">i</script>-ой точки на графике вычислим следующие величины:</p>
+<ul>
+  <li><script type="math/tex">y_{i} - \bar{y}</script> отклонение каждого наблюдения <script type="math/tex">y_{i}</script> от выборочного среднего;</li>
+  <li><script type="math/tex">x_{i} - \bar{x}</script> отклонение каждого наблюдения <script type="math/tex">x_{i}</script> от выборочного среднего;</li>
+  <li>произведение двух величин <script type="math/tex">(y_{i} - \bar{y})(x_{i} - \bar{x})</script>.</li>
+</ul>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y_deviation</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">brain.mean</span><span class="w">
+</span><span class="n">x_deviation</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">body.mean</span><span class="w">
+</span><span class="n">xy_product</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">y_deviation</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x_deviation</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Очевидно, что величины <script type="math/tex">(y_{i} - \bar{y})</script> положительны для каждой точки в 1 и 2 квадрантах и отрицательны в 3 и 4 квадрантах. Аналогично <script type="math/tex">(x_{i} - \bar{x})</script> положительны в 1 и 4 квадрантах и отрицательны в 2 и 3 квадрантах. Если линейная связь между <script type="math/tex">y</script> и <script type="math/tex">x</script> отрицательна (с увеличением <script type="math/tex">x</script> уменьшается <script type="math/tex">y</script>), то больше точек в 2 и 4 квадрантах. И наоборот, если связь положительна (с увеличением <script type="math/tex">x</script> увеличивается <script type="math/tex">y</script>), то больше точек в 1 и 3 квадрантах. Таким образом, знак следующего выражения:</p>
+
+<script type="math/tex; mode=display">cov(y,x) = \frac{\sum_{i=1}^{n}(y_{i} - \bar{y})(x_{i} - \bar{x})}{n-1}</script>
+
+<p>которое известно как <strong>коэффициент ковариации</strong> между <script type="math/tex">y</script> и <script type="math/tex">x</script>, указывает направление линейного отношения между <script type="math/tex">y</script> и <script type="math/tex">x</script>. Если <script type="math/tex">cov(y,x) \gt 0</script>, то связь положительная, иначе отрицательная.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">xy_product</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">nrow</span><span class="p">(</span><span class="n">animals.log</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">7.051974</span><span class="w">
+
+</span><span class="c1"># Или с помощью функции cov()</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cov</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">7.051974</span><span class="w">
+</span></code></pre></div></div>
+
+<p>К сожалению, <script type="math/tex">cov(Y,X)</script> не может нам много сказать о силе связи, потому что она зависима от изменений в шкале измерения объектов. Для того, чтобы избежать этого недостатка ковариации необходимо нормализовать (стандартизировать) данные прежде чем вычислять ковариацию. Для нормализации <script type="math/tex">Y</script> сначала вычитается выборочное среднее из каждого наблюдения и делится на стандартное отклонение:</p>
+
+<script type="math/tex; mode=display">z_{i} = \frac{y_{i} - \bar{y}}{s_{y}}</script>
+
+<p>где</p>
+
+<script type="math/tex; mode=display">s_{y} = \sqrt{\frac{\sum_{i=1}^{n}(y_{i} - \bar{y})^2}{n-1}}</script>
+
+<p>называется <strong>выборочным среднеквадратическим отклонением <script type="math/tex">Y</script></strong>. Легко показать, что нормализованная переменная <script type="math/tex">Z</script> имеет математическое ожидание 0 и стандартное отклонение 1. Аналогично нормализуется <script type="math/tex">X</script>. Ковариация между нормализованными <script type="math/tex">X</script> и <script type="math/tex">Y</script> называется <strong>коэффициентом корреляции</strong> между <script type="math/tex">X</script> и <script type="math/tex">Y</script> и вычисляется по следующей формуле:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Рассчитываемый нами коэффициент корреляции также известен как коэффициент корреляции Пирсона, есть и другие показатели корреляции, например, <a href="http://www.machinelearning.ru/wiki/index.php?title=%D0%9A%D0%BE%D1%8D%D1%84%D1%84%D0%B8%D1%86%D0%B8%D0%B5%D0%BD%D1%82_%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BB%D1%8F%D1%86%D0%B8%D0%B8_%D0%9A%D0%B5%D0%BD%D0%B4%D0%B5%D0%BB%D0%BB%D0%B0">коэффициент ранговой корреляции Кендалла</a>.</p>
+</div>
+
+<script type="math/tex; mode=display">cor(Y, X) = \frac{1}{n-1}\sum_{i=1}^{n}(\frac{y_{i} - \bar{y}}{s_{y}})(\frac{x_{i} - \bar{x}}{s_{x}}) = \frac{cov(Y,X)}{s_{y}s_{x}} = \frac{\sum{(y_{i} - \bar{y})(x_{i} - \bar{x})}}{\sqrt{\sum{(y_{i} - \bar{y})^2(x_{i} - \bar{x})^2}}}</script>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">cov</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">sd</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sd</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">0.7794935</span><span class="w">
+
+</span><span class="c1"># Или с помощью функции cor()</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cor</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">0.7794935</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">))</span><span class="w">
+</span><span class="n">animals.log.cor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cor</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w">
+</span><span class="n">animals.cor</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cor</span><span class="p">(</span><span class="n">Animals</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">Animals</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w">
+</span><span class="n">plot_animals</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">'r = '</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">animals.cor</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)))</span><span class="w">
+</span><span class="n">plot_animals</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">'r = '</span><span class="p">,</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">animals.log.cor</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)))</span><span class="w">
+</span><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/correlation.png" alt="" /></p>
+
+<p>Таким образом, <script type="math/tex">Cor(Y, X)</script> может быть интерпретирована как ковариация между стандартизированными переменными или отношение ковариации к стандартным отклонениям двух переменных. Коэффициент корреляции является симметричным, то есть: <script type="math/tex">Cor(Y,X) = Cor(X,Y)</script>.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>TODO</strong></p>
+  <p class="last">Рассказать про коэффициент корреляции, ближе к -1, 1 и 0. 0 не значит отсутствие зависимости, просто она может не быть линейной, например, Y = 50 - x^2. Рассказать про Anscombe датасет:
+<pre><code>data(anscombe)
+summary(anscombe)
+cor(anscombe)
+</code></pre></p>
+</div>
+
+<p>В отличии от <script type="math/tex">Cov(Y,X)</script>, <script type="math/tex">Cor(Y,X)</script> инвариантна (не зависит от шкалы измеряемых величин) и удовлетворяет условию <script type="math/tex">-1 \leq Cor(Y,X) \leq 1</script>.</p>
+
+<p>Итак, убедившись, что между <script type="math/tex">y</script> и <script type="math/tex">x</script> сущетвует линейная взаимосвязь необходимо построить модель, которая наилучшим образом позволила бы эту взаимосвязь описать, но какую модель следует выбрать?</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot_animals</span><span class="p">()</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">lm</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">)</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2.0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'darkred'</span><span class="p">)</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3.0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.3</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'darkred'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/model_selection.png" alt="" /></p>
+
+<p>Мы рассмотрим разные линейные модели и начнем с простой линейной регрессии.</p>
+
+<h3 id="простая-линейная-регрессия">Простая линейная регрессия</h3>
+
+<p>Простая линейная регрессия (least squares regression line) это метод восстановления зависимости между двумя переменными: <strong>предсказываемой переменной</strong> <script type="math/tex">Y</script> и <strong>предиктором</strong> <script type="math/tex">X</script>.</p>
+
+<script type="math/tex; mode=display">Y = \beta_{0} + \beta_{1} X + \epsilon</script>
+
+<p>Где <script type="math/tex">\beta_{0}</script> это пересечение (показывает значение <script type="math/tex">Y</script> при <script type="math/tex">X = 0</script>), <script type="math/tex">\beta_{1}</script> угол наколна прямой, а <script type="math/tex">\epsilon</script> случайная ошибка. Параметры <script type="math/tex">\beta_{0}</script> и <script type="math/tex">\beta_{1}</script> называются <strong>регрессионными коэффициентами</strong>.</p>
+
+<p><strong>Метод наименьших квадратов</strong> позволяет вычислить параметры <script type="math/tex">\beta_{0}</script> и <script type="math/tex">\beta_{1}</script> минимизируя сумму квадратов ошибок (вертикальных дистанций, см. рисунок ниже). Ошибки могут быть найдены по следующей формуле:</p>
+
+<script type="math/tex; mode=display">\epsilon_{i} = y_{i} - \beta_{0} - \beta_{1}\times x_{i}, i=1,2,...,n</script>
+
+<p><img src="/assets/images/notes-on-lr/errors_dist.png" alt="" /></p>
+
+<p>Сумма квадратов ошибок (sum of squares errors) может быть записана как:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">В разной литературе можно встретить разные обозначения: SSE (sum of squared errors of prediction) == RSS (residual sum of squares) == SSR (sum of squared residuals).</p>
+</div>
+
+<script type="math/tex; mode=display">SSE(\beta_{0}, \beta_{1}) = \sum_{i=1}^{n} \epsilon_{i}^2 = \sum_{i=1}^{n}(y_{i} - \beta_{0} - \beta_{1} x_{i})^2 \rightarrow min</script>
+
+<p>Наша задача найти такие значения <script type="math/tex">\hat{\beta_{0}}</script> и <script type="math/tex">\hat{\beta_{1}}</script>, которые минимизируют <script type="math/tex">SSE(\beta_{0}, \beta_{1})</script>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">manipulate</span><span class="p">)</span><span class="w">
+
+</span><span class="n">plotMininizeError</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">beta0</span><span class="p">,</span><span class="w"> </span><span class="n">beta1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">error</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sum</span><span class="p">((</span><span class="n">beta0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beta1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w">
+    </span><span class="n">plot</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">,</span><span class="w">
+         </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">,</span><span class="w">
+         </span><span class="n">main</span><span class="o">=</span><span class="n">paste</span><span class="p">(</span><span class="nf">round</span><span class="p">(</span><span class="n">error</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)))</span><span class="w">
+    </span><span class="n">abline</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">beta0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">beta1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'darkred'</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">manipulate</span><span class="p">(</span><span class="n">plotMininizeError</span><span class="p">(</span><span class="n">b</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="m">1</span><span class="p">),</span><span class="w">
+           </span><span class="n">b</span><span class="m">0</span><span class="o">=</span><span class="n">slider</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">step</span><span class="o">=</span><span class="m">0.1</span><span class="p">),</span><span class="w">
+           </span><span class="n">b</span><span class="m">1</span><span class="o">=</span><span class="n">slider</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Чтобы найти <script type="math/tex">\beta_{0}</script>, <script type="math/tex">\beta_{1}</script>, которые минимизируют <script type="math/tex">SSE</script>, необходимо решить: <script type="math/tex">\triangledown SSE = \left (\frac{\partial SSE}{\partial \beta_0}, \frac{\partial SSE}{\partial \beta_1}\right ) = (0,0)</script>:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\frac{\partial SSE}{\partial \beta_0} =& -2\sum_{i=1}^{n}(y_{i} - (\beta_{0} + \beta_{1} x_{i})) = 0 & \Rightarrow &
+&n\beta_0& + \Big(\sum_{i=1}^{n}x_i\Big)\beta_1 = \sum_{i=1}^{n}y_i \\
+\frac{\partial SSE}{\partial \beta_1} =& -2\sum_{i=1}^{n}(y_{i} - (\beta_{0} + \beta_{1} x_{i}))x_{i} = 0 & \Rightarrow &
+&\Big(\sum_{i=1}^{n}x_i\Big)\beta_0& + \Big(\sum_{i=1}^{n}x_i^2\Big)\beta_1 = \sum_{i=1}^{n}x_iy_i
+\end{aligned} %]]></script>
+
+<p>Откуда получим:</p>
+
+<script type="math/tex; mode=display">\beta_1 = \frac{n\sum x_iy_i - (\sum x_i)(\sum y_i)}{n(\sum x_i^2) - (\sum x_i)^2} = \frac{\sum (x_i-\bar{x})(y_i-\bar{y})}{\sum (x_i-\bar{x})} = r\frac{s_y}{s_x} \qquad
+\beta_0 = \bar{y} - \beta_1\bar{x}</script>
+
+<p><img src="/assets/images/notes-on-lr/min_rss.png" alt="" /></p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Линейная регрессия (или как ее еще иногда называют метод наименьших квадратов) была впервые описана Гауссом в 1795 году (Гауссу было всего 18 лет) и позже опубликована в его знаменитой книге «Theoria Motus Corporum Coelestium in sectionibus conicis solem ambientium» (Теория движения небесных тел), где он изложил методы вычисления планетных орбит.</p>
+</div>
+
+<p>В случае простой линейной регрессии коэффициент <script type="math/tex">\beta_{1}</script> можно вычислить и более простым способом. Угол наклона прямой считается как <script type="math/tex">\frac{dy}{dx}</script>, откуда получим:</p>
+
+<script type="math/tex; mode=display">\begin{aligned}
+\beta_1 = \frac{dy}{dx} \rightarrow \\
+\beta_1 = \frac{\sum_{i=1}^{n}(y_{i} - \bar{y})}{\sum_{i=1}^{n}(x_{i} - \bar{x})} | \times \sum_{i=1}^{n}(x - \bar{x}) \rightarrow \\
+\beta_1 = \frac{\sum_{i=1}^{n}(y_{i} - \bar{y})(x_{i} - \bar{x})}{\sum_{i=1}^{n}(x_{i} - \bar{x})^2} \rightarrow ... \\
+\beta_1 = r\frac{s_{y}}{s_{x}}
+\end{aligned}</script>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">beta1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cor</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sd</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">sd</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">0.4959947</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">beta0</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">beta1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">2.554898</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plot_animals</span><span class="p">(</span><span class="n">animals.log</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">,</span><span class="w">
+               </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Brain and Body Weights for 28 Species'</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">abline</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">beta0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">beta1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/model.png" alt="" /></p>
+
+<p>В R такую модель можно построить с помощью функции <code class="highlighter-rouge">lm</code>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">animals.log</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">summary</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="w">
+
+</span><span class="n">Call</span><span class="o">:</span><span class="w">
+</span><span class="n">lm</span><span class="p">(</span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">)</span><span class="w">
+
+</span><span class="n">Residuals</span><span class="o">:</span><span class="w">
+</span><span class="n">Min</span><span class="w"> </span><span class="m">1</span><span class="n">Q</span><span class="w"> </span><span class="n">Median</span><span class="w"> </span><span class="m">3</span><span class="n">Q</span><span class="w"> </span><span class="n">Max</span><span class="w">
+</span><span class="m">-3.2890</span><span class="w"> </span><span class="m">-0.6763</span><span class="w"> </span><span class="m">0.3316</span><span class="w"> </span><span class="m">0.8646</span><span class="w"> </span><span class="m">2.5835</span><span class="w">
+
+</span><span class="n">Coefficients</span><span class="o">:</span><span class="w">
+</span><span class="n">Estimate</span><span class="w"> </span><span class="n">Std.</span><span class="w"> </span><span class="n">Error</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">Pr</span><span class="p">(</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span><span class="p">)</span><span class="w">
+</span><span class="p">(</span><span class="n">Intercept</span><span class="p">)</span><span class="w"> </span><span class="m">2.55490</span><span class="w"> </span><span class="m">0.41314</span><span class="w"> </span><span class="m">6.184</span><span class="w"> </span><span class="m">1.53e-06</span><span class="w"> </span><span class="o">***</span><span class="w">
+</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="w"> </span><span class="m">0.49599</span><span class="w"> </span><span class="m">0.07817</span><span class="w"> </span><span class="m">6.345</span><span class="w"> </span><span class="m">1.02e-06</span><span class="w"> </span><span class="o">***</span><span class="w">
+</span><span class="o">---</span><span class="w">
+</span><span class="n">Signif.</span><span class="w"> </span><span class="n">codes</span><span class="o">:</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="err">‘</span><span class="o">***</span><span class="err">’</span><span class="w"> </span><span class="m">0.001</span><span class="w"> </span><span class="err">‘</span><span class="o">**</span><span class="err">’</span><span class="w"> </span><span class="m">0.01</span><span class="w"> </span><span class="err">‘</span><span class="o">*</span><span class="err">’</span><span class="w"> </span><span class="m">0.05</span><span class="w"> </span><span class="err">‘</span><span class="n">.</span><span class="err">’</span><span class="w"> </span><span class="m">0.1</span><span class="w"> </span><span class="err">‘</span><span class="w"> </span><span class="err">’</span><span class="w"> </span><span class="m">1</span><span class="w">
+
+</span><span class="n">Residual</span><span class="w"> </span><span class="n">standard</span><span class="w"> </span><span class="n">error</span><span class="o">:</span><span class="w"> </span><span class="m">1.532</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="n">degrees</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">freedom</span><span class="w">
+</span><span class="n">Multiple</span><span class="w"> </span><span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="o">:</span><span class="w"> </span><span class="m">0.6076</span><span class="p">,</span><span class="w">    </span><span class="n">Adjusted</span><span class="w"> </span><span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="o">:</span><span class="w"> </span><span class="m">0.5925</span><span class="w">
+</span><span class="nb">F</span><span class="o">-</span><span class="n">statistic</span><span class="o">:</span><span class="w"> </span><span class="m">40.26</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="n">DF</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="o">-</span><span class="n">value</span><span class="o">:</span><span class="w"> </span><span class="m">1.017e-06</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="highlighter-rouge">y ~ x</code> называется формулой. Символ <code class="highlighter-rouge">~</code> в формуле следует читать как «описывается переменной». К объяснению вывода результатов команды <code class="highlighter-rouge">summary</code> мы еще вернемся. А пока ответим на вопрос «Как с помощью полученной модели делать прогнозы?».</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">manipulate</span><span class="p">)</span><span class="w">
+</span><span class="n">plotPrediction</span><span class="w"> </span><span class="o">&lt;-</span><span class="k">function</span><span class="p">(</span><span class="n">newx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">)</span><span class="w">
+    </span><span class="n">plot</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">,</span><span class="w">
+         </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">)</span><span class="w">
+    </span><span class="n">abline</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'dark blue'</span><span class="p">)</span><span class="w">
+    </span><span class="n">points</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">newx</span><span class="p">),</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="m">-0.35</span><span class="p">),</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'darkred'</span><span class="p">)</span><span class="w">
+    </span><span class="n">points</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">newx</span><span class="p">,</span><span class="w"> </span><span class="n">newx</span><span class="p">),</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="p">)</span><span class="m">-0.35</span><span class="p">,</span><span class="w">
+           </span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">newx</span><span class="o">*</span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">2</span><span class="p">]),</span><span class="w">
+           </span><span class="n">type</span><span class="o">=</span><span class="s1">'l'</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+    </span><span class="n">points</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">)</span><span class="m">-0.4</span><span class="p">,</span><span class="w"> </span><span class="n">newx</span><span class="p">),</span><span class="w">
+           </span><span class="nf">c</span><span class="p">(</span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">newx</span><span class="o">*</span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w">
+           </span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">newx</span><span class="o">*</span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">2</span><span class="p">]),</span><span class="w">
+           </span><span class="n">type</span><span class="o">=</span><span class="s1">'l'</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+    </span><span class="n">points</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">)</span><span class="m">-0.6</span><span class="p">),</span><span class="w">
+           </span><span class="nf">c</span><span class="p">(</span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">newx</span><span class="o">*</span><span class="n">model</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">2</span><span class="p">]),</span><span class="w">
+           </span><span class="n">lwd</span><span class="o">=</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'darkred'</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="n">manipulate</span><span class="p">(</span><span class="n">plotPrediction</span><span class="p">(</span><span class="n">new_x</span><span class="p">),</span><span class="w"> </span><span class="n">new_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slider</span><span class="p">(</span><span class="nf">min</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">),</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/predictions.png" alt="" /></p>
+
+<p>Нам необходимо вернуться к исходной шкале измерения, чтобы делать легко интерпретируемые прогнозы:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\ln(y) & = 2.555 + 0.496 \times \ln(x) + \epsilon \\
+e^{\ln(y)} & = e^{2.555 + 0.496 \times \ln(x) + \epsilon} \\
+y & = e^{2.555}e^{\ln(x)^{0.496}}e^{\epsilon} \\
+y & = e^{2.555 + \epsilon} \times x^{0.496}
+\end{aligned} %]]></script>
+
+<h3 id="оценка-полученной-модели">Оценка полученной модели</h3>
+
+<h3 id="квартет-энскомба">Квартет Энскомба</h3>
+
+<p><img src="/assets/images/notes-on-lr/anscombe_data.png" alt="" /></p>
+
+<p><img src="/assets/images/notes-on-lr/DinoSequentialSmaller.gif" alt="" /></p>
+
+<h3 id="связь-мнк-и-ммп">Связь МНК и ММП</h3>
+
+<p>…</p>
+
+<h3 id="многомерная-линейная-регрессия">Многомерная линейная регрессия</h3>
+
+<script type="math/tex; mode=display">y_i = \beta_1 + \beta_2x_{2i} + ... + \beta_kx_{ki} + \epsilon_i,\quad  (i=1,...,n)</script>
+
+<p>Запишем в матричной форме:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+y = \begin{pmatrix} y_1 \\ ... \\ y_n \end{pmatrix},\quad 
+X = \begin{pmatrix} 1 & x_{21} & ... & x_{k1} \\  ... & ... & ... & ... \\ 1 & x_{2n} & ... & x_{kn} \end{pmatrix},\quad 
+\beta = \begin{pmatrix} \beta_1 \\ ... \\ \beta_k \end{pmatrix},\quad 
+\epsilon = \begin{pmatrix} \epsilon_1 \\ ... \\ \epsilon_n \end{pmatrix} %]]></script>
+
+<p>Опять хотим минимизировать квадрат ошибки:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+L = \sum_{i=1}^{n}\epsilon_{i}^2 = \epsilon'\epsilon &= (y - X\beta)'(y-X\beta) \\
+&= y'y - y'X\beta - X'\beta'y + \beta'X'b \rightarrow min
+\end{align*} %]]></script>
+
+<p>Уже по известной схеме:</p>
+
+<script type="math/tex; mode=display">\frac{\partial L}{\partial \beta} = -2X'y + 2X'X\beta = 0</script>
+
+<p>Откуда получим:</p>
+
+<script type="math/tex; mode=display">X'Xb = X'y \Rightarrow \beta = (X'X)^{-1}X'y</script>
+
+<p>Последнее уравнение называется <strong>нормальным уравнением</strong> (normal equation).</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w">
+</span><span class="n">X</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cbind</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="n">n</span><span class="p">))</span><span class="w">
+</span><span class="n">B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">solve</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">%*%</span><span class="n">X</span><span class="p">)</span><span class="o">%*%</span><span class="n">t</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">%*%</span><span class="n">y</span><span class="w">
+</span><span class="n">x.test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">0.25</span><span class="p">)</span><span class="w">
+</span><span class="n">y.hat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">B</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">+</span><span class="n">B</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">*</span><span class="n">x.test</span><span class="w">
+</span><span class="n">lines</span><span class="p">(</span><span class="n">x.test</span><span class="p">,</span><span class="w"> </span><span class="n">y.hat</span><span class="p">,</span><span class="n">col</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="робастность-регрессии">Робастность регрессии</h3>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">animals.log</span><span class="p">,</span><span class="w">
+     </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">animals.log</span><span class="p">[</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">6</span><span class="p">,],</span><span class="w">
+       </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">)</span><span class="w">
+</span><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">animals.log</span><span class="p">)</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'dark blue'</span><span class="p">)</span><span class="w">
+
+</span><span class="n">plot</span><span class="p">(</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">animals.log</span><span class="p">,</span><span class="w">
+     </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'log(body weight)'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'log(brain weight)'</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">animals.log</span><span class="p">[</span><span class="n">animals.log</span><span class="o">$</span><span class="n">body</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">animals.log</span><span class="o">$</span><span class="n">brain</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">6</span><span class="p">,],</span><span class="w">
+       </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">)</span><span class="w">
+</span><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rlm</span><span class="p">(</span><span class="n">brain</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">animals.log</span><span class="p">)</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'dark blue'</span><span class="p">)</span><span class="w">
+</span><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/robust.png" alt="" /></p>
+
+<h3 id="полиномиальная-регрессия-ridge-регрессия-и-lasso-регрессия">Полиномиальная регрессия, ridge-регрессия и LASSO-регрессия</h3>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">set.seed</span><span class="p">(</span><span class="m">123456</span><span class="p">)</span><span class="w">
+</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">-2</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">length.out</span><span class="o">=</span><span class="m">15</span><span class="p">)</span><span class="w">
+</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="m">-0.25</span><span class="p">,</span><span class="w"> </span><span class="m">0.25</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">abline</span><span class="p">(</span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'dark blue'</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/bad_model.png" alt="" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">))</span><span class="w">
+
+</span><span class="n">poly.1</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.7</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.14</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">))</span><span class="w">
+
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">curve</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">poly.1</span><span class="p">,</span><span class="w">  </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">add</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"royalblue"</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">curve</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">poly.7</span><span class="p">,</span><span class="w">  </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">add</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkgreen"</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">curve</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">poly.14</span><span class="p">,</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">add</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">)</span><span class="w">
+
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">curve</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">poly.1</span><span class="p">,</span><span class="w">  </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">add</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"royalblue"</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">curve</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">poly.7</span><span class="p">,</span><span class="w">  </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">add</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkgreen"</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">curve</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">poly.14</span><span class="p">,</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)),</span><span class="w"> </span><span class="n">add</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+
+</span><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/poly_regression.png" alt="" /></p>
+
+<p>Простая модель очень плохо описывает наши данные и это называется <strong>underfitting</strong>, полиномиальная модель же наоборот, прошла через каждую точку и в точности описала все данные, это называется <strong>overfitting</strong>.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">poly.2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.5</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.6</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">6</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.8</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.9</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">9</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.10</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.11</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">11</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.12</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">))</span><span class="w">
+</span><span class="n">poly.13</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">13</span><span class="p">))</span><span class="w">
+</span><span class="n">anova</span><span class="p">(</span><span class="n">poly.1</span><span class="p">,</span><span class="w"> </span><span class="n">poly.2</span><span class="p">,</span><span class="w"> </span><span class="n">poly.3</span><span class="p">,</span><span class="w"> </span><span class="n">poly.4</span><span class="p">,</span><span class="w"> </span><span class="n">poly.5</span><span class="p">,</span><span class="w"> </span><span class="n">poly.6</span><span class="p">,</span><span class="w"> </span><span class="n">poly.7</span><span class="p">,</span><span class="w"> </span><span class="n">poly.8</span><span class="p">,</span><span class="w"> </span><span class="n">poly.9</span><span class="p">,</span><span class="w"> 
+      </span><span class="n">poly.10</span><span class="p">,</span><span class="w"> </span><span class="n">poly.11</span><span class="p">,</span><span class="w"> </span><span class="n">poly.12</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Analysis of Variance Table
+
+Model  1: y ~ poly(x, 1)
+Model  2: y ~ poly(x, 2)
+Model  3: y ~ poly(x, 3)
+Model  4: y ~ poly(x, 4)
+Model  5: y ~ poly(x, 5)
+Model  6: y ~ poly(x, 6)
+Model  7: y ~ poly(x, 7)
+Model  8: y ~ poly(x, 8)
+Model  9: y ~ poly(x, 9)
+Model 10: y ~ poly(x, 10)
+Model 11: y ~ poly(x, 11)
+Model 12: y ~ poly(x, 12)
+   Res.Df    RSS Df Sum of Sq       F  Pr(&gt;F)  
+   1      13 6.7847                               
+   2      12 1.7598  1    5.0249 68.7312 0.01424 *
+   3      11 1.6804  1    0.0794  1.0859 0.40679  
+   4      10 0.2022  1    1.4782 20.2190 0.04607 *
+   5       9 0.1992  1    0.0030  0.0416 0.85728  
+   6       8 0.1548  1    0.0444  0.6075 0.51732  
+   7       7 0.1542  1    0.0006  0.0079 0.93723  
+   8       6 0.1542  1    0.0000  0.0004 0.98568  
+   9       5 0.1473  1    0.0069  0.0937 0.78845  
+   10      4 0.1470  1    0.0003  0.0042 0.95421  
+   11      3 0.1469  1    0.0001  0.0017 0.97091  
+   12      2 0.1462  1    0.0007  0.0090 0.93296  
+   ---
+   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</code></pre></div></div>
+
+<h3 id="ridge-регрессия"><em>Ridge-регрессия</em></h3>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Регуляризация Тихонова</p>
+</div>
+
+<p>Мы видели, что если в модель включить слишком много параметров, то она склонна к переобучению. В случае гребневой регрессии (ridge regression) мы включаем дополнительный параметр <script type="math/tex">\lambda</script> для регулирования сложности модели. Простыми словами, чем больше значение <script type="math/tex">\lambda</script>, тем проще модель мы хотим получить.</p>
+
+<p>Ранее мы минимизировали:</p>
+
+<script type="math/tex; mode=display">SSE(\beta) = \sum_{i=1}^{n}(y_{i} - \sum_{j=1}^{p}\beta_{j} x_{j})^2</script>
+
+<p>А теперь будем минимизировать:</p>
+
+<script type="math/tex; mode=display">SSE(\beta) = \sum_{i=1}^{n}(y_{i} - \sum_{j=1}^{p}\beta_{j} x_{j})^2 + \lambda\sum_{j=1}^{p}\beta_{j}^2</script>
+
+<p>где <script type="math/tex">\lambda</script> - параметр регуляризации, который надо как-то выбрать.</p>
+
+<script type="math/tex; mode=display">L = (y - X\beta)^{T}(y-X\beta) + \lambda\beta^{T}\beta</script>
+
+<p>Если взять производную, то получим:</p>
+
+<script type="math/tex; mode=display">\beta = (X^{T}X + \lambda I)^{-1}X^{T}y</script>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">-2</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">length.out</span><span class="o">=</span><span class="m">15</span><span class="p">)</span><span class="w">
+</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="m">-0.25</span><span class="p">,</span><span class="w"> </span><span class="m">0.25</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
+
+</span><span class="n">x</span><span class="m">1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">-2</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w">
+</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">-0.25</span><span class="p">,</span><span class="w"> </span><span class="m">0.25</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">17</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/ridge.png" alt="" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cv.ridge</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cv.glmnet</span><span class="p">(</span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="o">=</span><span class="s1">'gaussian'</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">cv.ridge</span><span class="p">,</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">),</span><span class="w"> </span><span class="n">s</span><span class="o">=</span><span class="n">cv.ridge</span><span class="o">$</span><span class="n">lambda.min</span><span class="p">),</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"royalblue"</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="lasso-регрессия"><em>LASSO-регрессия</em></h3>
+
+<script type="math/tex; mode=display">SSE(\beta) = \sum_{i=1}^{n}(y_{i} - \sum_{j=1}^{p}\beta_{j} x_{j})^2 + \lambda\sum_{j=1}^{p}\beta_{j}^2</script>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">lars</span><span class="p">)</span><span class="w">
+</span><span class="n">lasso.model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lars</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lasso"</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">lasso.model</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/lasso1.png" alt="" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span><span class="m">1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">-2</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">length.out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w">
+</span><span class="n">y</span><span class="m">1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">-0.25</span><span class="p">,</span><span class="w"> </span><span class="m">0.25</span><span class="p">)</span><span class="w">
+</span><span class="n">y.pred.lasso</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">predict</span><span class="p">(</span><span class="n">lasso.model</span><span class="p">,</span><span class="w">
+                        </span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">),</span><span class="w">
+                        </span><span class="n">s</span><span class="o">=</span><span class="n">best.fraction</span><span class="p">,</span><span class="w">
+                        </span><span class="n">type</span><span class="o">=</span><span class="s2">"fit"</span><span class="p">,</span><span class="w">
+                        </span><span class="n">mode</span><span class="o">=</span><span class="s2">"fraction"</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y.pred.lasso</span><span class="o">$</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"royalblue"</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">17</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/lasso2.png" alt="" /></p>
+
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

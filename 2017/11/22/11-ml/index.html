@@ -10,7 +10,7 @@
   
   
   <title>Прогнозируем, классифицируем и кластеризуем (draft)</title>
-  <meta name="description" content="">
+  <meta name="description" content="Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary">
   
   <meta name="twitter:title" content="Прогнозируем, классифицируем и кластеризуем (draft)">
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.">
   
   
 
@@ -103,11 +103,11 @@
   
   
     
+  
+    
+  
+    
       <a href="/categories/python/">python</a>,
-    
-  
-    
-  
     
   
     
@@ -126,6 +126,10 @@
   
 
   
+  
+    
+  
+    
   
     
   
@@ -145,24 +149,8 @@
   
     
   
-    
-  
-    
-  
 
   
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
   
     
       <a href="/categories/r/">R</a>,
@@ -174,16 +162,20 @@
   
     
   
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
 
   
-  
-    
-  
-    
-  
-    
-  
-    
   
     
   
@@ -199,8 +191,20 @@
   
     
   
+    
+  
+    
+  
+    
+  
+    
+  
 
   
+  
+    
+  
+    
   
     
   
@@ -220,21 +224,17 @@
   
     
   
-    
-  
-    
-  
 
 </p>
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-<p>Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.</p>
+    <p>Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.</p>
 
 <p>Перед выполнением каждого задания дается краткое описание рассматриваемой задачи (с минимальными математическими выкладками), приводится пример возможного решения на языке R, далее следует само задание, а именно реализация описываемых алгоритмов на языке Python (подразумевается использование модулей <code class="highlighter-rouge">numpy</code> и <code class="highlighter-rouge">pandas</code> для выполнения векторных операций) и в конце приводится пример решения задания с использованием библиотеки <code class="highlighter-rouge">sklearn</code>.</p>
+
+<script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 <h3 id="регрессия">Регрессия</h3>
 
@@ -291,11 +291,12 @@
 
 <p>В результате подстановки получим следующее правило для пересчета параметров <script type="math/tex">\theta</script>:</p>
 
-<script type="math/tex; mode=display">\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Более подробно про метод градиентного спуска можно почитать <a href="http://mccormickml.com/2014/03/04/gradient-descent-derivation/">тут</a>.</p>
+</div>
 
-<blockquote>
-  <p>Более подробно про метод градиентного спуска можно почитать <a href="http://mccormickml.com/2014/03/04/gradient-descent-derivation/">тут</a>.</p>
-</blockquote>
+<script type="math/tex; mode=display">\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
 
 <p>В репозитории уже есть готовая реализация метода градиентного спуска на языке R, поэтому давайте воспользуемся ей:</p>
 
@@ -337,6 +338,11 @@
 
 <p>Вашей задачей является реализовать метод градиентного спуска:</p>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Имена методов выбраны в соответствии с тем как они названы в <code>sklearn</code>.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">GDRegression</span><span class="p">:</span>
     
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
@@ -348,10 +354,6 @@
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
         <span class="k">pass</span>
 </code></pre></div></div>
-
-<blockquote>
-  <p><strong>Замечание</strong>: Имена методов выбраны в соответствии с тем как они названы в <code class="highlighter-rouge">sklearn</code>.</p>
-</blockquote>
 
 <p>Метод <code class="highlighter-rouge">fit</code> обучает модель на данных <code class="highlighter-rouge">X_train</code> (матрица признаков) и <code class="highlighter-rouge">y_train</code>(вектор ответов). Результатом работы этого метода являются два атрибута: <code class="highlighter-rouge">coef_</code> - вектор оценок для <script type="math/tex">\theta_i</script> (<script type="math/tex">i</script> принимает значения от 1 до <script type="math/tex">p</script>, где <script type="math/tex">p</script> - это количество признаков) и <code class="highlighter-rouge">intercept_</code> - оцененное значение для <script type="math/tex">\theta_0</script>.</p>
 
@@ -456,7 +458,32 @@
 
 <h3 id="классификация">Классификация</h3>
 
-<p>В общем виде задачу классификации можно представить следующим образом. Имеется множество объектов, которые разделены на классы по некоторым признакам. Например, успевающие студенты и отстающие студенты. В обучающей выборке задано конечное множество объектов и их признаков. Например, перечень всех студентов учебного заведения и все оценки по прошедшим и текущим дисциплинам. Для каждого из объектов обучающей выборки известно, к каким классам они относятся. Принадлежность же остальных объектов к классам неизвестна. Требуется построить алгоритм, способный классифицировать произвольный объект из исходного множества, то есть указать наименование (или номер) класса, к которому объект отнесён в результате применения алгоритма классификации.</p>
+<p>Вы уже встречались с задачей классфикации в работе <a href="http://127.0.0.1:4000/2017/11/22/06-hackernews/">«Персонализация новостной ленты Hacker News»</a>. В общем виде задачу классификации можно представить следующим образом: имеется множество объектов, которые разделены на классы по некоторым признакам. Например, успевающие студенты и отстающие студенты. В обучающей выборке задано конечное множество объектов и их признаков. Например, перечень всех студентов учебного заведения и все оценки по прошедшим и текущим дисциплинам. Для каждого из объектов обучающей выборки известно, к каким классам они относятся. Принадлежность же остальных объектов к классам неизвестна. Требуется построить алгоритм, способный классифицировать произвольный объект из исходного множества, то есть указать наименование (или номер) класса, к которому объект отнесён в результате применения алгоритма классификации.</p>
+
+<h3 id="логистическая-регрессия"><em>Логистическая регрессия</em></h3>
+
+<script type="math/tex; mode=display">h_{\theta}(x) = g(\theta^Tx) = \frac{1}{1 + \exp^{-\theta^{T}x}}</script>
+
+<p>где:</p>
+
+<script type="math/tex; mode=display">g(z) = \frac{1}{1 + \exp^{-z}}</script>
+
+<p><script type="math/tex">g(z)</script> называется <strong>логистической функцией</strong>.</p>
+
+<script type="math/tex; mode=display">\theta := \theta - \alpha \frac{\partial}{\partial \theta}J(\theta)</script>
+
+<p>Где <script type="math/tex">J(\theta)</script> называется целевой функцией (cost function), а <script type="math/tex">\alpha</script> скоростью обучения (learning rate). Целевая функция вычисляется по следующей формуле:</p>
+
+<script type="math/tex; mode=display">J(\theta) = -\frac{1}{m}\sum_{i=1}^{m}(y_{i}log(h_{\theta}(x_i)) - (1-y_{i})log(1-h_{\theta}(x_i)) \rightarrow \frac{\partial}{\partial \theta}J(\theta) = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
+
+<p>В результате подстановки получим следующее правило для пересчета параметров <script type="math/tex">\theta</script>:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Более подробно про метод градиентного спуска можно почитать <a href="http://mccormickml.com/2014/03/04/gradient-descent-derivation/">тут</a>.</p>
+</div>
+
+<script type="math/tex; mode=display">\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LogisticRegression</span><span class="p">:</span>
     
@@ -502,14 +529,10 @@
 
 <p>Пример поиска трех кластеров, используя алгоритм K-средних представлен на рисунках ниже:</p>
 
-<p><img src="/assets/images/11-ml/kmeans1.png" alt="" />
-<img src="/assets/images/11-ml/kmeans2.png" alt="" />
-<img src="/assets/images/11-ml/kmeans3.png" alt="" />
-<img src="/assets/images/11-ml/kmeans4.png" alt="" />
-<img src="/assets/images/11-ml/kmeans5.png" alt="" />
-<img src="/assets/images/11-ml/kmeans6.png" alt="" />
-<img src="/assets/images/11-ml/kmeans7.png" alt="" />
-<img src="/assets/images/11-ml/kmeans8.png" alt="" /></p>
+<p><img src="/assets/images/11-ml/kmeans1.png" alt="" /><img src="/assets/images/11-ml/kmeans2.png" alt="" />
+<img src="/assets/images/11-ml/kmeans3.png" alt="" /><img src="/assets/images/11-ml/kmeans4.png" alt="" />
+<img src="/assets/images/11-ml/kmeans5.png" alt="" /><img src="/assets/images/11-ml/kmeans6.png" alt="" />
+<img src="/assets/images/11-ml/kmeans7.png" alt="" /><img src="/assets/images/11-ml/kmeans8.png" alt="" /></p>
 
 <h3 id="замечания-по-k-средних"><em>Замечания по k-средних</em></h3>
 <ul>

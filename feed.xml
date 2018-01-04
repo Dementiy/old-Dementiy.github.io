@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2017-12-29T15:43:00+03:00</updated>
+  <updated>2018-01-04T18:32:25+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -1210,12 +1210,12 @@ class::call ('bar',) {'y': 2}
       <published>2017-11-22T00:00:00+03:00</published>
       <updated>2017-11-22T00:00:00+03:00</updated>
       <id>https://dementiy.github.io/2017/11/22/11-ml</id>
-      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/11-ml/">&lt;script type=&quot;text/javascript&quot; async=&quot;&quot; src=&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML&quot;&gt;
-&lt;/script&gt;
-
-&lt;p&gt;Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.&lt;/p&gt;
+      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/11-ml/">&lt;p&gt;Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.&lt;/p&gt;
 
 &lt;p&gt;Перед выполнением каждого задания дается краткое описание рассматриваемой задачи (с минимальными математическими выкладками), приводится пример возможного решения на языке R, далее следует само задание, а именно реализация описываемых алгоритмов на языке Python (подразумевается использование модулей &lt;code class=&quot;highlighter-rouge&quot;&gt;numpy&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;pandas&lt;/code&gt; для выполнения векторных операций) и в конце приводится пример решения задания с использованием библиотеки &lt;code class=&quot;highlighter-rouge&quot;&gt;sklearn&lt;/code&gt;.&lt;/p&gt;
+
+&lt;script type=&quot;text/javascript&quot; async=&quot;&quot; src=&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML&quot;&gt;
+&lt;/script&gt;
 
 &lt;h3 id=&quot;регрессия&quot;&gt;Регрессия&lt;/h3&gt;
 
@@ -1272,11 +1272,12 @@ class::call ('bar',) {'y': 2}
 
 &lt;p&gt;В результате подстановки получим следующее правило для пересчета параметров &lt;script type=&quot;math/tex&quot;&gt;\theta&lt;/script&gt;:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i&lt;/script&gt;
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Более подробно про метод градиентного спуска можно почитать &lt;a href=&quot;http://mccormickml.com/2014/03/04/gradient-descent-derivation/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;blockquote&gt;
-  &lt;p&gt;Более подробно про метод градиентного спуска можно почитать &lt;a href=&quot;http://mccormickml.com/2014/03/04/gradient-descent-derivation/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i&lt;/script&gt;
 
 &lt;p&gt;В репозитории уже есть готовая реализация метода градиентного спуска на языке R, поэтому давайте воспользуемся ей:&lt;/p&gt;
 
@@ -1318,6 +1319,11 @@ class::call ('bar',) {'y': 2}
 
 &lt;p&gt;Вашей задачей является реализовать метод градиентного спуска:&lt;/p&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Имена методов выбраны в соответствии с тем как они названы в &lt;code&gt;sklearn&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;GDRegression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
     
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.01&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n_iter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
@@ -1329,10 +1335,6 @@ class::call ('bar',) {'y': 2}
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Замечание&lt;/strong&gt;: Имена методов выбраны в соответствии с тем как они названы в &lt;code class=&quot;highlighter-rouge&quot;&gt;sklearn&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
 
 &lt;p&gt;Метод &lt;code class=&quot;highlighter-rouge&quot;&gt;fit&lt;/code&gt; обучает модель на данных &lt;code class=&quot;highlighter-rouge&quot;&gt;X_train&lt;/code&gt; (матрица признаков) и &lt;code class=&quot;highlighter-rouge&quot;&gt;y_train&lt;/code&gt;(вектор ответов). Результатом работы этого метода являются два атрибута: &lt;code class=&quot;highlighter-rouge&quot;&gt;coef_&lt;/code&gt; - вектор оценок для &lt;script type=&quot;math/tex&quot;&gt;\theta_i&lt;/script&gt; (&lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; принимает значения от 1 до &lt;script type=&quot;math/tex&quot;&gt;p&lt;/script&gt;, где &lt;script type=&quot;math/tex&quot;&gt;p&lt;/script&gt; - это количество признаков) и &lt;code class=&quot;highlighter-rouge&quot;&gt;intercept_&lt;/code&gt; - оцененное значение для &lt;script type=&quot;math/tex&quot;&gt;\theta_0&lt;/script&gt;.&lt;/p&gt;
 
@@ -1437,7 +1439,32 @@ class::call ('bar',) {'y': 2}
 
 &lt;h3 id=&quot;классификация&quot;&gt;Классификация&lt;/h3&gt;
 
-&lt;p&gt;В общем виде задачу классификации можно представить следующим образом. Имеется множество объектов, которые разделены на классы по некоторым признакам. Например, успевающие студенты и отстающие студенты. В обучающей выборке задано конечное множество объектов и их признаков. Например, перечень всех студентов учебного заведения и все оценки по прошедшим и текущим дисциплинам. Для каждого из объектов обучающей выборки известно, к каким классам они относятся. Принадлежность же остальных объектов к классам неизвестна. Требуется построить алгоритм, способный классифицировать произвольный объект из исходного множества, то есть указать наименование (или номер) класса, к которому объект отнесён в результате применения алгоритма классификации.&lt;/p&gt;
+&lt;p&gt;Вы уже встречались с задачей классфикации в работе &lt;a href=&quot;http://127.0.0.1:4000/2017/11/22/06-hackernews/&quot;&gt;«Персонализация новостной ленты Hacker News»&lt;/a&gt;. В общем виде задачу классификации можно представить следующим образом: имеется множество объектов, которые разделены на классы по некоторым признакам. Например, успевающие студенты и отстающие студенты. В обучающей выборке задано конечное множество объектов и их признаков. Например, перечень всех студентов учебного заведения и все оценки по прошедшим и текущим дисциплинам. Для каждого из объектов обучающей выборки известно, к каким классам они относятся. Принадлежность же остальных объектов к классам неизвестна. Требуется построить алгоритм, способный классифицировать произвольный объект из исходного множества, то есть указать наименование (или номер) класса, к которому объект отнесён в результате применения алгоритма классификации.&lt;/p&gt;
+
+&lt;h3 id=&quot;логистическая-регрессия&quot;&gt;&lt;em&gt;Логистическая регрессия&lt;/em&gt;&lt;/h3&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;h_{\theta}(x) = g(\theta^Tx) = \frac{1}{1 + \exp^{-\theta^{T}x}}&lt;/script&gt;
+
+&lt;p&gt;где:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;g(z) = \frac{1}{1 + \exp^{-z}}&lt;/script&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;g(z)&lt;/script&gt; называется &lt;strong&gt;логистической функцией&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta := \theta - \alpha \frac{\partial}{\partial \theta}J(\theta)&lt;/script&gt;
+
+&lt;p&gt;Где &lt;script type=&quot;math/tex&quot;&gt;J(\theta)&lt;/script&gt; называется целевой функцией (cost function), а &lt;script type=&quot;math/tex&quot;&gt;\alpha&lt;/script&gt; скоростью обучения (learning rate). Целевая функция вычисляется по следующей формуле:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;J(\theta) = -\frac{1}{m}\sum_{i=1}^{m}(y_{i}log(h_{\theta}(x_i)) - (1-y_{i})log(1-h_{\theta}(x_i)) \rightarrow \frac{\partial}{\partial \theta}J(\theta) = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i&lt;/script&gt;
+
+&lt;p&gt;В результате подстановки получим следующее правило для пересчета параметров &lt;script type=&quot;math/tex&quot;&gt;\theta&lt;/script&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Более подробно про метод градиентного спуска можно почитать &lt;a href=&quot;http://mccormickml.com/2014/03/04/gradient-descent-derivation/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i&lt;/script&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;LogisticRegression&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
     
@@ -1483,14 +1510,10 @@ class::call ('bar',) {'y': 2}
 
 &lt;p&gt;Пример поиска трех кластеров, используя алгоритм K-средних представлен на рисунках ниже:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/11-ml/kmeans1.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans2.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans3.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans4.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans5.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans6.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans7.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/assets/images/11-ml/kmeans8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/11-ml/kmeans1.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;/assets/images/11-ml/kmeans2.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;/assets/images/11-ml/kmeans3.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;/assets/images/11-ml/kmeans4.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;/assets/images/11-ml/kmeans5.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;/assets/images/11-ml/kmeans6.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;/assets/images/11-ml/kmeans7.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;/assets/images/11-ml/kmeans8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;замечания-по-k-средних&quot;&gt;&lt;em&gt;Замечания по k-средних&lt;/em&gt;&lt;/h3&gt;
 &lt;ul&gt;
@@ -1634,7 +1657,7 @@ class::call ('bar',) {'y': 2}
       
 
       
-        <summary type="html"></summary>
+        <summary type="html">Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.</summary>
       
 
       
@@ -6979,6 +7002,8 @@ no changes added to commit &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;use &lt
       
       
     </entry>
+  
+  
   
   
 </feed>
