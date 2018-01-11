@@ -16,19 +16,19 @@ categories: R datascience
 
 ```r
 > head(Animals)
-body brain
-Mountain beaver 1.35 8.1
-Cow 465.00 423.0
-Grey wolf 36.33 119.5
-Goat 27.66 115.0
-Guinea pig 1.04 5.5
-Dipliodocus 11700.00 50.0
+                    body brain
+Mountain beaver     1.35   8.1
+Cow               465.00 423.0
+Grey wolf          36.33 119.5
+Goat               27.66 115.0
+Guinea pig          1.04   5.5
+Dipliodocus     11700.00  50.0
 
 > nrow(Animals)
 [1] 28
 ```
 
-У нас имеется $$n=28$$ наблюдений и мы хотим проверить «силу связи» (и есть ли такая связь вообще) между весом мозга (переменная $$brain$$) и весом тела (переменная $$body$$). Хорошим правилом считается _посмотреть на данные_, с которыми мы работаем, поэтому отобразим точки на диаграмме рассеяния:
+У нас имеется $$n=28$$ наблюдений и мы хотим проверить «силу взаимосвязи» (и есть ли такая взаимосвязь вообще) между весом мозга (переменная $$brain$$) и весом тела (переменная $$body$$). Хорошим правилом считается _посмотреть на данные_, с которыми мы работаем, поэтому отобразим точки на диаграмме рассеяния:
 
 ```r
 plot_animals <- function(animals, xlab='', ylab='', main_label='') {
@@ -59,7 +59,7 @@ plot_animals(animals.log, xlab='log(body weight)', ylab='log(brain weight)',
 
 ![](/assets/images/notes-on-lr/animals-log.png)
 
-Теперь стало более очевидно, что имеется линейная связь между наблюдениями. Возникает вопрос: «На сколько сильная эта связь?» Чтобы ответить на этот вопрос мы можем посчитать так называемый **коэффициент корреляции**. Для этого сначала найдем выборочные средние и отобразим их соответствующими линиями на диаграмме рассеяния:
+Теперь стало более очевидно, что имеется линейная взаимосвязь между наблюдениями. Возникает вопрос: «На сколько эта взаимосвязь сильная?» Чтобы ответить на этот вопрос мы можем посчитать так называемый **коэффициент корреляции**. Для этого сначала найдем выборочные средние и отобразим их соответствующими линиями на диаграмме рассеяния:
 
 $$\bar{y} = \frac{\sum_{i=1}^{n}y_{i}}{n}$$
 
@@ -278,32 +278,43 @@ $$
 > summary(model)
 
 Call:
-lm(formula = animals.log$brain ~ animals.log$body)
+lm(formula = brain ~ body, data = animals.log)
 
 Residuals:
-Min 1Q Median 3Q Max
--3.2890 -0.6763 0.3316 0.8646 2.5835
+    Min      1Q  Median      3Q     Max 
+-3.2890 -0.6763  0.3316  0.8646  2.5835 
 
 Coefficients:
-Estimate Std. Error t value Pr(>|t|)
-(Intercept) 2.55490 0.41314 6.184 1.53e-06 ***
-animals.log$body 0.49599 0.07817 6.345 1.02e-06 ***
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  2.55490    0.41314   6.184 1.53e-06 ***
+body         0.49599    0.07817   6.345 1.02e-06 ***
 ---
-Signif. codes: 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 1.532 on 26 degrees of freedom
-Multiple R-squared: 0.6076,    Adjusted R-squared: 0.5925
-F-statistic: 40.26 on 1 and 26 DF, p-value: 1.017e-06
+Multiple R-squared:  0.6076,    Adjusted R-squared:  0.5925 
+F-statistic: 40.26 on 1 and 26 DF,  p-value: 1.017e-06
 ```
 
 `y ~ x` называется формулой. Символ `~` в формуле следует читать как «описывается переменной». К объяснению вывода результатов команды `summary` мы еще вернемся. А пока ответим на вопрос «Как с помощью полученной модели делать прогнозы?».
 
+Итак, наша оцененная модель в общем виде может быть записана следующим образом:
+
+$$\hat{y} = \hat{\beta_0} + \hat{\beta_1}x$$
+
+Подставив значения для оцененных коэффициентов $$\hat{\beta_0}$$ и $$\hat{\beta_1}$$ получим:
+
+$$\hat{y} = 2.55 + 0.50x$$
+
+Теперь мы можем использовать эту модель для прогнозов.
+
 ```r
 library(manipulate)
 plotPrediction <-function(newx) {
-    model <- lm(animals.log$brain ~ animals.log$body)
-    plot(animals.log$body, animals.log$brain,
-         xlab='log(body weight)', ylab='log(brain weight)')
+    model <- lm(brain~body, data=animals.log)
+    plot(animals.log$body, animals.log$brain, 
+         xlab='log(body weight)', ylab='log(brain weight)',
+         main=paste('y = ', round(predict(model, newdata=data.frame(body=newx)), 3)))
     abline(model, lwd=2, col='dark blue')
     points(c(newx), c(min(animals.log$brain)-0.35), lwd=3, col='darkred')
     points(c(newx, newx), c(min(animals.log$brain)-0.35,
@@ -335,6 +346,26 @@ y & = e^{2.555 + \epsilon} \times x^{0.496}
 $$
 
 ### Оценка полученной модели
+
+Коэффициент детерминации (R-square) - ...
+
+$$R^{2} = 1 - \frac{\sum_{i=1}^{n}(y_i-\hat{y_{i}})^2}{\sum_{i=1}^{n}(y_i-\bar{y})^2}$$
+
+```r
+model <- lm(animals.log$brain ~ animals.log$body)
+(r2 <- 1 - sum((animals.log$brain - predict(model))^2) / sum((animals.log$brain - mean(animals.log$brain))^2))
+[1] 0.6076101
+```
+
+Скорректированный коэффициент детерминации (Adjusted R-square) - ...
+
+$$R{_{adj}}^{2} = 1 - \frac{(1-R^2)(N-1)}{N-p-1}$$
+
+```r
+(r2_adj <- 1 - ((1-r2)*(nrow(animals.log) - 1)) / (nrow(animals.log) - 1 - 1))
+[1] 0.5925182
+```
+
 
 ### Квартет Энскомба
 
@@ -412,17 +443,22 @@ par(mfrow=c(1,1))
 ### Полиномиальная регрессия, ridge-регрессия и LASSO-регрессия 
 
 ```r
+par(mfrow=c(1,2))
 set.seed(123456)
-x <- seq(-2, 5, length.out=15)
+x <- seq(-2, 5, length.out=20)
 y <- sin(x) + runif(length(x), -0.25, 0.25)
-plot(y ~ x, lwd=2)
-abline(lm(y ~ x), lwd=2, col='dark blue'))
+fit <- lm(y ~ x)
+plot(y ~ x, lwd=2, main="Ordinary Least Squares")
+abline(fit, lwd=2, col='dark blue')
+plot(resid(fit) ~ fitted(fit), lwd=2, ylab="Residuals", xlab="Fitted", main="Residuals vs Fitted values")
+abline(0, 0, lwd=2, col='dark blue')
+par(mfrow=c(1,1))
 ```
 
-![](/assets/images/notes-on-lr/bad_model.png)
+![](/assets/images/notes-on-lr/residuals.png)
 
 ```r
-par(mfrow=c(2,3))
+par(mfrow=c(3,3))
 
 poly.1  <- lm(y ~ poly(x, 1))
 poly.7  <- lm(y ~ poly(x, 7))
@@ -445,10 +481,17 @@ plot(y ~ x, lwd = 2, main="")
 curve(predict(poly.14, data.frame(x=x)), add=TRUE, col="darkred")
 points(x1, y1, lwd=2, pch=2)
 
+plot(resid(poly.1) ~ fitted(poly.1), lwd=2, ylab="Residuals", xlab="Fitted")
+abline(0, 0, lwd=2, col='dark blue')
+plot(resid(poly.7) ~ fitted(poly.7), lwd=2, ylab="Residuals", xlab="Fitted")
+abline(0, 0, lwd=2, col='dark blue')
+plot(resid(poly.14) ~ fitted(poly.14), lwd=2, ylab="Residuals", xlab="Fitted")
+abline(0, 0, lwd=2, col='dark blue')
+
 par(mfrow=c(1,1))
 ```
 
-![](/assets/images/notes-on-lr/poly_regression.png)
+![](/assets/images/notes-on-lr/poly_regression1.png)
 
 Простая модель очень плохо описывает наши данные и это называется **underfitting**, полиномиальная модель же наоборот, прошла через каждую точку и в точности описала все данные, это называется **overfitting**.
 
