@@ -822,7 +822,21 @@ def detail(request):
 
 `src/notes/tests/test_views.py`
 ```python
+from django.contrib.auth.models import User
 
+class IndexTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="test", password="qwerty123")
+        self.client.login(username="test", password="qwerty123")
+        # ...
+
+class DetailTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="test", password="qwerty123")
+        self.client.login(username="test", password="qwerty123")
+        # ...
 ```
 
 Далее предлагается загрузить набор стилевых компонентов [bootstrap](https://getbootstrap.com/) и поместить их в папку со статичными файлами. Это, в свою очередь, решит обозначенную в начале работы проблему и преобразит внешний вид формы входа.
@@ -1372,7 +1386,11 @@ def get_success_url(self):
     })
 ```
 
-**Задание:** Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). Последующее редактирование заметок должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
+**Задание:** 
+1. Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
+2. Продолжая предыдущее задание добавьте возможность поиска не только по тегам, но и по названию заметок.
+3. Добавьте возможность расшаривания заметок.
+4. Регистрация нового пользователя должна происходить по email. Пользователю на электронную почту должна приходить ссылка с подтверждением регистрации.
 
 <img src="/assets/images/07-elevennote/elevennote8.png">
 

@@ -375,7 +375,114 @@ $$R{_{adj}}^{2} = 1 - \frac{(1-R^2)(N-1)}{N-p-1}$$
 
 ### Связь МНК и ММП
 
-...
+Рассмотрим принцип максимального правдоподобия (maximum likelihood estimation) на примере задачи подбрасывания монетки, а затем применим его к задаче линейной регрессии. Пусть у нас имеется:
+
+- $$y$$ - число решек при подбрасывании монетки $$n$$ раз;
+- $$n$$ - число бросков;
+- $$p$$ - вероятность выпадания решки (неизвестна);
+- $$\hat{p}$$ - оценка вероятности выпадания решки.
+
+Предположим, что мы не знаем истинную вероятность выпадания решки ($$0.5$$), поэтому попробуем ее оценить. По интуиции:
+
+$$\hat{p} = \frac{y}{n} = \frac{\# \textit{решек}}{\# \textit{бросков}}$$
+
+Например, если выпало 3 решки при 5 бросках, то:
+
+$$\hat{p} = \frac{y}{n} = \frac{3}{5} = 0.6$$
+
+Теперь давайте попробуем подтвердить нашу интуицию математически. Эксперимент с подбрасыванием монетки может быть описан с помощью [Биномиального распределения](https://www.probabilitycourse.com/chapter3/3_1_5_special_discrete_distr.php):
+
+$$P(Y = y|n, p) = \begin{pmatrix} n \\ y \end{pmatrix}p^y(1 - p)^{n - y}$$
+
+> Читаем как: «Вероятность того, что решка выпадет $$y$$ раз при заданной вероятности $$p$$ и числе бросков $$n$$».
+
+Для $$y=3$$ и $$n=5$$ получим:
+
+$$P(Y = 3|5, p) = \begin{pmatrix} 5 \\ 3 \end{pmatrix}p^3(1 - p)^{5 - 3}$$
+
+Но мы все еще не знаем $$p$$. Принцип максимального правдоподобия заключается в том, чтобы найти такое значение $$p$$ для имеющихся $$y$$ и $$n$$, при котором мы получим максимальное значение для $$P$$.
+
+Итак, зафиксируем $$y$$ и $$n$$, тогда **функция правдоподобия** (likelihood) будет выглядеть следующим образом:
+
+$$L(p|y, n) = \begin{pmatrix} n \\ y \end{pmatrix}p^y(1 - p)^{n - y} \rightarrow max$$
+
+Для наглядности будем перебирать значения $$p \in [0;1]$$ с шагом $$0.1$$ и для каждого значения вычислим функцию правдоподобия: 
+
+```r
+library(graphics)
+probs <- seq(0,1,0.1)
+likelihoods <- dbinom(3, size=5, prob=probs)
+plot(probs, likelihoods, type='l', xlab = 'probability', ylab = 'likelihood')
+points(probs, likelihoods, col = 'royal blue')
+segments(probs, rep(0, length(probs)), probs, likelihoods, lty=3, col='royal blue')
+```
+
+![](/assets/images/notes-on-lr/likelihood.png)
+
+Из графика хорошо видно, что мы достигаем максимума при $$p = 0.6$$, но мы не будем каждый раз перебирать параметр $$p$$.
+
+Иногда для упрощения расчетов берут логарифм, таким образом, максимизируя **log-likelihood**:
+
+$$\log \ell (p|y, n) = \log \begin{pmatrix} n \\ y \end{pmatrix} + y\log p + (n - y)\log (1 - p)$$
+
+И наконец продифференцируем функцию относительно параметра $$p$$ и приравняем ее нулю:
+
+$$\frac{\partial log \ell}{\partial p} = \frac{y}{p} - \frac{n - y}{1 - p} = 0 \Rightarrow y - yp - np + yp = 0 \Rightarrow \hat{p} = \frac{y}{n}$$
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Достаточно подробное описание можно найти в статье <a href="http://suriyadeepan.github.io/2017-01-22-mle-linear-regression/">The Principle of Maximum Likelihood</a>.</p>
+</div>
+
+Теперь кратко рассмотрим метод максимального правдоподобия применительно к линейной регрессии:
+
+$$Y_i = \beta_0 + \beta_1x_i + \epsilon$$
+
+Предположим, что остатки имеют нормальное распределение $$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$, тогда:
+
+$$Y_i|X_i \sim \mathcal{N}(\beta_0 + \beta_1 x_i, \sigma^2)$$
+
+В случае нормального распределния функция плотности вероятности для случайной величины $$X$$ выглядит следующим образом: 
+
+$$f_X(x; \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{(x - \mu)^2}{2\sigma^2}$$
+
+Тогда мы можем записать функцию плотности вероятности для каждой величины $$Y_i$$ как:
+
+$$f_{Y_i}(y_i; x_i, \beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{(y_i - \beta_0 - \beta_1 x_i)^2}{2\sigma^2}$$
+
+Для $$n$$ точек $$(x_i, y_i)$$ мы можем записать функцию правдоподобия от трех параметров $$\beta_0$$, $$\beta_1$$, $$\sigma^2$$ следующим образом:
+
+$$L(\beta_0, \beta_1, \sigma^2) = \prod_{i = 1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{(y_i - \beta_0 - \beta_1 x_i)^2}{2\sigma^2}$$
+
+Наша задача найти такие параметры $$\beta_0$$, $$\beta_1$$ и $$\sigma^2$$, которые максимизируют $$L(\beta_0, \beta_1, \sigma^2)$$. Для простоты вычислений будем считать log-likelihood:
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">По интуиции должно быть понятно, что $$\log \ell \rightarrow max$$ это тоже самое, что и $$SSE(\beta_0, \beta_1) \rightarrow min$$.</p>
+</div>
+
+$$
+\begin{align}
+\log \ell =& -\sum_{i = 1}^{n}\Big(\frac{1}{2}\log2\pi + \frac{1}{2}\log\sigma^2 + \frac{1}{2\sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\Big) \\
+=& -\frac{n}{2}\log2\pi -\frac{n}{2}\log\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2
+\end{align}
+$$
+
+Как и в задаче с подбрасыванием монетки возьмем частные проиводные по параметрам $$\beta_0$$, $$\beta_1$$ и $$\sigma^2$$ и затем приравняем нулю:
+
+$$\frac{\partial log \ell}{\partial \beta_0} = \frac{1}{\sigma^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i) \Rightarrow \sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i) = 0$$
+
+$$\frac{\partial log \ell}{\partial \beta_1} = \frac{1}{\sigma^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)x_i \Rightarrow \sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)x_i = 0$$
+
+$$\frac{\partial log \ell}{\partial \sigma^2} = -\frac{n}{2 \sigma^2} + \frac{1}{2 (\sigma^2)^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2 \Rightarrow -\frac{n}{2 \sigma^2} + \frac{1}{2 (\sigma^2)^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2 = 0$$
+
+Откуда получим:
+
+$$\hat{\beta_0} = \bar{y} - \beta_1\bar{x}$$
+
+$$\hat{\beta_1} = r\frac{s_y}{s_x}$$
+
+$$\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y_i})^2$$
 
 ### Многомерная линейная регрессия
 
@@ -440,6 +547,7 @@ par(mfrow=c(1,1))
 
 ![](/assets/images/notes-on-lr/robust.png)
 
+
 ### Полиномиальная регрессия, ridge-регрессия и LASSO-регрессия 
 
 ```r
@@ -456,6 +564,8 @@ par(mfrow=c(1,1))
 ```
 
 ![](/assets/images/notes-on-lr/residuals.png)
+
+<img src="http://www4.stat.ncsu.edu/~stefanski/NSF_Supported/Hidden_Images/000_images/orly_owl_Lin_4p_5_flat_res-plot1.eps.jpg">
 
 ```r
 par(mfrow=c(3,3))
