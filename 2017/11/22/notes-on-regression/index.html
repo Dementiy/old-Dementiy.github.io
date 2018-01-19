@@ -503,7 +503,116 @@ y & = e^{2.555 + \epsilon} \times x^{0.496}
 
 <h3 id="связь-мнк-и-ммп">Связь МНК и ММП</h3>
 
-<p>…</p>
+<p>Рассмотрим принцип максимального правдоподобия (maximum likelihood estimation) на примере задачи подбрасывания монетки, а затем применим его к задаче линейной регрессии. Пусть у нас имеется:</p>
+
+<ul>
+  <li><script type="math/tex">y</script> - число решек при подбрасывании монетки <script type="math/tex">n</script> раз;</li>
+  <li><script type="math/tex">n</script> - число бросков;</li>
+  <li><script type="math/tex">p</script> - вероятность выпадания решки (неизвестна);</li>
+  <li><script type="math/tex">\hat{p}</script> - оценка вероятности выпадания решки.</li>
+</ul>
+
+<p>Предположим, что мы не знаем истинную вероятность выпадания решки (<script type="math/tex">0.5</script>), поэтому попробуем ее оценить. По интуиции:</p>
+
+<script type="math/tex; mode=display">\hat{p} = \frac{y}{n} = \frac{\# \textit{решек}}{\# \textit{бросков}}</script>
+
+<p>Например, если выпало 3 решки при 5 бросках, то:</p>
+
+<script type="math/tex; mode=display">\hat{p} = \frac{y}{n} = \frac{3}{5} = 0.6</script>
+
+<p>Теперь давайте попробуем подтвердить нашу интуицию математически. Эксперимент с подбрасыванием монетки может быть описан с помощью <a href="https://www.probabilitycourse.com/chapter3/3_1_5_special_discrete_distr.php">Биномиального распределения</a>:</p>
+
+<script type="math/tex; mode=display">P(Y = y|n, p) = \begin{pmatrix} n \\ y \end{pmatrix}p^y(1 - p)^{n - y}</script>
+
+<blockquote>
+  <p>Читаем как: «Вероятность того, что решка выпадет <script type="math/tex">y</script> раз при заданной вероятности <script type="math/tex">p</script> и числе бросков <script type="math/tex">n</script>».</p>
+</blockquote>
+
+<p>Для <script type="math/tex">y=3</script> и <script type="math/tex">n=5</script> получим:</p>
+
+<script type="math/tex; mode=display">P(Y = 3|5, p) = \begin{pmatrix} 5 \\ 3 \end{pmatrix}p^3(1 - p)^{5 - 3}</script>
+
+<p>Но мы все еще не знаем <script type="math/tex">p</script>. Принцип максимального правдоподобия заключается в том, чтобы найти такое значение <script type="math/tex">p</script> для имеющихся <script type="math/tex">y</script> и <script type="math/tex">n</script>, при котором мы получим максимальное значение для <script type="math/tex">P</script>.</p>
+
+<p>Итак, зафиксируем <script type="math/tex">y</script> и <script type="math/tex">n</script>, тогда <strong>функция правдоподобия</strong> (likelihood) будет выглядеть следующим образом:</p>
+
+<script type="math/tex; mode=display">L(p|y, n) = \begin{pmatrix} n \\ y \end{pmatrix}p^y(1 - p)^{n - y} \rightarrow max</script>
+
+<p>Для наглядности будем перебирать значения <script type="math/tex">p \in [0;1]</script> с шагом <script type="math/tex">0.1</script> и для каждого значения вычислим функцию правдоподобия:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">graphics</span><span class="p">)</span><span class="w">
+</span><span class="n">probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.1</span><span class="p">)</span><span class="w">
+</span><span class="n">likelihoods</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">dbinom</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">prob</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span><span class="w"> </span><span class="n">likelihoods</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s1">'l'</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'probability'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'likelihood'</span><span class="p">)</span><span class="w">
+</span><span class="n">points</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span><span class="w"> </span><span class="n">likelihoods</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'royal blue'</span><span class="p">)</span><span class="w">
+</span><span class="n">segments</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">probs</span><span class="p">)),</span><span class="w"> </span><span class="n">probs</span><span class="p">,</span><span class="w"> </span><span class="n">likelihoods</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="o">=</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'royal blue'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/notes-on-lr/likelihood.png" alt="" /></p>
+
+<p>Из графика хорошо видно, что мы достигаем максимума при <script type="math/tex">p = 0.6</script>, но мы не будем каждый раз перебирать параметр <script type="math/tex">p</script>.</p>
+
+<p>Иногда для упрощения расчетов берут логарифм, таким образом, максимизируя <strong>log-likelihood</strong>:</p>
+
+<script type="math/tex; mode=display">\log \ell (p|y, n) = \log \begin{pmatrix} n \\ y \end{pmatrix} + y\log p + (n - y)\log (1 - p)</script>
+
+<p>И наконец продифференцируем функцию относительно параметра <script type="math/tex">p</script> и приравняем ее нулю:</p>
+
+<script type="math/tex; mode=display">\frac{\partial log \ell}{\partial p} = \frac{y}{p} - \frac{n - y}{1 - p} = 0 \Rightarrow y - yp - np + yp = 0 \Rightarrow \hat{p} = \frac{y}{n}</script>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Достаточно подробное описание можно найти в статье <a href="http://suriyadeepan.github.io/2017-01-22-mle-linear-regression/">The Principle of Maximum Likelihood</a>.</p>
+</div>
+
+<p>Теперь кратко рассмотрим метод максимального правдоподобия применительно к линейной регрессии:</p>
+
+<script type="math/tex; mode=display">Y_i = \beta_0 + \beta_1x_i + \epsilon</script>
+
+<p>Предположим, что остатки имеют нормальное распределение <script type="math/tex">\epsilon_i \sim \mathcal{N}(0, \sigma^2)</script>, тогда:</p>
+
+<script type="math/tex; mode=display">Y_i|X_i \sim \mathcal{N}(\beta_0 + \beta_1 x_i, \sigma^2)</script>
+
+<p>В случае нормального распределния функция плотности вероятности для случайной величины <script type="math/tex">X</script> выглядит следующим образом:</p>
+
+<script type="math/tex; mode=display">f_X(x; \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{(x - \mu)^2}{2\sigma^2}</script>
+
+<p>Тогда мы можем записать функцию плотности вероятности для каждой величины <script type="math/tex">Y_i</script> как:</p>
+
+<script type="math/tex; mode=display">f_{Y_i}(y_i; x_i, \beta_0, \beta_1, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{(y_i - \beta_0 - \beta_1 x_i)^2}{2\sigma^2}</script>
+
+<p>Для <script type="math/tex">n</script> точек <script type="math/tex">(x_i, y_i)</script> мы можем записать функцию правдоподобия от трех параметров <script type="math/tex">\beta_0</script>, <script type="math/tex">\beta_1</script>, <script type="math/tex">\sigma^2</script> следующим образом:</p>
+
+<script type="math/tex; mode=display">L(\beta_0, \beta_1, \sigma^2) = \prod_{i = 1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{(y_i - \beta_0 - \beta_1 x_i)^2}{2\sigma^2}</script>
+
+<p>Наша задача найти такие параметры <script type="math/tex">\beta_0</script>, <script type="math/tex">\beta_1</script> и <script type="math/tex">\sigma^2</script>, которые максимизируют <script type="math/tex">L(\beta_0, \beta_1, \sigma^2)</script>. Для простоты вычислений будем считать log-likelihood:</p>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">По интуиции должно быть понятно, что $$\log \ell \rightarrow max$$ это тоже самое, что и $$SSE(\beta_0, \beta_1) \rightarrow min$$.</p>
+</div>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align}
+\log \ell =& -\sum_{i = 1}^{n}\Big(\frac{1}{2}\log2\pi + \frac{1}{2}\log\sigma^2 + \frac{1}{2\sigma^2}(y_i - \beta_0 - \beta_1 x_i)^2\Big) \\
+=& -\frac{n}{2}\log2\pi -\frac{n}{2}\log\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2
+\end{align} %]]></script>
+
+<p>Как и в задаче с подбрасыванием монетки возьмем частные проиводные по параметрам <script type="math/tex">\beta_0</script>, <script type="math/tex">\beta_1</script> и <script type="math/tex">\sigma^2</script> и затем приравняем нулю:</p>
+
+<script type="math/tex; mode=display">\frac{\partial log \ell}{\partial \beta_0} = \frac{1}{\sigma^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i) \Rightarrow \sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i) = 0</script>
+
+<script type="math/tex; mode=display">\frac{\partial log \ell}{\partial \beta_1} = \frac{1}{\sigma^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)x_i \Rightarrow \sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)x_i = 0</script>
+
+<script type="math/tex; mode=display">\frac{\partial log \ell}{\partial \sigma^2} = -\frac{n}{2 \sigma^2} + \frac{1}{2 (\sigma^2)^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2 \Rightarrow -\frac{n}{2 \sigma^2} + \frac{1}{2 (\sigma^2)^2}\sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x_i)^2 = 0</script>
+
+<p>Откуда получим:</p>
+
+<script type="math/tex; mode=display">\hat{\beta_0} = \bar{y} - \beta_1\bar{x}</script>
+
+<script type="math/tex; mode=display">\hat{\beta_1} = r\frac{s_y}{s_x}</script>
+
+<script type="math/tex; mode=display">\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y_i})^2</script>
 
 <h3 id="многомерная-линейная-регрессия">Многомерная линейная регрессия</h3>
 
@@ -579,6 +688,8 @@ L = \sum_{i=1}^{n}\epsilon_{i}^2 = \epsilon'\epsilon &= (y - X\beta)'(y-X\beta) 
 </span></code></pre></div></div>
 
 <p><img src="/assets/images/notes-on-lr/residuals.png" alt="" /></p>
+
+<p><img src="http://www4.stat.ncsu.edu/~stefanski/NSF_Supported/Hidden_Images/000_images/orly_owl_Lin_4p_5_flat_res-plot1.eps.jpg" /></p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">))</span><span class="w">
 

@@ -515,31 +515,52 @@
 </code></pre></div></div>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- news_template.tpl --&gt;</span>
-<span class="nt">&lt;table</span> <span class="na">border=</span><span class="s">1</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;tr&gt;</span>
-        <span class="nt">&lt;th&gt;</span>Title<span class="nt">&lt;/th&gt;</span>
-        <span class="nt">&lt;th&gt;</span>Author<span class="nt">&lt;/th&gt;</span>
-        <span class="nt">&lt;th&gt;</span>#Likes<span class="nt">&lt;/th&gt;</span>
-        <span class="nt">&lt;th&gt;</span>#Comments<span class="nt">&lt;/th&gt;</span>
-        <span class="nt">&lt;th</span> <span class="na">colspan=</span><span class="s">"3"</span><span class="nt">&gt;</span>Label<span class="nt">&lt;/th&gt;</span>
-    <span class="nt">&lt;/tr&gt;</span>
-    %for row in rows:
-        <span class="nt">&lt;tr&gt;</span>
-            <span class="nt">&lt;td&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{{row.url}}"</span><span class="nt">&gt;</span>{{row.title}}<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
-            <span class="nt">&lt;td&gt;</span>{{row.author}}<span class="nt">&lt;/td&gt;</span>
-            <span class="nt">&lt;td&gt;</span>{{row.points}}<span class="nt">&lt;/td&gt;</span>
-            <span class="nt">&lt;td&gt;</span>{{row.comments}}<span class="nt">&lt;/td&gt;</span>
-            <span class="nt">&lt;td&gt;&lt;a</span> <span class="na">href=</span><span class="s">"/add_label/?label=good&amp;id={{row.id}}"</span><span class="nt">&gt;</span>Интересно<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
-            <span class="nt">&lt;td&gt;&lt;a</span> <span class="na">href=</span><span class="s">"/add_label/?label=maybe&amp;id={{row.id}}"</span><span class="nt">&gt;</span>Возможно<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
-            <span class="nt">&lt;td&gt;&lt;a</span> <span class="na">href=</span><span class="s">"/add_label/?label=never&amp;id={{row.id}}"</span><span class="nt">&gt;</span>Не интересно<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
-        <span class="nt">&lt;/tr&gt;</span>
-    %end
-<span class="nt">&lt;/table&gt;</span>
+<span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"</span><span class="nt">&gt;&lt;/link&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"ui container"</span> <span class="na">style=</span><span class="s">"padding-top: 10px;"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;table</span> <span class="na">class=</span><span class="s">"ui celled table"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;thead&gt;</span>
+                <span class="nt">&lt;th&gt;</span>Title<span class="nt">&lt;/th&gt;</span>
+                <span class="nt">&lt;th&gt;</span>Author<span class="nt">&lt;/th&gt;</span>
+                <span class="nt">&lt;th&gt;</span>#Likes<span class="nt">&lt;/th&gt;</span>
+                <span class="nt">&lt;th&gt;</span>#Comments<span class="nt">&lt;/th&gt;</span>
+                <span class="nt">&lt;th</span> <span class="na">colspan=</span><span class="s">"3"</span><span class="nt">&gt;</span>Label<span class="nt">&lt;/th&gt;</span>
+            <span class="nt">&lt;/thead&gt;</span>
+            <span class="nt">&lt;tbody&gt;</span>
+                %for row in rows:
+                <span class="nt">&lt;tr&gt;</span>
+                    <span class="nt">&lt;td&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{{ row.url }}"</span><span class="nt">&gt;</span>{{ row.title }}<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
+                    <span class="nt">&lt;td&gt;</span>{{ row.author }}<span class="nt">&lt;/td&gt;</span>
+                    <span class="nt">&lt;td&gt;</span>{{ row.points }}<span class="nt">&lt;/td&gt;</span>
+                    <span class="nt">&lt;td&gt;</span>{{ row.comments }}<span class="nt">&lt;/td&gt;</span>
+                    <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">"positive"</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">"/add_label/?label=good&amp;id={{ row.id }}"</span><span class="nt">&gt;</span>Интересно<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
+                    <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">"active"</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">"/add_label/?label=maybe&amp;id={{ row.id }}"</span><span class="nt">&gt;</span>Возможно<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
+                    <span class="nt">&lt;td</span> <span class="na">class=</span><span class="s">"negative"</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">"/add_label/?label=never&amp;id={{ row.id }}"</span><span class="nt">&gt;</span>Не интересно<span class="nt">&lt;/a&gt;&lt;/td&gt;</span>
+                <span class="nt">&lt;/tr&gt;</span>
+                %end
+            <span class="nt">&lt;/tbody&gt;</span>
+            <span class="nt">&lt;tfoot</span> <span class="na">class=</span><span class="s">"full-width"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;tr&gt;</span>
+                    <span class="nt">&lt;th</span> <span class="na">colspan=</span><span class="s">"7"</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"/update_news"</span> <span class="na">class=</span><span class="s">"ui right floated small primary button"</span><span class="nt">&gt;</span>I Wanna more Hacker News!<span class="nt">&lt;/a&gt;</span>
+                    <span class="nt">&lt;/th&gt;</span>
+                <span class="nt">&lt;/tr&gt;</span>
+            <span class="nt">&lt;/tfoot&gt;</span>
+        <span class="nt">&lt;/table&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
 </code></pre></div></div>
 
 <p>Пример таблицы:</p>
 
-<p><img src="/assets/images/06-hn/hn7.png" alt="" /></p>
+<p><img src="/assets/images/06-hn/hn7-new.png" alt="" /></p>
 
 <p>Обратите внимание на запрос к БД: 
 <code class="highlighter-rouge">s.query(News).filter(News.label == None).all()</code></p>
@@ -577,8 +598,6 @@
     <span class="c"># 3. Сохранить в БД те новости, которых там нет</span>
     <span class="n">redirect</span><span class="p">(</span><span class="s">'/news'</span><span class="p">)</span>
 </code></pre></div></div>
-
-<p>Также, добавьте в конец шаблона следующую строчку: <code class="highlighter-rouge">&lt;a href="/update_news"&gt;I Wanna more HACKER NEWS!&lt;/a&gt;</code>.</p>
 
 <h3 id="классификация-данных">Классификация данных</h3>
 

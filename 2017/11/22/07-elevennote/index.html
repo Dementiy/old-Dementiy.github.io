@@ -970,7 +970,21 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">src/notes/tests/test_views.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="k">class</span> <span class="nc">IndexTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">"test"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">"qwerty123"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">"test"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">"qwerty123"</span><span class="p">)</span>
+        <span class="c"># ...</span>
+
+<span class="k">class</span> <span class="nc">DetailTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">"test"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">"qwerty123"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">"test"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">"qwerty123"</span><span class="p">)</span>
+        <span class="c"># ...</span>
 </code></pre></div></div>
 
 <p>Далее предлагается загрузить набор стилевых компонентов <a href="https://getbootstrap.com/">bootstrap</a> и поместить их в папку со статичными файлами. Это, в свою очередь, решит обозначенную в начале работы проблему и преобразит внешний вид формы входа.</p>
@@ -1463,7 +1477,13 @@ unzip static-elevennote-ch16.zip
     <span class="p">})</span>
 </code></pre></div></div>
 
-<p><strong>Задание:</strong> Добавьте возможность указывать теги у каждой заметки (можете использовать <a href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/">Bootstrap Tags Input</a> для отображения и управления тегами на стороне клиента, см. скриншот ниже). Последующее редактирование заметок должно быть асинхронным (с использованием технологии AJAX). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.</p>
+<p><strong>Задание:</strong></p>
+<ol>
+  <li>Добавьте возможность указывать теги у каждой заметки (можете использовать <a href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/">Bootstrap Tags Input</a> для отображения и управления тегами на стороне клиента, см. скриншот ниже). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.</li>
+  <li>Продолжая предыдущее задание добавьте возможность поиска не только по тегам, но и по названию заметок.</li>
+  <li>Добавьте возможность расшаривания заметок.</li>
+  <li>Регистрация нового пользователя должна происходить по email. Пользователю на электронную почту должна приходить ссылка с подтверждением регистрации.</li>
+</ol>
 
 <p><img src="/assets/images/07-elevennote/elevennote8.png" /></p>
 
