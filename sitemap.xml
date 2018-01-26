@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://dementiy.github.io/2017/11/22/notes-on-neuralnetworks/</loc>
+<lastmod>2017-11-22T00:00:00+03:00</lastmod>
+</url>
+<url>
+<loc>https://dementiy.github.io/2017/11/22/notes-on-regression/</loc>
+<lastmod>2017-11-22T00:00:00+03:00</lastmod>
+</url>
+<url>
 <loc>https://dementiy.github.io/2017/11/22/00-introduction/</loc>
 <lastmod>2017-11-22T00:00:00+03:00</lastmod>
 </url>
@@ -67,6 +75,12 @@
 <loc>https://dementiy.github.io/categories/python/</loc>
 </url>
 <url>
+<loc>https://dementiy.github.io/categories/datascience/</loc>
+</url>
+<url>
+<loc>https://dementiy.github.io/categories/r/</loc>
+</url>
+<url>
 <loc>https://dementiy.github.io/categories/golang/</loc>
 </url>
 <url>
@@ -77,12 +91,6 @@
 </url>
 <url>
 <loc>https://dementiy.github.io/categories/web/</loc>
-</url>
-<url>
-<loc>https://dementiy.github.io/categories/datascience/</loc>
-</url>
-<url>
-<loc>https://dementiy.github.io/categories/r/</loc>
 </url>
 <url>
 <loc>https://dementiy.github.io/categories/classes/</loc>
