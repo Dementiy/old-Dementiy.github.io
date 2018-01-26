@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2018-01-19T12:11:57+03:00</updated>
+  <updated>2018-01-27T00:03:41+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -4931,7 +4931,7 @@ unzip static-elevennote-ch16.zip
   &lt;p class=&quot;last&quot;&gt;Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.&lt;/p&gt;
 &lt;/div&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(C|D) \propto P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)&lt;/script&gt;
 
 &lt;p&gt;Вы можете догадаться, что если появится слово, которого мы раньше не встречали, то &lt;script type=&quot;math/tex&quot;&gt;\prod_{i}P(w_i \mid C) = 0&lt;/script&gt;, а следовательно и &lt;script type=&quot;math/tex&quot;&gt;P(C \mid D) = 0&lt;/script&gt;.&lt;/p&gt;
 
@@ -4950,18 +4950,412 @@ unzip static-elevennote-ch16.zip
 
 &lt;p&gt;Еще одним «техническим» трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(C|D) = \ln P(C) + \sum_i \ln P(w_i|C)&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\ln P(C|D) \propto \ln P(C) + \sum_i \ln P(w_i|C)&lt;/script&gt;
 
 &lt;p&gt;Итак, наша итоговая модель будет выглядеть следующим образом:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\hat{y} = argmax_c\Big(\ln P(C=c) + \sum_i \ln P(w_i|C = c) \Big)&lt;/script&gt;
 
 &lt;h3 id=&quot;пример&quot;&gt;&lt;em&gt;Пример&lt;/em&gt;&lt;/h3&gt;
-&lt;p&gt;…&lt;/p&gt;
+
+&lt;p&gt;Давайте рассмотрим простой пример классификации сообщений с двумя классами «Positive» и «Negative». Пусть у нас имеется следующая обучающая выборка:&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Данные для примера можно найти &lt;a href=&quot;https://stevenloria.com/simple-text-classification/&quot;&gt;тут&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Сообщение&lt;/th&gt;
+      &lt;th&gt;Метка класса&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I love this sandwich&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;This is an amazing place&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I feel very good about these beers&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;This is my best work&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;What an awesome view&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I do not like this restaurant&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I am tired of this stuff&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I can’t deal with this&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;He is my sworn enemy&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;My boss is horrible&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Для начала найдем априорные вероятности классов: &lt;script type=&quot;math/tex&quot;&gt;P(C=pos) = 5/10 = 0.5&lt;/script&gt; и &lt;script type=&quot;math/tex&quot;&gt;P(C=neg) = 5/10 = 0.5&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;Теперь составим таблицу, в которой будут следующие колонки (о двух дополнительных колонках см. ниже):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;слова из обучающей выборки;&lt;/li&gt;
+  &lt;li&gt;сколько раз слово встретилось в классе «Positive»;&lt;/li&gt;
+  &lt;li&gt;сколько раз слово встретилось в классе «Negative».&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Слово&lt;/th&gt;
+      &lt;th&gt;«&lt;script type=&quot;math/tex&quot;&gt;+&lt;/script&gt;»&lt;/th&gt;
+      &lt;th&gt;«&lt;script type=&quot;math/tex&quot;&gt;-&lt;/script&gt;»&lt;/th&gt;
+      &lt;th&gt;$$P(w_i \mid pos)$$&lt;/th&gt;
+      &lt;th&gt;$$P(w_i \mid neg)$$&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;about&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;am&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;amazing&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;an&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.049&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;awesome&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;beers&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;best&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;boss&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;cant&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;deal&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;do&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;enemy&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;feel&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;good&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;he&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;horrible&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;i&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;0.049&lt;/td&gt;
+      &lt;td&gt;0.064&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;is&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;0.049&lt;/td&gt;
+      &lt;td&gt;0.048&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;like&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;love&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;my&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.048&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;not&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;of&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;place&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;restaurant&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;sandwich&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stuff&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;sworn&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;these&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;this&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;0.065&lt;/td&gt;
+      &lt;td&gt;0.064&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;tired&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;very&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;view&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;what&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;with&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;work&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.032&lt;/td&gt;
+      &lt;td&gt;0.016&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Итак, размер вектора признаков равен &lt;script type=&quot;math/tex&quot;&gt;d=36&lt;/script&gt; (число уникальных слов во всей выборке). Также найдем число слов относящихся  к классу «Positive» и к классу «Negative»: &lt;script type=&quot;math/tex&quot;&gt;n_{pos} = 25&lt;/script&gt; и &lt;script type=&quot;math/tex&quot;&gt;n_{neg} = 26&lt;/script&gt; (суммы по второму и третьему столбцу). Теперь мы можем посчитать вероятность встретить слово в каждом из классов &lt;script type=&quot;math/tex&quot;&gt;P(w_i \mid C = c)&lt;/script&gt; (4 и 5 столбцы).&lt;/p&gt;
+
+&lt;p&gt;Нам этого достаточно для того, чтобы классифицировать новые сообщения. Пусть имеется такой набор тестовых данных:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Сообщение&lt;/th&gt;
+      &lt;th&gt;Метка класса&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;The beer was good&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I do not enjoy my job&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I ain’t feeling dandy today&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I feel amazing&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Gary is a friend of mine&lt;/td&gt;
+      &lt;td&gt;Positive&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;I can’t believe I’m doing this&lt;/td&gt;
+      &lt;td&gt;Negative&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;В качестве примера рассмотрим классификацию первого сообщения.&lt;/p&gt;
+
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Если слова нет в словаре, то есть, среди всех слов из обучающей выборки, то оно никак не повлияет на результат классификации. Таким образом, будем считать его вероятность для обоих классов равной нулю.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+\ln P(pos|D) &amp;= \ln P(pos) + \ln P(the|pos) + \ln P(beer|pos) + \ln P(was|pos) + \ln P(good|pos) \\ 
+&amp;= -0.693 + 0 + 0 + 0 - 3.417 = -4.110 \\
+\ln P(neg|D) &amp;= \ln P(neg) + \ln P(the|neg) + \ln P(beer|neg) + \ln P(was|neg) + \ln P(good|neg) \\
+&amp;= -0.693 - 0 + 0 + 0 - 4.127 = -4.820 \\
+\hat{y} &amp;= argmax_c\Big(\ln P(pos|D), \ln P(neg|D)\Big) = \ln P(pos|D) \Rightarrow pos
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Если мы классифицируем остальные сообщения, то получим, что мы верно классифицировали 5 из 6 сообщений. Таким образом, точность нашего классификатора составила 83% на тестовой выборке.&lt;/p&gt;
 
 &lt;h3 id=&quot;построение-классификатора&quot;&gt;Построение классификатора&lt;/h3&gt;
 
 &lt;p&gt;Вашей задачей является написать наивный байесовский классификатор:&lt;/p&gt;
+
+&lt;div class=&quot;admonition note&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Подсказка&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Вы можете использовать &lt;code&gt;Counter&lt;/code&gt; и &lt;code&gt;defaultdict&lt;/code&gt; из модуля &lt;code&gt;collections&lt;/code&gt;, чтобы хранить вероятности классов и слов, соответственно.&lt;/p&gt;
+&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NaiveBayesClassifier&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
     
@@ -7207,8 +7601,6 @@ no changes added to commit &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;use &lt
       
       
     </entry>
-  
-  
   
   
 </feed>

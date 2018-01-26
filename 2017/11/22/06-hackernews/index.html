@@ -103,11 +103,11 @@
   
   
     
-  
-    
-  
-    
       <a href="/categories/python/">python</a>,
+    
+  
+    
+  
     
   
     
@@ -126,10 +126,6 @@
   
 
   
-  
-    
-  
-    
   
     
   
@@ -149,12 +145,12 @@
   
     
   
+    
+  
+    
+  
 
   
-  
-    
-  
-    
   
     
   
@@ -174,8 +170,20 @@
   
     
   
+    
+  
+    
+  
 
   
+  
+    
+  
+    
+  
+    
+  
+    
   
     
   
@@ -191,14 +199,6 @@
   
     
   
-    
-  
-    
-  
-    
-  
-    
-  
 
   
   
@@ -207,11 +207,11 @@
     
   
     
-  
-    
-  
-    
       <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
     
   
     
@@ -627,7 +627,7 @@
   <p class="last">Хотя с точки зрения теории вероятностей эта формула неверная, так как сумма вероятностей не будет равна 1, но с точки зрения работы классификатора она нас полностью устраивает.</p>
 </div>
 
-<script type="math/tex; mode=display">P(C|D) = P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)</script>
+<script type="math/tex; mode=display">P(C|D) \propto P(C)P(D|C) = P(C)\prod_{i}P(w_i|C)</script>
 
 <p>Вы можете догадаться, что если появится слово, которого мы раньше не встречали, то <script type="math/tex">\prod_{i}P(w_i \mid C) = 0</script>, а следовательно и <script type="math/tex">P(C \mid D) = 0</script>.</p>
 
@@ -646,18 +646,412 @@
 
 <p>Еще одним «техническим» трюком является логарифмирование, чтобы произведение маленьких величин не привело к обращению всего произведения в ноль:</p>
 
-<script type="math/tex; mode=display">P(C|D) = \ln P(C) + \sum_i \ln P(w_i|C)</script>
+<script type="math/tex; mode=display">\ln P(C|D) \propto \ln P(C) + \sum_i \ln P(w_i|C)</script>
 
 <p>Итак, наша итоговая модель будет выглядеть следующим образом:</p>
 
 <script type="math/tex; mode=display">\hat{y} = argmax_c\Big(\ln P(C=c) + \sum_i \ln P(w_i|C = c) \Big)</script>
 
 <h3 id="пример"><em>Пример</em></h3>
-<p>…</p>
+
+<p>Давайте рассмотрим простой пример классификации сообщений с двумя классами «Positive» и «Negative». Пусть у нас имеется следующая обучающая выборка:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Данные для примера можно найти <a href="https://stevenloria.com/simple-text-classification/">тут</a>.</p>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Сообщение</th>
+      <th>Метка класса</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>I love this sandwich</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>This is an amazing place</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>I feel very good about these beers</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>This is my best work</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>What an awesome view</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>I do not like this restaurant</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>I am tired of this stuff</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>I can’t deal with this</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>He is my sworn enemy</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>My boss is horrible</td>
+      <td>Negative</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Для начала найдем априорные вероятности классов: <script type="math/tex">P(C=pos) = 5/10 = 0.5</script> и <script type="math/tex">P(C=neg) = 5/10 = 0.5</script>.</p>
+
+<p>Теперь составим таблицу, в которой будут следующие колонки (о двух дополнительных колонках см. ниже):</p>
+<ul>
+  <li>слова из обучающей выборки;</li>
+  <li>сколько раз слово встретилось в классе «Positive»;</li>
+  <li>сколько раз слово встретилось в классе «Negative».</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Слово</th>
+      <th>«<script type="math/tex">+</script>»</th>
+      <th>«<script type="math/tex">-</script>»</th>
+      <th>$$P(w_i \mid pos)$$</th>
+      <th>$$P(w_i \mid neg)$$</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>about</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>am</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>amazing</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>an</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.049</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>awesome</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>beers</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>best</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>boss</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>cant</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>deal</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>do</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>enemy</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>feel</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>good</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>he</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>horrible</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>i</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0.049</td>
+      <td>0.064</td>
+    </tr>
+    <tr>
+      <td>is</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0.049</td>
+      <td>0.048</td>
+    </tr>
+    <tr>
+      <td>like</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>love</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>my</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0.032</td>
+      <td>0.048</td>
+    </tr>
+    <tr>
+      <td>not</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>of</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>place</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>restaurant</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>sandwich</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>stuff</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>sworn</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>these</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>this</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0.065</td>
+      <td>0.064</td>
+    </tr>
+    <tr>
+      <td>tired</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>very</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>view</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>what</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+    <tr>
+      <td>with</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.016</td>
+      <td>0.032</td>
+    </tr>
+    <tr>
+      <td>work</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.032</td>
+      <td>0.016</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Итак, размер вектора признаков равен <script type="math/tex">d=36</script> (число уникальных слов во всей выборке). Также найдем число слов относящихся  к классу «Positive» и к классу «Negative»: <script type="math/tex">n_{pos} = 25</script> и <script type="math/tex">n_{neg} = 26</script> (суммы по второму и третьему столбцу). Теперь мы можем посчитать вероятность встретить слово в каждом из классов <script type="math/tex">P(w_i \mid C = c)</script> (4 и 5 столбцы).</p>
+
+<p>Нам этого достаточно для того, чтобы классифицировать новые сообщения. Пусть имеется такой набор тестовых данных:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Сообщение</th>
+      <th>Метка класса</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>The beer was good</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>I do not enjoy my job</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>I ain’t feeling dandy today</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>I feel amazing</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>Gary is a friend of mine</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>I can’t believe I’m doing this</td>
+      <td>Negative</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>В качестве примера рассмотрим классификацию первого сообщения.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Если слова нет в словаре, то есть, среди всех слов из обучающей выборки, то оно никак не повлияет на результат классификации. Таким образом, будем считать его вероятность для обоих классов равной нулю.</p>
+</div>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\ln P(pos|D) &= \ln P(pos) + \ln P(the|pos) + \ln P(beer|pos) + \ln P(was|pos) + \ln P(good|pos) \\ 
+&= -0.693 + 0 + 0 + 0 - 3.417 = -4.110 \\
+\ln P(neg|D) &= \ln P(neg) + \ln P(the|neg) + \ln P(beer|neg) + \ln P(was|neg) + \ln P(good|neg) \\
+&= -0.693 - 0 + 0 + 0 - 4.127 = -4.820 \\
+\hat{y} &= argmax_c\Big(\ln P(pos|D), \ln P(neg|D)\Big) = \ln P(pos|D) \Rightarrow pos
+\end{aligned} %]]></script>
+
+<p>Если мы классифицируем остальные сообщения, то получим, что мы верно классифицировали 5 из 6 сообщений. Таким образом, точность нашего классификатора составила 83% на тестовой выборке.</p>
 
 <h3 id="построение-классификатора">Построение классификатора</h3>
 
 <p>Вашей задачей является написать наивный байесовский классификатор:</p>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last">Вы можете использовать <code>Counter</code> и <code>defaultdict</code> из модуля <code>collections</code>, чтобы хранить вероятности классов и слов, соответственно.</p>
+</div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NaiveBayesClassifier</span><span class="p">:</span>
     
