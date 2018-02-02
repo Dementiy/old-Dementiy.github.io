@@ -4,7 +4,7 @@ title: Описательная статистика с Pandas, SQL и R
 categories: python R SQL datascience
 ---
 
-В этой работе вам предстоит выполнить два домашних задания с [открытого курса по машинному обучению](https://habrahabr.ru/company/ods/blog/344044/) от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. [Первая тема курса](https://habrahabr.ru/company/ods/blog/322626/) посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).
+В этой работе вам предстоит выполнить два домашних задания с [открытого курса по машинному обучению](https://habrahabr.ru/company/ods/blog/344044/) от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. [Первая тема курса](https://habrahabr.ru/company/ods/blog/322626/) посвящена первичному анализу данных с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории). Чтобы не дублировать исходный текст статьи я оставил только ключевые фразы, поэтому за выводами по полученным результатам следует обращаться именно к нему.
 
 ### Запускаем PostgreSQL в Docker
 
@@ -356,6 +356,11 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 +---------+---------+----------+-------+-------+-------+
 ```
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Примеры с таблицами сопряженности, аналогичными тем, которые рассмотрены в статье, будут показаны далее.</p>
+</div>
+
 Допустим, мы хотим посмотреть, как наблюдения в нашей выборке распределены в контексте двух признаков: `churn` и `international_plan`:
 
 ```python
@@ -402,6 +407,8 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 +-------------+-----------------------+-----------------------+-------------------------+
 ```
 
+Хотим посчитать общее количество звонков для всех пользователей. Создадим временную таблицу и добавим в нее столбец `total_calls`:
+
 ```python
 cursor.execute("""
     CREATE TABLE telecom_churn_temp  AS
@@ -425,6 +432,10 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 +---------------+
 ```
 
+### Первые попытки прогнозирования оттока
+
+Посмотрим, как отток связан с признаком «Подключение международного роуминга» (`international_plan`). Сделаем это с помощью сводной таблицы crosstab:
+
 ```python
 cursor.execute("""
     CREATE EXTENSION tablefunc;
@@ -446,4 +457,97 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 | True    |  346 |   137 |   483 |
 |         | 3010 |   323 |  3333 |
 +---------+------+-------+-------+
+```
+
+Далее посмотрим на еще один важный признак – «Число обращений в сервисный центр» (`customer_service_calls`):
+
+```python
+cursor.execute("""
+    SELECT Churn,
+           SUM("0") as "0", SUM("1") as "1", SUM("2") as "2", SUM("3") as "3",
+           SUM("4") as "4", SUM("5") as "5", SUM("6") as "6", SUM("7") as "7",
+           SUM("8") as "8", (CASE WHEN SUM("9") IS NULL THEN 0 ELSE SUM("9") END) as "9",
+           SUM("0"+"1"+"2"+"3"+"4"+"5"+"6"+"7"+"8"+(CASE WHEN "9" IS NULL THEN 0 ELSE "9" END)) as "ALL"
+    FROM (
+        SELECT * FROM crosstab(
+            'SELECT churn, customer_service_calls, COUNT(*)::int
+             FROM telecom_churn GROUP BY churn, customer_service_calls ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, "0" INTEGER, "1" INTEGER, "2" INTEGER, "3" INTEGER,
+            "4" INTEGER, "5" INTEGER, "6" INTEGER, "7" INTEGER, "8" INTEGER, "9" INTEGER)
+    ) results
+    GROUP BY rollup(Churn)
+""")
+print(tabulate(fetch_all(cursor), "keys", "psql"))
+```
+
+```
++---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------+
+| churn   |   0 |    1 |   2 |   3 |   4 |   5 |   6 |   7 |   8 |   9 |   ALL |
+|---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------|
+| False   | 605 | 1059 | 672 | 385 |  90 |  26 |   8 |   4 |   1 |   0 |  2850 |
+| True    |  92 |  122 |  87 |  44 |  76 |  40 |  14 |   5 |   1 |   2 |   483 |
+|         | 697 | 1181 | 759 | 429 | 166 |  66 |  22 |   9 |   2 |   2 |  3333 |
++---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------+
+```
+
+Добавим бинарный признак — результат сравнения `customer_service_calls > 3`. И еще раз посмотрим, как он связан с оттоком:
+
+```python
+cursor.execute("""
+    SELECT Churn, SUM("0") as "0", SUM("1") as "1", SUM("0"+"1") as "ALL"
+    FROM (
+        SELECT * FROM crosstab('
+            SELECT churn, (CASE WHEN customer_service_calls > 3 THEN 1 ELSE 0 END) as many_service_calls, COUNT(*)::int
+            FROM telecom_churn GROUP BY churn, many_service_calls ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, "0" INTEGER, "1" INTEGER
+        )
+    ) results
+    GROUP BY rollup(Churn)
+""")
+print(tabulate(fetch_all(cursor), "keys", "psql"))
+```
+
+```
++---------+------+-----+-------+
+| churn   |    0 |   1 |   ALL |
+|---------+------+-----+-------|
+| False   | 2721 | 129 |  2850 |
+| True    |  345 | 138 |   483 |
+|         | 3066 | 267 |  3333 |
++---------+------+-----+-------+
+```
+
+Объединим рассмотренные выше условия и построим сводную таблицу для этого объединения и оттока:
+
+```python
+cursor.execute("""
+    SELECT Churn, SUM("0") as "0", SUM("1") as "1", SUM("0"+"1") as "ALL"
+    FROM (
+        SELECT * FROM crosstab('
+            SELECT churn, (
+                CASE
+                    WHEN customer_service_calls > 3 AND international_plan LIKE $$Yes$$
+                    THEN 1
+                    ELSE 0
+                END) as many_calls_and_plan, COUNT(*)::int
+            FROM telecom_churn GROUP BY churn, many_calls_and_plan ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, "0" INTEGER, "1" INTEGER
+        )
+    ) results
+    GROUP BY rollup(Churn)
+""")
+print(tabulate(fetch_all(cursor), "keys", "psql"))
+```
+
+```
++---------+------+-----+-------+
+| churn   |    0 |   1 |   ALL |
+|---------+------+-----+-------|
+| False   | 2841 |   9 |  2850 |
+| True    |  464 |  19 |   483 |
+|         | 3305 |  28 |  3333 |
++---------+------+-----+-------+
 ```
