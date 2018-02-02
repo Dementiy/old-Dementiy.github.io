@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Описательная статистика с Pandas, SQL и R</title>
+  <meta name="description" content="В этой работе вам предстоит выполнить два домашних задания с открытого курса по машинному обучению от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. Первая тема курса посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/11-descriptive-statistics/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Описательная статистика с Pandas, SQL и R">
+  <meta name="twitter:description" content="В этой работе вам предстоит выполнить два домашних задания с открытого курса по машинному обучению от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. Первая тема курса ...">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Описательная статистика с Pandas, SQL и R</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+      <a href="/categories/r/">R</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/sql/">SQL</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/datascience/">datascience</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>В этой работе вам предстоит выполнить два домашних задания с <a href="https://habrahabr.ru/company/ods/blog/344044/">открытого курса по машинному обучению</a> от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. <a href="https://habrahabr.ru/company/ods/blog/322626/">Первая тема курса</a> посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).</p>
+
+<h3 id="запускаем-postgresql-в-docker">Запускаем PostgreSQL в Docker</h3>
+
+<p>В качестве СУБД будем использовать PostgreSQL, которая будет запущена в докер-контейнере. Все данные будут храниться в отдельном дата-контейнере. Подробное описание команд можно найти в статье <a href="https://ryaneschinger.com/blog/dockerized-postgresql-development-environment/">«Dockerized Postgresql Development Environment»</a>.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Создание дата-контейнера, в котором будут хранится все базы данных постгреса
+$ docker create -v /var/lib/postgresql/data --name mypostgres-data busybox
+
+# Создание контейнера с PostgreSQL
+$ docker run --name local-mypostgres -e POSTGRES_PASSWORD=secret -d --volumes-from mypostgres-data postgres:latest
+</code></pre></div></div>
+
+<p>Подключимся к контейнеру и создадим новую БД:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker exec -it local-mypostgres bash
+root@9ab15e9feb4d:/# psql -U postgres
+psql (9.6.5)
+Type "help" for help.
+
+postgres=# CREATE DATABASE odscourse;
+postgres=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+-----------+----------+----------+------------+------------+-----------------------
+ odscourse | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+postgres=# \q
+root@9ab15e9feb4d:/# exit
+</code></pre></div></div>
+
+<h3 id="создание-таблицы-с-данными-по-оттоку-клиентов">Создание таблицы с данными по оттоку клиентов</h3>
+
+<p>Для взаимодействия с PostgreSQL из Python мы будем использовать драйвер <code class="highlighter-rouge">psycopg2</code>, который можно установить следующей командой:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Перед установкой новых пакетов не забудьте активировать виртуальное окружение.</p>
+</div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(cs102) $ python -m pip install psycopg2
+</code></pre></div></div>
+
+<p>Теперь скачаем файл с данными, которые потребуются для выполнения примеров:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(cs102) $ wget https://raw.githubusercontent.com/Yorko/mlcourse_open/master/data/telecom_churn.csv
+</code></pre></div></div>
+
+<p>Создадим таблицу, содержащую данные по оттоку клиентов:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">"host=localhost port=5433 dbname=odscourse user=postgres password=secret"</span><span class="p">)</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="s">"""
+CREATE TABLE IF NOT EXISTS telecom_churn (
+    id SERIAL PRIMARY KEY,
+    state VARCHAR,
+    account_length INTEGER,
+    area_code INTEGER,
+    international_plan VARCHAR,
+    voice_mail_plan VARCHAR,
+    number_vmail_messages INTEGER,
+    total_day_minutes REAL,
+    total_day_calls INTEGER,
+    total_day_charge REAL,
+    total_eve_minutes REAL,
+    total_eve_calls INTEGER,
+    total_eve_charge REAL,
+    total_night_minutes REAL,
+    total_night_calls INTEGER,
+    total_night_charge REAL,
+    total_intl_minutes REAL,
+    total_intl_calls INTEGER,
+    total_intl_charge REAL,
+    customer_service_calls INTEGER,
+    churn BOOLEAN
+)
+"""</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'telecom_churn.csv'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="c"># Skip the header row</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">Id</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s">"INSERT INTO telecom_churn VALUES (</span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s, </span><span class="si">%</span><span class="s">s)"</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">Id</span><span class="p">]</span> <span class="o">+</span> <span class="n">row</span>
+        <span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Посмотрим на первые 5 строк:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">psycopg2</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">"host=localhost port=5433 dbname=odscourse user=postgres password=secret"</span><span class="p">)</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SELECT * FROM telecom_churn LIMIT 5"</span><span class="p">)</span>
+<span class="n">records</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[(0, 'KS', 128, 415, 'No', 'Yes', 25, 265.1, 110, 45.07, 197.4, 99, 16.78, 244.7, 91, 11.01, 10.0, 3, 2.7, 1, False),
+(1, 'OH', 107, 415, 'No', 'Yes', 26, 161.6, 123, 27.47, 195.5, 103, 16.62, 254.4, 103, 11.45, 13.7, 3, 3.7, 1, False),
+(2, 'NJ', 137, 415, 'No', 'No', 0, 243.4, 114, 41.38, 121.2, 110, 10.3, 162.6, 104, 7.32, 12.2, 5, 3.29, 0, False),
+(3, 'OH', 84, 408, 'Yes', 'No', 0, 299.4, 71, 50.9, 61.9, 88, 5.26, 196.9, 89, 8.86, 6.6, 7, 1.78, 2, False),
+(4, 'OK', 75, 415, 'Yes', 'No', 0, 166.7, 113, 28.34, 148.3, 122, 12.61, 186.9, 121, 8.41, 10.1, 3, 2.73, 3, False)]
+</code></pre></div></div>
+
+<p>Посмотрим на распределение данных по целевой переменной <code class="highlighter-rouge">churn</code>:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Для более красивого вывода табличных данных можно воспользоваться модулем <code>tabulate</code>. Чтобы установить модуль воспользуйтесь командой <code>pip install tabulate</code>.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+
+<span class="k">def</span> <span class="nf">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">):</span>
+    <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[{</span><span class="n">colname</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="n">colname</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">colnames</span><span class="p">,</span> <span class="n">record</span><span class="p">)}</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">]</span>
+
+
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="s">"""
+    SELECT churn, COUNT(*)
+        FROM telecom_churn
+        GROUP BY churn
+    """</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+---------+
+| churn   |   count |
+|---------+---------|
+| False   |    2850 |
+| True    |     483 |
++---------+---------+
+</code></pre></div></div>
+
+<p>Посмотрим на распределение пользователей по переменной <code class="highlighter-rouge">area_code</code>. Нормализуем значения, чтобы посмотреть не абсолютные частоты, а относительные:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="s">"""
+    SELECT area_code, ROUND((COUNT(*) / (SELECT COUNT(*) FROM telecom_churn)::numeric), 6)
+        FROM telecom_churn
+        GROUP BY area_code;
+    """</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-------------+----------+
+|   area_code |    round |
+|-------------+----------|
+|         408 | 0.251425 |
+|         510 | 0.252025 |
+|         415 | 0.49655  |
++-------------+----------+
+</code></pre></div></div>
+
+<h3 id="сортировка">Сортировка</h3>
+
+<p>Упорядочим значения в порядке убывания по столбцу <code class="highlighter-rouge">total_day_charge</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SELECT * FROM telecom_churn ORDER BY total_day_charge DESC LIMIT 5"</span><span class="p">)</span>
+<span class="n">records</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[(365, 'CO', 154, 415, 'No', 'No', 0, 350.8, 75, 59.64, 216.5, 94, 18.4, 253.9, 100, 11.43, 10.1, 9, 2.73, 1, True),
+ (985, 'NY', 64, 415, 'Yes', 'No', 0, 346.8, 55, 58.96, 249.5, 79, 21.21, 275.4, 102, 12.39, 13.3, 9, 3.59, 1, True),
+ (2594, 'OH', 115, 510, 'Yes', 'No', 0, 345.3, 81, 58.7, 203.4, 106, 17.29, 217.5, 107, 9.79, 11.8, 8, 3.19, 1, True),
+ (156, 'OH', 83, 415, 'No', 'No', 0, 337.4, 120, 57.36, 227.4, 116, 19.33, 153.9, 114, 6.93, 15.8, 7, 4.27, 0, True),
+ (605, 'MO', 112, 415, 'No', 'No', 0, 335.5, 77, 57.04, 212.5, 109, 18.06, 265.0, 132, 11.93, 12.7, 8, 3.43, 2, True)]
+</code></pre></div></div>
+
+<p>Упорядочивать можно по нескольким столбцам:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SELECT * FROM telecom_churn ORDER BY churn ASC, total_day_charge DESC LIMIT 5"</span><span class="p">)</span>
+<span class="n">records</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[(688, 'MN', 13, 510, 'No', 'Yes', 21, 315.6, 105, 53.65, 208.9, 71, 17.76, 260.1, 123, 11.7, 12.1, 3, 3.27, 3, False),
+ (2259, 'NC', 210, 415, 'No', 'Yes', 31, 313.8, 87, 53.35, 147.7, 103, 12.55, 192.7, 97, 8.67, 10.1, 7, 2.73, 3, False),
+ (534, 'LA', 67, 510, 'No', 'No', 0, 310.4, 97, 52.77, 66.5, 123, 5.65, 246.5, 99, 11.09, 9.2, 10, 2.48, 4, False),
+ (575, 'SD', 114, 415, 'No', 'Yes', 36, 309.9, 90, 52.68, 200.3, 89, 17.03, 183.5, 105, 8.26, 14.2, 2, 3.83, 1, False),
+ (2858, 'AL', 141, 510, 'No', 'Yes', 28, 308.0, 123, 52.36, 247.8, 128, 21.06, 152.9, 103, 6.88, 7.4, 3, 2.0, 1, False)]
+</code></pre></div></div>
+
+<h3 id="извлечение-данных">Извлечение данных</h3>
+
+<p>Ответим на вопрос: какова доля людей нелояльных пользователей в нашем датафрейме?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SELECT AVG(churn::int) FROM telecom_churn"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----------+
+|      avg |
+|----------|
+| 0.144914 |
++----------+
+</code></pre></div></div>
+
+<p>Ответим на вопрос: каковы средние значения числовых признаков среди нелояльных пользователей?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span> <span class="k">as</span> <span class="n">pp</span>
+
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT AVG(account_length), AVG(number_vmail_messages), AVG(total_day_minutes), AVG(total_day_calls),
+              AVG(total_day_charge), AVG(total_eve_minutes), AVG(total_eve_calls), AVG(total_eve_charge),
+              AVG(total_night_minutes), AVG(total_night_calls), AVG(total_night_charge), AVG(total_intl_minutes),
+              AVG(total_intl_calls), AVG(total_intl_charge), AVG(customer_service_calls), AVG(churn::int)
+        FROM telecom_churn WHERE churn = TRUE
+"""</span><span class="p">)</span>
+<span class="n">records</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+<span class="n">pp</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[(Decimal('102.6645962732919255'),
+  Decimal('5.1159420289855072'),
+  206.9140780984,
+  Decimal('101.3354037267080745'),
+  35.1759213532473,
+  212.410144829602,
+  Decimal('100.5610766045548654'),
+  18.0549689119153,
+  205.231677321914,
+  Decimal('100.3995859213250518'),
+  9.23552795029081,
+  10.6999999869684,
+  Decimal('4.1635610766045549'),
+  2.88954451525927,
+  Decimal('2.2298136645962733'),
+  Decimal('1.00000000000000000000'))]
+</code></pre></div></div>
+
+<p>Ответим на вопрос: сколько в среднем в течение дня разговаривают по телефону нелояльные пользователи?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT AVG(total_day_minutes) FROM telecom_churn WHERE churn = TRUE
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+
+|     avg |
+|---------|
+| 206.914 |
++---------+
+</code></pre></div></div>
+
+<p>Какова максимальная длина международных звонков среди лояльных пользователей (<code class="highlighter-rouge">churn = FALSE</code>), не пользующихся услугой международного роуминга (<code class="highlighter-rouge">international_plan = No</code>)?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT MAX(total_intl_minutes) FROM telecom_churn
+    WHERE churn = FALSE AND international_plan = 'No'
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-------+
+|   max |
+|-------|
+|  18.9 |
++-------+
+</code></pre></div></div>
+
+<p>Для замены значений в колонке можно воспользоваться <code class="highlighter-rouge">CASE</code>, например:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT (CASE WHEN international_plan = 'No' THEN False ELSE True END) as international_plan
+    FROM telecom_churn
+    LIMIT 5
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----------------------+
+| international_plan   |
+|----------------------|
+| False                |
+| False                |
+| False                |
+| True                 |
+| True                 |
++----------------------+
+</code></pre></div></div>
+
+<h3 id="группировка-данных">Группировка данных</h3>
+
+<p>Группирование данных в зависимости от значения признака <code class="highlighter-rouge">churn</code> и вывод статистик по трём столбцам в каждой группе:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT COUNT(*),
+           AVG(total_day_minutes), STDDEV(total_day_minutes), MIN(total_day_minutes),
+           PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY total_day_minutes) as "50</span><span class="si">%</span><span class="s">", MAX(total_day_minutes)
+    FROM telecom_churn
+    GROUP BY churn
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+---------+----------+-------+-------+-------+
+|   count |     avg |   stddev |   min |   50% |   max |
+|---------+---------+----------+-------+-------+-------|
+|    2850 | 175.176 |  50.1817 |     0 | 177.2 | 315.6 |
+|     483 | 206.914 |  68.9978 |     0 | 217.6 | 350.8 |
++---------+---------+----------+-------+-------+-------+
+</code></pre></div></div>
+
+<p>Допустим, мы хотим посмотреть, как наблюдения в нашей выборке распределены в контексте двух признаков: <code class="highlighter-rouge">churn</code> и <code class="highlighter-rouge">international_plan</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT churn, international_plan, COUNT(*) FROM telecom_churn
+    GROUP BY churn, international_plan
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+----------------------+---------+
+| churn   | international_plan   |   count |
+|---------+----------------------+---------|
+| True    | No                   |     346 |
+| False   | Yes                  |     186 |
+| False   | No                   |    2664 |
+| True    | Yes                  |     137 |
++---------+----------------------+---------+
+</code></pre></div></div>
+
+<p>Давайте посмотрим среднее число дневных, вечерних и ночных звонков для разных <code class="highlighter-rouge">area_code</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT area_code,
+           AVG(total_day_calls) as avg_total_day_calls,
+           AVG(total_eve_calls) as avg_total_eve_calls,
+           AVG(total_night_calls) as avg_total_night_calls
+    FROM telecom_churn
+    GROUP BY area_code
+    ORDER BY area_code
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-------------+-----------------------+-----------------------+-------------------------+
+|   area_code |   avg_total_day_calls |   avg_total_eve_calls |   avg_total_night_calls |
+|-------------+-----------------------+-----------------------+-------------------------|
+|         408 |               100.496 |               99.7888 |                 99.0394 |
+|         415 |               100.576 |              100.504  |                100.398  |
+|         510 |               100.098 |               99.6714 |                100.601  |
++-------------+-----------------------+-----------------------+-------------------------+
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    CREATE TABLE telecom_churn_temp  AS
+        SELECT *, (total_day_calls + total_eve_calls + total_night_calls + total_intl_calls) as total_calls
+        FROM telecom_churn
+        LIMIT 5;
+    SELECT total_calls FROM telecom_churn_temp
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------------+
+|   total_calls |
+|---------------|
+|           303 |
+|           332 |
+|           333 |
+|           255 |
+|           359 |
++---------------+
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    CREATE EXTENSION tablefunc;
+    SELECT Churn, SUM(No) as No, SUM(Yes) as Yes, SUM(No+Yes) as "All" FROM (
+        SELECT *
+            FROM crosstab('SELECT churn, international_plan, COUNT(*)::int FROM telecom_churn GROUP BY churn, international_plan ORDER BY 1,2')
+                AS (Churn BOOLEAN, No INTEGER, Yes INTEGER)
+        ) results_tbl
+        GROUP BY rollup(Churn)
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+------+-------+-------+
+| churn   |   no |   yes |   All |
+|---------+------+-------+-------|
+| False   | 2664 |   186 |  2850 |
+| True    |  346 |   137 |   483 |
+|         | 3010 |   323 |  3333 |
++---------+------+-------+-------+
+</code></pre></div></div>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
