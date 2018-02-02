@@ -10,7 +10,7 @@
   
   
   <title>Описательная статистика с Pandas, SQL и R</title>
-  <meta name="description" content="В этой работе вам предстоит выполнить два домашних задания с открытого курса по машинному обучению от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. Первая тема курса посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).">
+  <meta name="description" content="В этой работе вам предстоит выполнить два домашних задания с открытого курса по машинному обучению от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. Первая тема курса посвящена первичному анализу данных с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории). Чтобы не дублировать исходный текст статьи я оставил только ключевые фразы, поэтому за выводами по полученным результатам следует обращаться именно к нему.">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -212,7 +212,7 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>В этой работе вам предстоит выполнить два домашних задания с <a href="https://habrahabr.ru/company/ods/blog/344044/">открытого курса по машинному обучению</a> от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. <a href="https://habrahabr.ru/company/ods/blog/322626/">Первая тема курса</a> посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).</p>
+    <p>В этой работе вам предстоит выполнить два домашних задания с <a href="https://habrahabr.ru/company/ods/blog/344044/">открытого курса по машинному обучению</a> от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. <a href="https://habrahabr.ru/company/ods/blog/322626/">Первая тема курса</a> посвящена первичному анализу данных с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории). Чтобы не дублировать исходный текст статьи я оставил только ключевые фразы, поэтому за выводами по полученным результатам следует обращаться именно к нему.</p>
 
 <h3 id="запускаем-postgresql-в-docker">Запускаем PostgreSQL в Docker</h3>
 
@@ -537,6 +537,11 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 +---------+---------+----------+-------+-------+-------+
 </code></pre></div></div>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Примеры с таблицами сопряженности, аналогичными тем, которые рассмотрены в статье, будут показаны далее.</p>
+</div>
+
 <p>Допустим, мы хотим посмотреть, как наблюдения в нашей выборке распределены в контексте двух признаков: <code class="highlighter-rouge">churn</code> и <code class="highlighter-rouge">international_plan</code>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
@@ -579,6 +584,8 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 +-------------+-----------------------+-----------------------+-------------------------+
 </code></pre></div></div>
 
+<p>Хотим посчитать общее количество звонков для всех пользователей. Создадим временную таблицу и добавим в нее столбец <code class="highlighter-rouge">total_calls</code>:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
     CREATE TABLE telecom_churn_temp  AS
         SELECT *, (total_day_calls + total_eve_calls + total_night_calls + total_intl_calls) as total_calls
@@ -600,6 +607,10 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 +---------------+
 </code></pre></div></div>
 
+<h3 id="первые-попытки-прогнозирования-оттока">Первые попытки прогнозирования оттока</h3>
+
+<p>Посмотрим, как отток связан с признаком «Подключение международного роуминга» (<code class="highlighter-rouge">international_plan</code>). Сделаем это с помощью сводной таблицы crosstab:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
     CREATE EXTENSION tablefunc;
     SELECT Churn, SUM(No) as No, SUM(Yes) as Yes, SUM(No+Yes) as "All" FROM (
@@ -619,6 +630,93 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 | True    |  346 |   137 |   483 |
 |         | 3010 |   323 |  3333 |
 +---------+------+-------+-------+
+</code></pre></div></div>
+
+<p>Далее посмотрим на еще один важный признак – «Число обращений в сервисный центр» (<code class="highlighter-rouge">customer_service_calls</code>):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT Churn,
+           SUM("0") as "0", SUM("1") as "1", SUM("2") as "2", SUM("3") as "3",
+           SUM("4") as "4", SUM("5") as "5", SUM("6") as "6", SUM("7") as "7",
+           SUM("8") as "8", (CASE WHEN SUM("9") IS NULL THEN 0 ELSE SUM("9") END) as "9",
+           SUM("0"+"1"+"2"+"3"+"4"+"5"+"6"+"7"+"8"+(CASE WHEN "9" IS NULL THEN 0 ELSE "9" END)) as "ALL"
+    FROM (
+        SELECT * FROM crosstab(
+            'SELECT churn, customer_service_calls, COUNT(*)::int
+             FROM telecom_churn GROUP BY churn, customer_service_calls ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, "0" INTEGER, "1" INTEGER, "2" INTEGER, "3" INTEGER,
+            "4" INTEGER, "5" INTEGER, "6" INTEGER, "7" INTEGER, "8" INTEGER, "9" INTEGER)
+    ) results
+    GROUP BY rollup(Churn)
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------+
+| churn   |   0 |    1 |   2 |   3 |   4 |   5 |   6 |   7 |   8 |   9 |   ALL |
+|---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------|
+| False   | 605 | 1059 | 672 | 385 |  90 |  26 |   8 |   4 |   1 |   0 |  2850 |
+| True    |  92 |  122 |  87 |  44 |  76 |  40 |  14 |   5 |   1 |   2 |   483 |
+|         | 697 | 1181 | 759 | 429 | 166 |  66 |  22 |   9 |   2 |   2 |  3333 |
++---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------+
+</code></pre></div></div>
+
+<p>Добавим бинарный признак — результат сравнения <code class="highlighter-rouge">customer_service_calls &gt; 3</code>. И еще раз посмотрим, как он связан с оттоком:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT Churn, SUM("0") as "0", SUM("1") as "1", SUM("0"+"1") as "ALL"
+    FROM (
+        SELECT * FROM crosstab('
+            SELECT churn, (CASE WHEN customer_service_calls &gt; 3 THEN 1 ELSE 0 END) as many_service_calls, COUNT(*)::int
+            FROM telecom_churn GROUP BY churn, many_service_calls ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, "0" INTEGER, "1" INTEGER
+        )
+    ) results
+    GROUP BY rollup(Churn)
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+------+-----+-------+
+| churn   |    0 |   1 |   ALL |
+|---------+------+-----+-------|
+| False   | 2721 | 129 |  2850 |
+| True    |  345 | 138 |   483 |
+|         | 3066 | 267 |  3333 |
++---------+------+-----+-------+
+</code></pre></div></div>
+
+<p>Объединим рассмотренные выше условия и построим сводную таблицу для этого объединения и оттока:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"""
+    SELECT Churn, SUM("0") as "0", SUM("1") as "1", SUM("0"+"1") as "ALL"
+    FROM (
+        SELECT * FROM crosstab('
+            SELECT churn, (
+                CASE
+                    WHEN customer_service_calls &gt; 3 AND international_plan LIKE $$Yes$$
+                    THEN 1
+                    ELSE 0
+                END) as many_calls_and_plan, COUNT(*)::int
+            FROM telecom_churn GROUP BY churn, many_calls_and_plan ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, "0" INTEGER, "1" INTEGER
+        )
+    ) results
+    GROUP BY rollup(Churn)
+"""</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">fetch_all</span><span class="p">(</span><span class="n">cursor</span><span class="p">),</span> <span class="s">"keys"</span><span class="p">,</span> <span class="s">"psql"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------+------+-----+-------+
+| churn   |    0 |   1 |   ALL |
+|---------+------+-----+-------|
+| False   | 2841 |   9 |  2850 |
+| True    |  464 |  19 |   483 |
+|         | 3305 |  28 |  3333 |
++---------+------+-----+-------+
 </code></pre></div></div>
 
   </div>

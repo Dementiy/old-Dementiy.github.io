@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2018-02-02T14:40:37+03:00</updated>
+  <updated>2018-02-02T17:40:40+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -1674,7 +1674,7 @@ class::call ('bar',) {'y': 2}
       <published>2017-11-22T00:00:00+03:00</published>
       <updated>2017-11-22T00:00:00+03:00</updated>
       <id>https://dementiy.github.io/2017/11/22/11-descriptive-statistics</id>
-      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/11-descriptive-statistics/">&lt;p&gt;В этой работе вам предстоит выполнить два домашних задания с &lt;a href=&quot;https://habrahabr.ru/company/ods/blog/344044/&quot;&gt;открытого курса по машинному обучению&lt;/a&gt; от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. &lt;a href=&quot;https://habrahabr.ru/company/ods/blog/322626/&quot;&gt;Первая тема курса&lt;/a&gt; посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).&lt;/p&gt;
+      <content type="html" xml:base="https://dementiy.github.io/2017/11/22/11-descriptive-statistics/">&lt;p&gt;В этой работе вам предстоит выполнить два домашних задания с &lt;a href=&quot;https://habrahabr.ru/company/ods/blog/344044/&quot;&gt;открытого курса по машинному обучению&lt;/a&gt; от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. &lt;a href=&quot;https://habrahabr.ru/company/ods/blog/322626/&quot;&gt;Первая тема курса&lt;/a&gt; посвящена первичному анализу данных с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории). Чтобы не дублировать исходный текст статьи я оставил только ключевые фразы, поэтому за выводами по полученным результатам следует обращаться именно к нему.&lt;/p&gt;
 
 &lt;h3 id=&quot;запускаем-postgresql-в-docker&quot;&gt;Запускаем PostgreSQL в Docker&lt;/h3&gt;
 
@@ -1999,6 +1999,11 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 +---------+---------+----------+-------+-------+-------+
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;div class=&quot;admonition legend&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Примеры с таблицами сопряженности, аналогичными тем, которые рассмотрены в статье, будут показаны далее.&lt;/p&gt;
+&lt;/div&gt;
+
 &lt;p&gt;Допустим, мы хотим посмотреть, как наблюдения в нашей выборке распределены в контексте двух признаков: &lt;code class=&quot;highlighter-rouge&quot;&gt;churn&lt;/code&gt; и &lt;code class=&quot;highlighter-rouge&quot;&gt;international_plan&lt;/code&gt;:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
@@ -2041,6 +2046,8 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 +-------------+-----------------------+-----------------------+-------------------------+
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;Хотим посчитать общее количество звонков для всех пользователей. Создадим временную таблицу и добавим в нее столбец &lt;code class=&quot;highlighter-rouge&quot;&gt;total_calls&lt;/code&gt;:&lt;/p&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
     CREATE TABLE telecom_churn_temp  AS
         SELECT *, (total_day_calls + total_eve_calls + total_night_calls + total_intl_calls) as total_calls
@@ -2062,6 +2069,10 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 +---------------+
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;h3 id=&quot;первые-попытки-прогнозирования-оттока&quot;&gt;Первые попытки прогнозирования оттока&lt;/h3&gt;
+
+&lt;p&gt;Посмотрим, как отток связан с признаком «Подключение международного роуминга» (&lt;code class=&quot;highlighter-rouge&quot;&gt;international_plan&lt;/code&gt;). Сделаем это с помощью сводной таблицы crosstab:&lt;/p&gt;
+
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
     CREATE EXTENSION tablefunc;
     SELECT Churn, SUM(No) as No, SUM(Yes) as Yes, SUM(No+Yes) as &quot;All&quot; FROM (
@@ -2081,6 +2092,93 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
 | True    |  346 |   137 |   483 |
 |         | 3010 |   323 |  3333 |
 +---------+------+-------+-------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Далее посмотрим на еще один важный признак – «Число обращений в сервисный центр» (&lt;code class=&quot;highlighter-rouge&quot;&gt;customer_service_calls&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    SELECT Churn,
+           SUM(&quot;0&quot;) as &quot;0&quot;, SUM(&quot;1&quot;) as &quot;1&quot;, SUM(&quot;2&quot;) as &quot;2&quot;, SUM(&quot;3&quot;) as &quot;3&quot;,
+           SUM(&quot;4&quot;) as &quot;4&quot;, SUM(&quot;5&quot;) as &quot;5&quot;, SUM(&quot;6&quot;) as &quot;6&quot;, SUM(&quot;7&quot;) as &quot;7&quot;,
+           SUM(&quot;8&quot;) as &quot;8&quot;, (CASE WHEN SUM(&quot;9&quot;) IS NULL THEN 0 ELSE SUM(&quot;9&quot;) END) as &quot;9&quot;,
+           SUM(&quot;0&quot;+&quot;1&quot;+&quot;2&quot;+&quot;3&quot;+&quot;4&quot;+&quot;5&quot;+&quot;6&quot;+&quot;7&quot;+&quot;8&quot;+(CASE WHEN &quot;9&quot; IS NULL THEN 0 ELSE &quot;9&quot; END)) as &quot;ALL&quot;
+    FROM (
+        SELECT * FROM crosstab(
+            'SELECT churn, customer_service_calls, COUNT(*)::int
+             FROM telecom_churn GROUP BY churn, customer_service_calls ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, &quot;0&quot; INTEGER, &quot;1&quot; INTEGER, &quot;2&quot; INTEGER, &quot;3&quot; INTEGER,
+            &quot;4&quot; INTEGER, &quot;5&quot; INTEGER, &quot;6&quot; INTEGER, &quot;7&quot; INTEGER, &quot;8&quot; INTEGER, &quot;9&quot; INTEGER)
+    ) results
+    GROUP BY rollup(Churn)
+&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabulate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fetch_all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;keys&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;psql&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------+
+| churn   |   0 |    1 |   2 |   3 |   4 |   5 |   6 |   7 |   8 |   9 |   ALL |
+|---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------|
+| False   | 605 | 1059 | 672 | 385 |  90 |  26 |   8 |   4 |   1 |   0 |  2850 |
+| True    |  92 |  122 |  87 |  44 |  76 |  40 |  14 |   5 |   1 |   2 |   483 |
+|         | 697 | 1181 | 759 | 429 | 166 |  66 |  22 |   9 |   2 |   2 |  3333 |
++---------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Добавим бинарный признак — результат сравнения &lt;code class=&quot;highlighter-rouge&quot;&gt;customer_service_calls &amp;gt; 3&lt;/code&gt;. И еще раз посмотрим, как он связан с оттоком:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    SELECT Churn, SUM(&quot;0&quot;) as &quot;0&quot;, SUM(&quot;1&quot;) as &quot;1&quot;, SUM(&quot;0&quot;+&quot;1&quot;) as &quot;ALL&quot;
+    FROM (
+        SELECT * FROM crosstab('
+            SELECT churn, (CASE WHEN customer_service_calls &amp;gt; 3 THEN 1 ELSE 0 END) as many_service_calls, COUNT(*)::int
+            FROM telecom_churn GROUP BY churn, many_service_calls ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, &quot;0&quot; INTEGER, &quot;1&quot; INTEGER
+        )
+    ) results
+    GROUP BY rollup(Churn)
+&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabulate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fetch_all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;keys&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;psql&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+---------+------+-----+-------+
+| churn   |    0 |   1 |   ALL |
+|---------+------+-----+-------|
+| False   | 2721 | 129 |  2850 |
+| True    |  345 | 138 |   483 |
+|         | 3066 | 267 |  3333 |
++---------+------+-----+-------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Объединим рассмотренные выше условия и построим сводную таблицу для этого объединения и оттока:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    SELECT Churn, SUM(&quot;0&quot;) as &quot;0&quot;, SUM(&quot;1&quot;) as &quot;1&quot;, SUM(&quot;0&quot;+&quot;1&quot;) as &quot;ALL&quot;
+    FROM (
+        SELECT * FROM crosstab('
+            SELECT churn, (
+                CASE
+                    WHEN customer_service_calls &amp;gt; 3 AND international_plan LIKE $$Yes$$
+                    THEN 1
+                    ELSE 0
+                END) as many_calls_and_plan, COUNT(*)::int
+            FROM telecom_churn GROUP BY churn, many_calls_and_plan ORDER BY 1,2
+        ') AS (
+            Churn BOOLEAN, &quot;0&quot; INTEGER, &quot;1&quot; INTEGER
+        )
+    ) results
+    GROUP BY rollup(Churn)
+&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tabulate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fetch_all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;keys&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;psql&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+---------+------+-----+-------+
+| churn   |    0 |   1 |   ALL |
+|---------+------+-----+-------|
+| False   | 2841 |   9 |  2850 |
+| True    |  464 |  19 |   483 |
+|         | 3305 |  28 |  3333 |
++---------+------+-----+-------+
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content>
 
       
@@ -2104,7 +2202,7 @@ CREATE TABLE IF NOT EXISTS telecom_churn (
       
 
       
-        <summary type="html">В этой работе вам предстоит выполнить два домашних задания с открытого курса по машинному обучению от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. Первая тема курса посвящена первичному анализу данныз с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории).</summary>
+        <summary type="html">В этой работе вам предстоит выполнить два домашних задания с открытого курса по машинному обучению от OpenDataScience. Каждое задание нужно выполнить отдельно на Pandas, R и SQL. Первая тема курса посвящена первичному анализу данных с Pandas. Мы рассмотрим этот же пример с использованием SQL и R (решение на R можно найти в нашем репозитории). Чтобы не дублировать исходный текст статьи я оставил только ключевые фразы, поэтому за выводами по полученным результатам следует обращаться именно к нему.</summary>
       
 
       
