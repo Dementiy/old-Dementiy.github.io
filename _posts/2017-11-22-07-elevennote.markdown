@@ -1013,10 +1013,12 @@ INSTALLED_APPS = [
 ```
 
 ```bash
-# Fix me
-wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
-unzip templates-ch6.zip   # If prompted to replace, say (Y)es
-cd ..
+$ cd src/templates
+$ wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/templates01.zip
+$ unzip templates01.zip   # If prompted to replace, say (Y)es
+$ cp -r templates01/* .
+$ rm -rf templates01 templates01.zip
+$ cd ..
 ```
 
 <img src="/assets/images/07-elevennote/elevennote_signin_new.png">
@@ -1810,15 +1812,20 @@ class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
 ```
 
 ```bash
-$ wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch16.zip
-$ unzip templates-ch16.zip
+$ cd src/templates
+$ wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/templates02.zip
+$ unzip templates02.zip
+$ cp -r templates02/* .
+$ rm -rf templates02 templates02.zip
+$ cd -
 ```
 
 ```bash
-cd static
-wget https://github.com/sixfeetup/ElevenNote/raw/master/static-elevennote-ch16.zip
-unzip static-elevennote-ch16.zip
-cd ..
+$ cd src/static
+$ wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/static02.zip
+$ unzip static02.zip
+$ rm -rf static02.zip
+$ cd - 
 ```
 
 <img src="/assets/images/07-elevennote/elevennote_new_styles.png">
