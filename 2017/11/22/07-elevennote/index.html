@@ -1159,10 +1159,12 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 <span class="p">]</span>
 </code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Fix me</span>
-wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
-unzip templates-ch6.zip   <span class="c"># If prompted to replace, say (Y)es</span>
-<span class="nb">cd</span> ..
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>src/templates
+<span class="nv">$ </span>wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/templates01.zip
+<span class="nv">$ </span>unzip templates01.zip   <span class="c"># If prompted to replace, say (Y)es</span>
+<span class="nv">$ </span>cp <span class="nt">-r</span> templates01/<span class="k">*</span> <span class="nb">.</span>
+<span class="nv">$ </span>rm <span class="nt">-rf</span> templates01 templates01.zip
+<span class="nv">$ </span><span class="nb">cd</span> ..
 </code></pre></div></div>
 
 <p><img src="/assets/images/07-elevennote/elevennote_signin_new.png" /></p>
@@ -1913,14 +1915,19 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 +
 </span></code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch16.zip
-<span class="nv">$ </span>unzip templates-ch16.zip
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>src/templates
+<span class="nv">$ </span>wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/templates02.zip
+<span class="nv">$ </span>unzip templates02.zip
+<span class="nv">$ </span>cp <span class="nt">-r</span> templates02/<span class="k">*</span> <span class="nb">.</span>
+<span class="nv">$ </span>rm <span class="nt">-rf</span> templates02 templates02.zip
+<span class="nv">$ </span><span class="nb">cd</span> -
 </code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>static
-wget https://github.com/sixfeetup/ElevenNote/raw/master/static-elevennote-ch16.zip
-unzip static-elevennote-ch16.zip
-<span class="nb">cd</span> ..
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>src/static
+<span class="nv">$ </span>wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/static02.zip
+<span class="nv">$ </span>unzip static02.zip
+<span class="nv">$ </span>rm <span class="nt">-rf</span> static02.zip
+<span class="nv">$ </span><span class="nb">cd</span> - 
 </code></pre></div></div>
 
 <p><img src="/assets/images/07-elevennote/elevennote_new_styles.png" /></p>

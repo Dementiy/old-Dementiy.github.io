@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2018-02-07T18:50:18+03:00</updated>
+  <updated>2018-02-07T20:00:24+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -4675,10 +4675,12 @@ root@67a3bcc5c881:/src# &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Fix me&lt;/span&gt;
-wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch06.zip
-unzip templates-ch6.zip   &lt;span class=&quot;c&quot;&gt;# If prompted to replace, say (Y)es&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ..
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;src/templates
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/templates01.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;unzip templates01.zip   &lt;span class=&quot;c&quot;&gt;# If prompted to replace, say (Y)es&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cp &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; templates01/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; templates01 templates01.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ..
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/07-elevennote/elevennote_signin_new.png&quot; /&gt;&lt;/p&gt;
@@ -5429,14 +5431,19 @@ root@67a3bcc5c881:/src# &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
 +
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget https://github.com/sixfeetup/ElevenNote/raw/master/templates-ch16.zip
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;unzip templates-ch16.zip
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;src/templates
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/templates02.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;unzip templates02.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cp &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; templates02/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; templates02 templates02.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; -
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;static
-wget https://github.com/sixfeetup/ElevenNote/raw/master/static-elevennote-ch16.zip
-unzip static-elevennote-ch16.zip
-&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ..
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;src/static
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget https://github.com/Dementiy/pybook-assignments/raw/elevennote/homework07/elevennote/templates_archives/static02.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;unzip static02.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; static02.zip
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; - 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/images/07-elevennote/elevennote_new_styles.png&quot; /&gt;&lt;/p&gt;
