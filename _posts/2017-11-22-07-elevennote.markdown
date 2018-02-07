@@ -6,6 +6,8 @@ categories: python golang web практики
 
 В этой работе вы напишите простое приложение для ведения заметок, покрывая каждую часть приложения тестами. Ваше приложение будет работать в нескольких докер-контейнерах (о которых вы вскоре узнаете). И в конце разработаете API и swagger-схему для этого приложения.
 
+### Создание нового проекта
+
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
   <p class="last">Эта работа основана на <a href="https://github.com/sixfeetup/ElevenNote">замечательном руководстве</a> по Django от компании Six Feet Up.</p>
@@ -38,6 +40,7 @@ pytz==2017.2
 (elevennote-env) $ pip freeze > requirements/base.txt
 (elevennote-env) $ echo "-r base.txt" >> requirements/dev.txt
 (elevennote-env) $ echo "-r base.txt" >> requirements/prod.txt
+(elevennote-env) $ echo "django-debug-toolbar==1.9.1" >> requirements/dev.txt
 ```
 
 Теперь создадим новый проект с помощью команды `django-admin` (исходники проекта будем хранить в папке `src`). Обратите внимание, что имя проекта `config`, а все файлы проекта будут созданы в текущей рабочей директории (на что указывает `.`):
@@ -98,7 +101,7 @@ src/config
 └── wsgi.py
 ```
 
-Содержимое файла `config/settings/base.py`:
+Содержимое файла `src/config/settings/base.py`:
 
 ```python
 import os
@@ -192,6 +195,8 @@ DB_PORT=5432
 ```python
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 ```
+
+### Запуск проекта в докере
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
@@ -351,18 +356,28 @@ $ docker-compose up
 
 На текущий момент нам больше не нужно виртуальное окружение, так как эту часть функций, а именно изоляции окружения, на себя взял докер.
 
-Создадим суперпользователя, чтобы иметь возможность заходить в панель администратора. Для этого подключимся к контейнеру:
+Структура вашего проекта должна выглядеть следующим образом:
 
-```sh
-$ docker exec -it dg01 bash
-root@67a3bcc5c881:/src# python manage.py createsuperuser
-Username (leave blank to use 'root'):
-Email address:
-Password:
-Password (again):
-Superuser created successfully.
-root@67a3bcc5c881:/src# exit
 ```
+$ tree -L 2
+.
+├── Dockerfile
+├── deploy
+│   ├── nginx
+│   └── uwsgi
+├── docker-compose.yml
+├── requirements
+│   ├── base.txt
+│   ├── dev.txt
+│   └── prod.txt
+├── src
+│   ├── config
+│   └── manage.py
+└── static
+    └── admin
+```
+
+### Создание нового приложения
 
 Создадим новое приложение `notes` (заметки) и добавим его в `INSTALLED_APPS`:
 
@@ -388,21 +403,15 @@ INSTALLED_APPS = [
 - текст заметки (`body`);
 - и датой создания (`pub_date`).
 
-`notes/models.py`
+`src/notes/models.py`
 ```python
 class Note(models.Model):
     title = models.CharField(max_length=200)
     body = models.TextField()
-    pub_date = models.DateTimeField('date published')
-```
+    pub_date = models.DateTimeField('date published', auto_now_add=True)
 
-Зарегистрируем созданную модель в панели администратора:
-`notes/admin.py`
-```python
-from django.contrib import admin
-from .models import Note
-
-admin.site.register(Note)
+    def __str__(self):
+        return self.title
 ```
 
 И применим внесенные изменения к БД:
@@ -423,73 +432,70 @@ $ docker-compose run web python manage.py migrate
 $ docker-compose restart web
 ```
 
-Теперь откройте панель администратора [http://localhost:8000/admin](http://localhost:8000/admin). Вы должны увидеть новый раздел `Notes`, в котором вы можете создавать, редактировать и удалять заметки.
+```python
+from django.test import TestCase
 
-<img src="/assets/images/07-elevennote/elevennote3.png">
+from notes.models import Note
 
-<div class="admonition legend">
-  <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">На момент составления этой работы <code>django-admin-honeypot</code> не совместим с Django версии 2 (и скорее всего уже не будет). Поэтому представленный пример работает только для более ранних версий фреймворка.</p>
-</div>
 
-Вы могли заметить, что путь по умолчанию для входа в панель администратора - `/admin`. В случае, если вы хотите предотвратить потенциальные автоматизированные атаки на ваш ресурс путем подбора логина и пароля, или же есть любые иные причины ограничить доступ к панели администратора путем изменения адреса, по которому она будет доступна, вы можете обратить внимание на модуль [admin-honeypot](https://github.com/dmpayton/django-admin-honeypot), который также будет вести историю попыток входа в фейковую панель администратора.
+class TestNoteModel(TestCase):
 
-Этот этап не обязателен, вы можете его пропустить или вернуться к нему позже.
+    def test_can_create_a_new_note(self):
+        note = Note.objects.create(title='Note title', body='Note body')
+        self.assertTrue(note)
+
+    def test_string_representation(self):
+        note = Note.objects.create(title='Note title', body='Note body')
+        self.assertEqual(str(note), 'Note title')
+```
 
 ```bash
-$ docker exec -it dg01 bash
-root@67a3bcc5c881:/src# pip install django-admin-honeypot==1.0.0
-root@67a3bcc5c881:/src# exit
+$ docker-compose run web python manage.py test
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.009s
+
+OK
+Destroying test database for alias 'default'...
 ```
 
-`src/config/settings/base.py`
-```python
-INSTALLED_APPS = [
-    # ...
-    'admin_honeypot',
-    # ...
-]
+```bash
+$ mkdir src/notes/tests
+$ mv src/notes/tests.py src/notes/tests/test_models.py
+$ touch src/notest/tests/__init__.py
 ```
 
-`src/config/urls.py`
-```python
-urlpatterns = [
-    url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
-    url(r'^secret/', admin.site.urls),
-]
+Ваши тесты должны по прежнему проходить.
+
+```
+$ docker-compose run web coverage run --source='.' manage.py test notes
+$ docker-compose run web coverage report
+Name                               Stmts   Miss  Cover
+------------------------------------------------------
+config/__init__.py                     0      0   100%
+config/settings/__init__.py            0      0   100%
+config/settings/base.py               20      0   100%
+config/settings/local.py               4      0   100%
+config/settings/production.py          0      0   100%
+config/urls.py                         3      0   100%
+config/wsgi.py                         4      4     0%
+manage.py                              9      2    78%
+notes/__init__.py                      0      0   100%
+notes/admin.py                         1      0   100%
+notes/apps.py                          3      3     0%
+notes/migrations/0001_initial.py       5      0   100%
+notes/migrations/__init__.py           0      0   100%
+notes/models.py                        7      0   100%
+notes/test_models.py                   9      0   100%
+notes/tests/__init__.py                0      0   100%
+notes/views.py                         1      1     0%
+------------------------------------------------------
+TOTAL                                 66     10    85%
 ```
 
-Логи попыток входа:
-
-<img src="/assets/images/07-elevennote/elevennote4.png">
-
-Вернемся к приложению с заметками. На текущий момент, если создать новую заметку через панель администратора, то она будет отображаться следующим образом:
-
-<div class="admonition legend">
-  <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">Мы также можем переопределить метод <code>__str__</code> у модели <code>Note</code>.</p>
-</div>
-
-<img src="/assets/images/07-elevennote/elevennote5_1.png">
-
-Сделаем отображение заметки в панели администратора более дружелюбным, отображая название заметки и дату публикации. Дополнительно добавим поле, указываюещее на то, была ли заметка опубликована в течениии последних 24-х часов:
-
-`src/notes/admin.py`
-
-<div class="admonition legend">
-  <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">Узнать больше о расширении панели администратора можно в <a href="https://docs.djangoproject.com/en/2.0/ref/contrib/admin/">официальной документации</a>.</p>
-</div>
-
-```python
-class NoteAdmin(admin.ModelAdmin):
-    list_display = ('title', 'pub_date', 'was_published_recently')
-    list_filter = ['pub_date']
-
-admin.site.register(Note, NoteAdmin)
-```
-
-Мы ссылаемся на новый метод `was_published_recently`, который нужно добавить в модель `Note`:
+Добавим метод `was_published_recently`, который определяет была ли заметка опубликована за последние 24 часа, в модель `Note`:
 
 `src/notes/models.py`
 ```python
@@ -503,15 +509,7 @@ class Note(models.Model):
         return self.pub_date >= timezone.now() - timezone.timedelta(days=1)
 ```
 
-<img src="/assets/images/07-elevennote/elevennote5.png">
-
-Давайте напишем наш первый тест, который будет проверять, что отложенная заметка не является недавно опубликованной:
-
-```bash
-$ mkdir src/notes/tests
-$ mv src/notes/tests.py src/notes/tests/test_models.py
-$ touch src/notes/tests/__init__.py
-```
+Напишем тест, который будет проверять, что отложенная заметка не является недавно опубликованной:
 
 `src/notes/tests/test_models.py`
 ```python
@@ -521,11 +519,9 @@ from django.test import TestCase
 from notes.models import Note
 
 class NoteMethodTests(TestCase):
+    # ...
 
     def test_was_published_recently(self):
-        """
-        was_published_recently() should return False for notes whose pub_date is in the future.
-        """
         time = timezone.now() + timezone.timedelta(days=30)
         future_note = Note(pub_date=time)
         self.assertEqual(future_note.was_published_recently(), False)
@@ -535,7 +531,7 @@ class NoteMethodTests(TestCase):
 $ docker-compose run web python manage.py test
 Creating test database for alias 'default'...
 System check identified no issues (0 silenced).
-F
+..F
 ======================================================================
 FAIL: test_was_published_recently (notes.tests.test_models.NoteMethodTests)
 ----------------------------------------------------------------------
@@ -545,7 +541,7 @@ Traceback (most recent call last):
 AssertionError: True != False
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.020s
+Ran 3 tests in 0.018s
 
 FAILED (failures=1)
 Destroying test database for alias 'default'...
@@ -569,11 +565,60 @@ Creating test database for alias 'default'...
 System check identified no issues (0 silenced).
 .
 ----------------------------------------------------------------------
-Ran 1 test in 0.006s
+Ran 3 tests in 0.012s
 
 OK
 Destroying test database for alias 'default'...
 ```
+
+### Работа с панелью администратора
+
+Создадим суперпользователя, чтобы иметь возможность заходить в панель администратора. Для этого подключимся к контейнеру:
+
+```sh
+$ docker exec -it dg01 bash
+root@67a3bcc5c881:/src# python manage.py createsuperuser
+Username (leave blank to use 'root'):
+Email address:
+Password:
+Password (again):
+Superuser created successfully.
+root@67a3bcc5c881:/src# exit
+```
+
+Зарегистрируем созданную модель в панели администратора:
+`src/notes/admin.py`
+```python
+from django.contrib import admin
+from .models import Note
+
+admin.site.register(Note)
+```
+
+Теперь откройте панель администратора [http://localhost:8000/admin](http://localhost:8000/admin). Вы должны увидеть новый раздел `Notes`, в котором вы можете создавать, редактировать и удалять заметки.
+
+<img src="/assets/images/07-elevennote/elevennote3.png">
+
+Сделаем отображение заметки в панели администратора более дружелюбным, отображая название заметки, дату публикации и проверку на то, была ли заметка опубликована в течениии последних 24-х часов:
+
+`src/notes/admin.py`
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Узнать больше о расширении панели администратора можно в <a href="https://docs.djangoproject.com/en/2.0/ref/contrib/admin/">официальной документации</a>.</p>
+</div>
+
+```python
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('title', 'pub_date', 'was_published_recently')
+    list_filter = ['pub_date']
+
+admin.site.register(Note, NoteAdmin)
+```
+
+<img src="/assets/images/07-elevennote/elevennote5.png">
+
+### Добавление вьюверов
 
 `src/config/urls.py`
 ```python
@@ -648,7 +693,7 @@ TEMPLATES = [
    {% endfor %}
    </ul>
 {% else %}
-  <p>No notes available.</p>
+   <p>No notes available.</p>
 {% endif %}
 ```
 {% endraw %}
@@ -717,24 +762,117 @@ class DetailTests(TestCase):
 $ docker-compose run web python manage.py test
 Creating test database for alias 'default'...
 System check identified no issues (0 silenced).
-......
+........
 ----------------------------------------------------------------------
-Ran 6 tests in 0.117s
+Ran 8 tests in 0.119s
 
 OK
 Destroying test database for alias 'default'...
 ```
 
-Создадим новое приложением `accounts`, которое будет отвечать за хранение информации о пользователях. Также добавим возможность регистрации и авторизации.
+### Создание кастомной модели пользователя
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
   <p class="last">Не забудьте добавить созданное приложение в <code>INSTALLED_APPS</code> в файле <code>src/config/settings/base.py</code>.</p>
 </div>
 
+Создадим новое приложением `accounts`, которое будет отвечать за хранение информации о пользователях. Также добавим возможность регистрации и авторизации.
+
+Пример создания кастомной модели пользователя можно найти в [официальной документации Django](https://docs.djangoproject.com/en/2.0/topics/auth/customizing/#a-full-example).
+
 ```bash
 $ docker-compose run web python manage.py startapp accounts
 ```
+
+`src/accounts/models.py`
+
+```python
+from django.db import models
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
+
+
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def create_user(self, email, password=None):
+        """
+        Creates and saves a User with the given email and password.
+        """
+        if email is None:
+            raise ValueError('User must have an email address.')
+        user = self.model(email=self.normalize_email(email))
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None):
+        """
+        Creates and saves a superuser with the given email and password.
+        """
+        if password is None:
+            raise ValueError('Superusers must have a password.')
+        user = self.create_user(email, password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(db_index=True, unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    USERNAME_FIELD = 'email'
+
+    objects = UserManager()
+
+    def __str__(self):
+        return self.email
+```
+
+`src/config/settings/base.py`
+
+```python
+# ...
+AUTH_USER_MODEL = 'accounts.User'
+```
+
+```bash
+$ mkdir src/accounts/tests
+$ mv src/accounts/tests.py src/accounts/test_models.py
+$ touch src/accounts/tests/__init__.py
+```
+
+`src/accounts/tests/test_models.py`
+
+```python
+from django.test import TestCase
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+class TestUserModel(TestCase):
+
+    def test_can_create_user(self):
+        user = User.objects.create_user(email='user@example.com')
+        self.assertTrue(user)
+
+    def test_can_create_superuser(self):
+        superuser = User.objects.create_superuser(
+            email='superuser@example.com',
+            password='secret'
+        )
+        self.assertTrue(superuser)
+
+    def test_string_representation(self):
+        user = User.objects.create_user(email='user@example.com')
+        self.assertEqual(str(user), 'user@example.com')
+```
+
+### Добавление авторизации
 
 `src/config/urls.py`
 <div class="admonition note">
@@ -748,7 +886,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     # Handle the root url.
-    path('', RedirectView.as_view(url='notes/')),
+    path('', RedirectView.as_view(url='notes/'), name='index'),
 
     # Accounts app
     path('accounts/', include('accounts.urls', namespace='accounts')),
@@ -788,13 +926,7 @@ $ touch src/templates/registration/login.html
 ```html
 <form action="{% url 'accounts:login' %}" method="post" accept-charset="utf-8">
   {% csrf_token %}
-  {% for field in form %}
-    <label>{{ field.label }}</label>
-    {% if field.errors %}
-      {{ field.errors }}
-    {% endif %}
-    {{ field }}
-  {% endfor %}
+  {{ form.as_p }}
   <input type="hidden" name="next" value="{{ next }}" />
   <input class="button small" type="submit" value="Submit"/>
 </form>
@@ -822,20 +954,25 @@ def detail(request):
 
 `src/notes/tests/test_views.py`
 ```python
-from django.contrib.auth.models import User
+# ...
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class IndexTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="test", password="qwerty123")
-        self.client.login(username="test", password="qwerty123")
+        self.user = User.objects.create_user(
+            email="user@example.com", password="secret")
+        self.client.login(email="user@example.com", password="secret")
         # ...
 
 class DetailTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="test", password="qwerty123")
-        self.client.login(username="test", password="qwerty123")
+        self.user = User.objects.create_user(
+            email="user@example.com", password="secret")
+        self.client.login(email="user@example.com", password="secret")
         # ...
 ```
 
@@ -846,6 +983,7 @@ $ mkdir src/static
 $ cd src/static
 $ wget https://github.com/twbs/bootstrap/releases/download/v4.0.0-beta.3/bootstrap-4.0.0-beta.3-dist.zip
 $ unzip bootstrap-4.0.0-beta.3-dist.zip -d bootstrap
+$ rm -rf bootstrap-4.0.0-beta.3-dist.zip
 $ cd -
 ```
 
@@ -888,25 +1026,23 @@ cd ..
 `src/accounts/views.py`
 ```python
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import FormView
+
+from .forms import UserCreationForm
 
 
 class RegisterView(FormView):
     template_name = 'registration/register.html'
     form_class = UserCreationForm
-    success_url='/'
+    success_url = '/'
 
     def form_valid(self, form):
-        #save the new user first
         form.save()
 
-        #get the username and password
-        username = self.request.POST['username']
+        email = self.request.POST['email']
         password = self.request.POST['password1']
 
-        #authenticate user then login
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
         login(self.request, user)
         return super(RegisterView, self).form_valid(form)
 ```
@@ -944,10 +1080,85 @@ LOGIN_REDIRECT_URL = '/'
 ```
 {% endraw %}
 
-
 `accounts/tests/test_views.py`
 ```python
+from django.test import TestCase
+from django.urls import reverse, resolve
+from django.contrib.auth import get_user_model
 
+from accounts.views import RegisterView
+from accounts.forms import UserCreationForm
+
+
+User = get_user_model()
+
+class RegisterViewTests(TestCase):
+
+    def setUp(self):
+        url = reverse('accounts:register')
+        self.response = self.client.get(url)
+
+    def test_signup_status_code(self):
+        self.assertEquals(self.response.status_code, 200)
+
+    def test_signup_url_resolves_signup_view(self):
+        view = resolve('/accounts/register/')
+        self.assertEquals(view.func.view_class, RegisterView)
+
+    def test_csrf(self):
+        self.assertContains(self.response, 'csrfmiddlewaretoken')
+
+    def test_contains_form(self):
+        form = self.response.context.get('form')
+        self.assertIsInstance(form, UserCreationForm)
+
+    def test_form_inputs(self):
+        self.assertContains(self.response, '<input', 6)
+        self.assertContains(self.response, 'type="email"', 1)
+        self.assertContains(self.response, 'type="password"', 2)
+
+
+class SuccessfulSignUpTests(TestCase):
+
+    def setUp(self):
+        url = reverse('accounts:register')
+        data = {
+            'email': 'user@example.com',
+            'password1': 'secret',
+            'password2': 'secret',
+        }
+        self.response = self.client.post(url, data)
+        self.notes_page = reverse('notes:index')
+        self.index_page = reverse('index')
+
+    def test_redirects_to_index_page(self):
+        self.assertRedirects(self.response, self.index_page,
+            target_status_code=302)
+
+    def test_user_creation(self):
+        self.assertTrue(User.objects.exists())
+
+    def test_user_authentication(self):
+        response = self.client.get(self.notes_page)
+        user = response.context.get('user')
+        self.assertTrue(user.is_authenticated)
+
+
+class InvalidSingUpTests(TestCase):
+
+    def setUp(self):
+        url = reverse('accounts:register')
+        self.response = self.client.post(url, {})
+
+    def test_signup_status_code(self):
+        self.assertEquals(self.response.status_code, 200)
+
+    def test_form_errors(self):
+        form = self.response.context.get('form')
+        self.assertTrue(form.errors)
+
+    def test_dont_create_user(self):
+        self.assertFalse(User.objects.exists())
 ```
 
 Добавим в модель заметки информацию об авторе - пользователе, создавшем ее - путем внесения внешнего ключа.
@@ -976,15 +1187,133 @@ root@67a3bcc5c881:/src# exit
 
 В выводимый список заметок добавим сортировку по убыванию даты публикации и ограничим выводимое количество (5 шт.). Позже можно убрать количественное ограничение для возможности постраничного просмотра имеющихся заметок.
 
-`notes/views.py`
+`src/notes/views.py`
 ```python
 latest_note_list = Note.objects.filter(owner=request.user).order_by('-pub_date')[:5]
+
+# ...
+
+note = get_object_or_404(Note, pk=note_id, owner=request.user)
 ```
 
-`notes/admin.py`
+`src/notes/admin.py`
 ```python
 list_display = ('title', 'owner', 'pub_date', 'was_published_recently')
 ```
+
+`src/notes/tests/test_views.py`
+```python
+from django.test import TestCase
+from django.urls import reverse, resolve
+from django.contrib.auth import get_user_model
+
+import datetime
+
+from notes.models import Note
+from notes.views import index, detail
+
+User = get_user_model()
+
+
+class IndexTests(TestCase):
+
+    def setUp(self):
+        self.test_user1 = User.objects.create_user(
+            email="test_user1@example.com",
+            password="secret")
+        self.test_user2 = User.objects.create_user(
+            email="test_user2@example.com",
+            password="secret")
+
+        now = datetime.datetime.now()
+        self.notes = []
+        self.n = 5
+        for i in range(self.n):
+            self.notes.append(Note.objects.create(
+                title=f"Note title {i}",
+                body="Note description",
+                pub_date=now + datetime.timedelta(days=i),
+                owner=self.test_user1))
+
+    def test_redirect_if_not_logged_in(self):
+        index_page_url = reverse('notes:index')
+        response = self.client.get(index_page_url)
+        self.assertRedirects(response, "/accounts/login/?next=/notes/")
+
+    def test_index_view_status_code(self):
+        self.client.login(email="test_user1@example.com", password="secret")
+        index_page_url = reverse('notes:index')
+        response = self.client.get(index_page_url)
+        self.assertEquals(response.status_code, 200)
+
+    def test_index_url_resolves_index_view(self):
+        view = resolve('/notes/')
+        self.assertEquals(view.func, index)
+
+    def test_index_view_contains_link_to_details_page(self):
+        self.client.login(email="test_user1@example.com", password="secret")
+        index_page_url = reverse('notes:index')
+        response = self.client.get(index_page_url)
+        for note in self.notes:
+            note_detail_url = reverse('notes:detail',
+                kwargs={'note_id': note.pk})
+            self.assertContains(response, f'href="{note_detail_url}"')
+
+    def test_notes_ordered_by_pub_dates(self):
+        self.client.login(email="test_user1@example.com", password="secret")
+        index_page_url = reverse('notes:index')
+        response = self.client.get(index_page_url)
+        notes = response.context["latest_note_list"]
+        self.assertEquals(len(notes), self.n)
+
+        pub_date = notes[0].pub_date
+        for note in notes[1:]:
+            self.assertTrue(pub_date >= note.pub_date)
+            pub_date = note.pub_date
+
+    def test_only_owned_notes_in_list(self):
+        self.client.login(email="test_user2@example.com", password="secret")
+        index_page_url = reverse('notes:index')
+        response = self.client.get(index_page_url)
+        notes = response.context["latest_note_list"]
+        self.assertEquals(len(notes), 0)
+
+
+class DetailTests(TestCase):
+
+    def setUp(self):
+        self.test_user1 = User.objects.create_user(
+            email="test_user1@example.com",
+            password="secret")
+        self.test_user2 = User.objects.create_user(
+            email="test_user2@example.com",
+            password="secret")
+        self.note = Note.objects.create(
+            title="Note title", body="Note description", owner=self.test_user1)
+
+    def test_redirect_if_not_logged_in(self):
+        detail_page_url = reverse('notes:detail', kwargs={'note_id': self.note.pk})
+        response = self.client.get(detail_page_url)
+        self.assertRedirects(response, f"/accounts/login/?next=/notes/{self.note.pk}/")
+
+    def test_detail_view_status_code(self):
+        self.client.login(email="test_user1@example.com", password="secret")
+        url = reverse('notes:detail', kwargs={'note_id': self.note.pk})
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 200)
+
+    def test_detail_url_resolves_detail_view(self):
+        view = resolve(f'/notes/{self.note.pk}/')
+        self.assertEquals(view.func, detail)
+
+    def test_only_owner_can_see_detail_page(self):
+        self.client.login(email="test_user2@example.com", password="secret")
+        url = reverse('notes:detail', kwargs={'note_id': self.note.pk})
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 404)
+```
+
+### Class-based views
 
 
 `notes/views.py`
@@ -1006,7 +1335,7 @@ class NoteList(ListView):
         return super(NoteList, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        return Note.objects.filter(owner=self.request.user)
+        return Note.objects.filter(owner=self.request.user).order_by('-pub_date')
 
 
 class NoteDetail(DetailView):
@@ -1017,6 +1346,9 @@ class NoteDetail(DetailView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(NoteDetail, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return Note.objects.filter(owner=self.request.user)
 ```
 
 `notes/urls.py`
@@ -1031,6 +1363,103 @@ urlpatterns = [
     path('', NoteList.as_view(), name='index'),
     path('<int:pk>/', NoteDetail.as_view(), name='detail'),
 ]
+```
+
+`src/tests/test_views.py`
+```diff
+-from notes.views import index, detail
++from notes.views import NoteList, NoteDetail
+
+ User = get_user_model()
+
+@@ -43,7 +43,7 @@ class IndexTests(TestCase):
+
+     def test_index_url_resolves_index_view(self):
+         view = resolve('/notes/')
+-        self.assertEquals(view.func, index)
++        self.assertEquals(view.func.view_class, NoteList)
+
+     def test_index_view_contains_link_to_details_page(self):
+         self.client.login(email="test_user1@example.com", password="secret")
+@@ -51,7 +51,7 @@ class IndexTests(TestCase):
+         response = self.client.get(index_page_url)
+         for note in self.notes:
+             note_detail_url = reverse('notes:detail',
+-                kwargs={'note_id': note.pk})
++                kwargs={'pk': note.pk})
+             self.assertContains(response, f'href="{note_detail_url}"')
+
+     def test_notes_ordered_by_pub_dates(self):
+@@ -87,23 +87,23 @@ class DetailTests(TestCase):
+             title="Note title", body="Note description", owner=self.test_user1)
+
+     def test_redirect_if_not_logged_in(self):
+-        detail_page_url = reverse('notes:detail', kwargs={'note_id': self.note.pk})
++        detail_page_url = reverse('notes:detail', kwargs={'pk': self.note.pk})
+         response = self.client.get(detail_page_url)
+         self.assertRedirects(response, f"/accounts/login/?next=/notes/{self.note.pk}/")
+
+     def test_detail_view_status_code(self):
+         self.client.login(email="test_user1@example.com", password="secret")
+-        url = reverse('notes:detail', kwargs={'note_id': self.note.pk})
++        url = reverse('notes:detail', kwargs={'pk': self.note.pk})
+         response = self.client.get(url)
+         self.assertEquals(response.status_code, 200)
+
+     def test_detail_url_resolves_detail_view(self):
+         view = resolve(f'/notes/{self.note.pk}/')
+-        self.assertEquals(view.func, detail)
++        self.assertEquals(view.func.view_class, NoteDetail)
+
+     def test_only_owner_can_see_detail_page(self):
+         self.client.login(email="test_user2@example.com", password="secret")
+-        url = reverse('notes:detail', kwargs={'note_id': self.note.pk})
++        url = reverse('notes:detail', kwargs={'pk': self.note.pk})
+         response = self.client.get(url)
+         self.assertEquals(response.status_code, 404)
+```
+
+```diff
+@@ -22,7 +22,8 @@ class IndexTests(TestCase):
+
+         now = datetime.datetime.now()
+         self.notes = []
+-        self.n = 5
++        self.n = 10
++        self.paginate_by = 5
+         for i in range(self.n):
+             self.notes.append(Note.objects.create(
+                 title=f"Note title {i}",
+@@ -49,7 +50,7 @@ class IndexTests(TestCase):
+         self.client.login(email="test_user1@example.com", password="secret")
+         index_page_url = reverse('notes:index')
+         response = self.client.get(index_page_url)
+-        for note in self.notes:
++        for note in response.context["latest_note_list"]:
+             note_detail_url = reverse('notes:detail',
+                 kwargs={'pk': note.pk})
+             self.assertContains(response, f'href="{note_detail_url}"')
+@@ -59,7 +60,7 @@ class IndexTests(TestCase):
+         index_page_url = reverse('notes:index')
+         response = self.client.get(index_page_url)
+         notes = response.context["latest_note_list"]
+-        self.assertEquals(len(notes), self.n)
++        self.assertEquals(len(notes), self.paginate_by)
+
+         pub_date = notes[0].pub_date
+         for note in notes[1:]:
+@@ -73,6 +74,15 @@ class IndexTests(TestCase):
+         notes = response.context["latest_note_list"]
+         self.assertEquals(len(notes), 0)
+
++    def test_pagination_is_five(self):
++        self.client.login(email="test_user1@example.com", password="secret")
++        index_page_url = reverse('notes:index')
++        response = self.client.get(index_page_url)
++        notes = response.context["latest_note_list"]
++        self.assertTrue('is_paginated' in response.context)
++        self.assertTrue(response.context['is_paginated'] == True)
++        self.assertEquals(len(notes), self.paginate_by)
 ```
 
 <div class="admonition legend">
@@ -1122,6 +1551,94 @@ path('new/', NoteCreate.as_view(), name='create'),
 ```
 {% endraw %}
 
+`src/notes/tests/test_forms.py`
+```python
+from django.test import TestCase
+from django.contrib.auth import get_user_model
+
+from notes.models import Note
+from notes.forms import NoteForm
+
+
+User = get_user_model()
+
+class NoteFormTests(TestCase):
+
+    def test_form_save(self):
+        data = {'title': 'Note Title', 'body': 'Note body'}
+        form = NoteForm(data=data)
+        self.assertTrue(form.is_valid())
+
+        user = User.objects.create_user(email='user@example.com', password='secret')
+        form.instance.owner = user
+        note = form.save()
+        self.assertEqual(note, Note.objects.first())
+```
+
+`src/notes/tests/test_views.py`
+```python
+# ...
+class IndexTests(TestCase):
+    # ...
+    def test_index_view_contains_link_to_create_page(self):
+        self.client.login(email="test_user1@example.com", password="secret")
+        index_page_url = reverse('notes:index')
+        response = self.client.get(index_page_url)
+        self.assertContains(response, 'href="{}"'.format(reverse('notes:create')))
+
+# ...
+class CreateViewTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="user@example.com",
+            password="secret")
+
+    def test_redirect_if_not_logged_in(self):
+        create_page_url = reverse('notes:create')
+        response = self.client.get(create_page_url)
+        self.assertRedirects(response, f"/accounts/login/?next=/notes/new/")
+
+    def test_create_view_status_code(self):
+        self.client.login(email="user@example.com", password="secret")
+        create_page_url = reverse('notes:create')
+        response = self.client.get(create_page_url)
+        self.assertEquals(response.status_code, 200)
+
+    def test_uses_correct_template(self):
+        self.client.login(email="user@example.com", password="secret")
+        create_page_url = reverse('notes:create')
+        response = self.client.get(create_page_url)
+        self.assertTemplateUsed(response, 'notes/form.html')
+
+    def test_redirects_to_index_page(self):
+        self.client.login(email="user@example.com", password="secret")
+        index_page_url = reverse('notes:index')
+        create_page_url = reverse('notes:create')
+        response = self.client.post(create_page_url,
+            {'title': 'Note Title', 'body': 'Note body'})
+        self.assertRedirects(response, index_page_url)
+
+    def test_form_success(self):
+        self.client.login(email="user@example.com", password="secret")
+        create_page_url = reverse('notes:create')
+        self.client.post(create_page_url,
+            {'title': 'Note title', 'body': 'Note body'})
+        note = Note.objects.first()
+        self.assertEquals(note.title, 'Note title')
+        self.assertEquals(note.body, 'Note body')
+        self.assertEquals(note.owner, self.user)
+        self.assertTrue(note.was_published_recently())
+
+    def test_form_invalid(self):
+        self.client.login(email="user@example.com", password="secret")
+        create_page_url = reverse('notes:create')
+        response = self.client.post(create_page_url,
+            {'title': '', 'body': ''})
+        self.assertFormError(response, "form", "title", "This field is required.")
+        self.assertFormError(response, "form", "body", "This field is required.")
+```
+
 Добавим возможность постраничного просмотра имеющихся заметок.
 
 `src/template/notes/index.html`
@@ -1146,17 +1663,6 @@ path('new/', NoteCreate.as_view(), name='create'),
 {% endif %}
 ```
 {% endraw %}
-
-Пользователь должен иметь доступ только к тем заметкам, автором которых является.
-
-`src/notes/views.py`
-```python
-return Note.objects.filter(owner=self.request.user)
-```
-
-```python
-return Note.objects.filter(owner=self.request.user).order_by('-pub_date')
-```
 
 Для возможности обширного редактирования заметок (функции для выделения текста, использование различных шрифтов, вставка ссылок, изображений и т. д.) предлагается к использованию модуль [django-wysiwyg](https://github.com/pydanny-archive/django-wysiwyg).
 
@@ -1185,45 +1691,30 @@ DJANGO_WYSIWYG_FLAVOR = 'ckeditor'
 $ cd src/static
 $ wget https://download.cksource.com/CKEditor/CKEditor/CKEditor%204.7.2/ckeditor_4.7.2_full.zip
 $ unzip ckeditor_4.7.2_full.zip
+$ rm -rf ckeditor_4.7.2_full.zip
 $ cd -
 ```
 
-Предотвращение неправомерного доступа.
-
 `src/notes/views.py`
 ```python
-from django.core.exceptions import PermissionDenied
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView
+)
 
-...
-
-# In NoteDetail class, override the get() method to raise an
-# error if the user tries to view another user's note.
-
-def get(self, request, *args, **kwargs):
-    self.object = self.get_object()
-
-    if self.object.owner != self.request.user:
-        raise PermissionDenied
-
-    context = self.get_context_data(object=self.object)
-    return self.render_to_response(context)
-```
-
-`src/notes/views.py`
-```python
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-
-...
+# ...
 
 class NoteUpdate(LoginRequiredMixin, UpdateView):
     model = Note
     form_class = NoteForm
     template_name = 'notes/form.html'
-    success_url = reverse_lazy('notes:index')
 
-    def form_valid(self, form):
-       form.instance.pub_date = timezone.now()
-       return super(NoteUpdate, self).form_valid(form)
+    def get_queryset(self):
+        return Note.objects.filter(owner=self.request.user)
+
+    def get_success_url(self):
+        return reverse('notes:update', kwargs={
+            'pk': self.object.pk
+        })
 ```
 
 `src/notes/urls.py`
@@ -1282,28 +1773,40 @@ class NoteMixin(object):
 
 `src/notes/views.py`
 ```python
+# ...
 class NoteCreate(LoginRequiredMixin, NoteMixin, CreateView):
+# ...
+class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
+# ...
 ```
 
-```python
-class NoteUpdate(LoginRequiredMixin, NoteMixin, UpdateView):
+```diff
+@@ -175,6 +175,12 @@ class CreateViewTest(TestCase):
+         self.assertFormError(response, "form", "title", "This field is required.")
+         self.assertFormError(response, "form", "body", "This field is required.")
 
-    ...
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
++    def test_response_contains_notes_list(self):
++        self.client.login(email="user@example.com", password="secret")
++        create_page_url = reverse('notes:create')
++        response = self.client.get(create_page_url)
++        self.assertIn('notes', response.context)
++
 
-        if self.object.owner != self.request.user:
-            raise PermissionDenied
+ class UpdateViewTest(TestCase):
 
-        return super(NoteUpdate, self).get(request, *args, **kwargs)
+@@ -240,3 +246,12 @@ class UpdateViewTest(TestCase):
+         self.assertEquals(note.body, 'Note description')
+         self.assertEquals(note.owner, self.user)
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if self.object.owner != self.request.user:
-            raise PermissionDenied
-
-        return super(NoteUpdate, self).post(request, *args, **kwargs)
++    def test_response_contains_notes_list(self):
++        self.client.login(email="user@example.com", password="secret")
++        update_page_url = reverse('notes:update', kwargs={'pk': self.note.pk})
++        response = self.client.get(update_page_url)
++        self.assertIn('notes', response.context)
++        self.assertQuerysetEqual(
++            response.context['notes'],
++            ['<Note: Note title>'])
++
 ```
 
 ```bash
@@ -1320,14 +1823,6 @@ cd ..
 
 <img src="/assets/images/07-elevennote/elevennote_new_styles.png">
 
-`src/notes/mixins.py`
-```python
-def check_user_or_403(self, user):
-    """ Issue a 403 if the current user is no the same as the `user` param. """
-    if self.request.user != user:
-        raise PermissionDenied
-```
-
 `src/notes/views.py`
 ```python
 # ...
@@ -1336,14 +1831,12 @@ from django.views.generic import (
 )
 # ...
 
-class NoteDelete(LoginRequiredMixin, NoteMixin, DeleteView):
+class NoteDelete(LoginRequiredMixin, DeleteView):
     model = Note
-    success_url = reverse_lazy('notes:index')
+    success_url = reverse_lazy('notes:create')
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.check_user_or_403(self.object.owner)
-        return super(NoteDelete, self).post(request, *args, **kwargs)
+    def get_queryset(self):
+        return Note.objects.filter(owner=self.request.user)
 ```
 
 `src/notes/urls.py`
@@ -1377,48 +1870,80 @@ path('<int:pk>/delete/', NoteDelete.as_view(), name='delete'),
 ```
 {% endraw %}
 
-
-`src/notes/views.py`
+`src/notes/tests/test_views.py`
 ```python
-def get_success_url(self):
-    return reverse('notes:update', kwargs={
-        'pk': self.object.pk
-    })
+# ...
+class DeleteViewTest(TestCase):
+
+    def setUp(self):
+        self.test_user1 = User.objects.create_user(
+            email="test_user1@example.com",
+            password="secret")
+        self.test_user2 = User.objects.create_user(
+            email="test_user2@example.com",
+            password="secret")
+        self.note = Note.objects.create(
+            title="Note title", body="Note description", owner=self.test_user1)
+
+    def test_can_delete_note(self):
+        self.client.login(email="test_user1@example.com", password="secret")
+        delete_page_url = reverse('notes:delete', kwargs={'pk': self.note.pk})
+        response = self.client.post(delete_page_url)
+        self.assertEquals(Note.objects.count(), 0)
+        self.assertRedirects(response, reverse('notes:create'))
+
+    def test_only_owner_can_delete_note(self):
+        self.client.login(email="test_user2@example.com", password="secret")
+        delete_page_url = reverse('notes:delete', kwargs={'pk': self.note.pk})
+        response = self.client.post(delete_page_url)
+        self.assertEquals(Note.objects.count(), 1)
+        self.assertEquals(response.status_code, 404)
 ```
-
-**Задание:** 
-1. Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
-2. Продолжая предыдущее задание добавьте возможность поиска не только по тегам, но и по названию заметок.
-3. Добавьте возможность расшаривания заметок.
-4. Регистрация нового пользователя должна происходить по email. Пользователю на электронную почту должна приходить ссылка с подтверждением регистрации.
-
-<img src="/assets/images/07-elevennote/elevennote8.png">
-
-### Continuous Integration с CircleCI
-
 
 ### Добавляем API с помощью DRF
 
 ```bash
-$ pip install djangorestframework
-$ python manage.py api
+$ echo "djangorestframework==3.7.7" >> requirements/base.txt
+$ echo "djangorestframework-jwt==1.11.0" >> requirements/base.txt
 ```
 
-`config/settings/base.py`
-```python
-INSTALLED_APPS = [
-    # ...
-    'rest_framework',
-    # ...
-    'api',
-]
+```bash
+$ docker-compose run web python manage.py startapp api
 ```
 
-`api/base/serializers.py`
+`src/config/settings/base.py`
+```diff
+@@ -19,8 +19,10 @@ INSTALLED_APPS = [
+     'django.contrib.staticfiles',
+     'widget_tweaks',
+     'django_wysiwyg',
++    'rest_framework',
+     'notes',
+     'accounts',
++    'api',
+ ]
+
+ MIDDLEWARE = [
+@@ -68,6 +70,15 @@ AUTH_PASSWORD_VALIDATORS = [
+     },
+ ]
+
++REST_FRAMEWORK = {
++    'DEFAULT_PERMISSION_CLASSES': (
++        'rest_framework.permissions.IsAuthenticated',
++    ),
++    'DEFAULT_AUTHENTICATION_CLASSES': (
++        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
++    ),
++}
+```
+
+`src/api/serializers.py`
 ```python
 from rest_framework import serializers
 
 from notes.models import Note
+
 
 class NoteSerializer(serializers.ModelSerializer):
 
@@ -1426,3 +1951,179 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ('id', 'title', 'body', 'pub_date')
 ```
+
+`src/api/views.py`
+```python
+from rest_framework import viewsets
+
+from notes.models import Note
+from .serializers import NoteSerializer
+
+
+class NoteViewSet(viewsets.ModelViewSet):
+    serializer_class = NoteSerializer
+    queryset = Note.objects.all()
+
+    def filter_queryset(self, queryset):
+        queryset = Note.objects.filter(owner=self.request.user)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+```
+
+`src/api/urls.py`
+```python
+from django.urls import path, include
+from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework.routers import DefaultRouter
+
+from .views import NoteViewSet
+
+app_name = 'api'
+
+router = DefaultRouter(trailing_slash=False)
+router.register(r'notes', NoteViewSet)
+
+urlpatterns = [
+    path('jwt-auth/', obtain_jwt_token),
+    path('', include(router.urls)),
+]
+```
+
+`src/config/urls.py`
+```python
+# ...
+path('api/', include('api.urls', namespace='api')),
+# ...
+```
+
+`src/api/tests/test_views.py`
+```python
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+from rest_framework.test import APIClient
+
+from notes.models import Note
+
+User = get_user_model()
+
+class NoteViewTest(TestCase):
+
+    def setUp(self):
+        self.test_user1 = User.objects.create_user(
+            email="test_user1@example.com",
+            password="secret")
+        self.test_user2 = User.objects.create_user(
+            email="test_user2@example.com",
+            password="secret")
+
+        self.n = 5
+        self.notes = []
+        for i in range(self.n):
+            self.notes.append(Note.objects.create(
+                title=f"Note title {i}",
+                body="Note body",
+                owner=self.test_user1))
+
+        self.test_user2_note = Note.objects.create(
+            title="Note title",
+            body="Note body",
+            owner=self.test_user2)
+
+        self.client = APIClient()
+
+    def _authenticate(self):
+        response = self.client.post('/api/jwt-auth/', {
+            "email": "test_user1@example.com",
+            "password": "secret"
+        }, format="json")
+        token = response.json()["token"]
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+    def test_api_can_get_note_list(self):
+        self._authenticate()
+        response = self.client.get(reverse('api:note-list'))
+        self.assertEquals(len(response.json()), self.n)
+
+    def test_api_can_get_note_detail(self):
+        self._authenticate()
+        pk = self.notes[0].id
+        response = self.client.get(reverse('api:note-detail', kwargs={"pk": pk}))
+        note = response.json()
+        self.assertEquals(note["id"], self.notes[0].id)
+        self.assertEquals(note["title"], self.notes[0].title)
+        self.assertEquals(note["body"], self.notes[0].body)
+
+    def test_api_can_create_note(self):
+        self._authenticate()
+        response = self.client.post(reverse('api:note-list'),
+            {
+                "title": "New note title",
+                "body": "New note body"
+            }, format="json")
+        note = Note.objects.filter(owner=self.test_user1).last()
+        self.assertEquals(Note.objects.filter(owner=self.test_user1).count(),
+            self.n + 1)
+        self.assertEquals(note.title, "New note title")
+        self.assertEquals(note.body, "New note body")
+
+    def test_api_can_update_note(self):
+        self._authenticate()
+        pk = self.notes[0].id
+        response = self.client.put(reverse('api:note-detail', kwargs={"pk": pk}),
+            {
+                "title": "Note title updated",
+                "body": "Note body updated"
+            }, format="json")
+        note = Note.objects.get(pk=pk)
+        self.assertEquals(note.title, "Note title updated")
+        self.assertEquals(note.body, "Note body updated")
+
+    def test_api_can_delete_note(self):
+        self._authenticate()
+        pk = self.notes[0].id
+        response = self.client.delete(reverse('api:note-detail', kwargs={"pk": pk}))
+        self.assertEquals(Note.objects.filter(owner=self.test_user1).count(),
+            self.n-1)
+
+    def test_api_only_owner_can_get_note_detail(self):
+        self._authenticate()
+        response = self.client.get(reverse('api:note-detail',
+            kwargs={"pk": self.test_user2_note.id}))
+        self.assertEquals(response.json()["detail"], "Not found.")
+
+    def test_api_only_owner_can_update_note(self):
+        self._authenticate()
+        pk = self.test_user2_note.id
+        response = self.client.put(reverse('api:note-detail', kwargs={"pk": pk}),
+            {
+                "title": "Note title updated",
+                "body": "Note body updated"
+            }, format="json")
+        note = Note.objects.get(pk=pk)
+        self.assertEquals(response.json()["detail"], "Not found.")
+        self.assertEquals(note.title, "Note title")
+        self.assertEquals(note.body, "Note body")
+
+    def test_api_only_owner_can_delete_note(self):
+        self._authenticate()
+        pk = self.test_user2_note.id
+        response = self.client.delete(reverse('api:note-detail', kwargs={"pk": pk}))
+        self.assertEquals(response.json()["detail"], "Not found.")
+        self.assertEquals(Note.objects.filter(owner=self.test_user2).count(), 1)
+```
+
+### Задание 
+
+1. Добавьте возможность указывать теги у каждой заметки (можете использовать [Bootstrap Tags Input](https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/) для отображения и управления тегами на стороне клиента, см. скриншот ниже). При нажатии на тег должен выводиться список только тех заметок, у которых указан этот тег.
+2. Продолжая предыдущее задание добавьте возможность поиска не только по тегам, но и по названию заметок.
+3. Добавьте возможность расшаривания заметок.
+4. Пользователю на электронную почту должна приходить ссылка с подтверждением регистрации.
+5. Добавить API ко всем пунктам.
+
+<img src="/assets/images/07-elevennote/elevennote8.png">
+
+
