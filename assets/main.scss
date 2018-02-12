@@ -48,12 +48,32 @@ $on-laptop:        800px;
 // Import partials from the `whiteglass` theme.
 @import "whiteglass";
 
+/* --- Post title --- */
+.post-meta {
+    font-size: 18px;
+    font-family: "Alegreya Sans";
+}
+
 pre, code {
     font-family: $monospace-font-family;
     font-size: 14px; // 16px;
     border: 1px solid $grey-color-light;
     border-radius: 0;
-    background-color: lighten($grey-color-light, 5%);
+    // background-color: lighten($grey-color-light, 5%);
+    background-color: #fcfcfc;
+}
+
+.highlighter-rouge .highlight {
+    background-color: #fcfcfc;
+}
+
+/* --- Links --- */
+a {
+    color: #06e;
+    text-decoration:none;
+}
+a:visited {
+    color: #06e;
 }
 
 blockquote {
