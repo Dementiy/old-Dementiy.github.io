@@ -176,7 +176,17 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 .highlight .vi { color: #008080; }
 .highlight .il { color: #099; }
 
-pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 14px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
+/* --- Post title --- */
+.post-meta { font-size: 18px; font-family: "Alegreya Sans"; }
+
+pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 14px; border: 1px solid #e8e8e8; border-radius: 0; background-color: #fcfcfc; }
+
+.highlighter-rouge .highlight { background-color: #fcfcfc; }
+
+/* --- Links --- */
+a { color: #06e; text-decoration: none; }
+
+a:visited { color: #06e; }
 
 blockquote { font-size: 16px; }
 

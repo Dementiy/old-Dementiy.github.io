@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Нейронная сеть для распознования рукописных цифр</title>
+  <meta name="description" content="В этой работе вы напишите простую нейронную сеть, решающую задачу классификации рукописных цифр из набора данных MNIST. От вас требуется описать формулы для обновления весов, выполнить решение задачи на Python с использованием библиотеки numpy, затем рассмотреть решение задачи с использованием библиотеки Keras. Пререквизитом к этой работе являются «Заметки по нейронным сетям», где рассматривается задача регрессии.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/14-neuralnetworks/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Нейронная сеть для распознования рукописных цифр">
+  <meta name="twitter:description" content="В этой работе вы напишите простую нейронную сеть, решающую задачу классификации рукописных цифр из набора данных MNIST. От вас требуется описать формулы для обновления весов, выполнить решение зада...">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Нейронная сеть для распознования рукописных цифр</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/datascience/">datascience</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D0%B8/">практики</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>В этой работе вы напишите простую нейронную сеть, решающую задачу классификации рукописных цифр из набора данных MNIST. От вас требуется описать формулы для обновления весов, выполнить решение задачи на Python с использованием библиотеки numpy, затем рассмотреть решение задачи с использованием библиотеки Keras. Пререквизитом к этой работе являются «Заметки по нейронным сетям», где рассматривается задача регрессии.</p>
+
+<h3 id="описание-набора-данных-mnist">Описание набора данных MNIST</h3>
+
+<p><img src="/assets/images/14-neuralnetworks/mnist.png" alt="" /></p>
+
+<p>Смешанный набор данных Национального института стандартов и технологий (mixed National Institute of Standards and Technology, MNIST) был создан исследователями IR (Image Recognition) в качестве эталона для сравнения различных алгоритмов IR. Основная идея в том, что, если у вас есть какой-то алгоритм или программная система IR, которую надо протестировать, вы можете запустить свой алгоритм или систему с использованием набора данных MNIST и сравнить результаты с ранее опубликованными для других систем.</p>
+
+<p>Набор данных состоит всего из 70 000 изображений: 60 000 обучающих (используемых для создания модели IR) и 10 000 тестовых (применяемых для оценки точности модели). Каждое изображение MNIST — это оцифрованная картинка одной цифры, написанной от руки. Каждое изображение имеет размер 28 × 28 пикселей. Каждое значение пикселя лежит в диапазоне от 0 (представляет белый цвет) до 255 (представляет черный цвет). Промежуточные значения отражают оттенки серого. На рис. 2 показаны первые восемь изображений в обучающем наборе. Сама цифра, которая соответствует каждому изображению, очевидна человеку, но для компьютеров идентификация цифр — очень сложная задача.</p>
+
+<p>Любопытно, что и обучающие, и тестовые данные хранятся в двух файлах, а не в одном. Один файл содержит значения пикселей для изображений, а другой — метки изображений (0–9). Каждый из четырех файлов также содержит заголовочную информацию, и все они хранятся в двоичном формате, сжатом в формате gzip.</p>
+
+<p>Обратите внимание на рис. 1, что демонстрационная программа использует только обучающий набор из 60 000 элементов. Формат тестового набора идентичен таковому для обучающего набора. Основной репозитарий для файлов MNIST в настоящее время находится на yann.lecun.com/exdb/mnist. Обучающие пиксельные данные хранятся в файле train-images-idx3-ubyte.gz, а обучающие маркерные данные — в файле train-labels-idx1-ubyte.gz. Чтобы запустить демонстрационную программу, вам понадобится перейти на сайт репозитария MNIST, скачать и разархивировать эти два файла обучающих данных. Чтобы разархивировать файлы, я использовал бесплатную программу 7-Zip с открытым исходным кодом.</p>
+
+<h3 id="архитектура-сети">Архитектура сети</h3>
+
+<h3 id="реализация-с-использованием-numpy">Реализация с использованием numpy</h3>
+
+<h3 id="реализация-с-использованием-keras">Реализация с использованием keras</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">keras.datasets</span> <span class="kn">import</span> <span class="n">mnist</span>
+<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span>
+<span class="kn">from</span> <span class="nn">keras.utils</span> <span class="kn">import</span> <span class="n">np_utils</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">'TkAgg'</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span> <span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">mnist</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">60000</span><span class="p">,</span> <span class="mi">784</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">784</span><span class="p">)</span>
+
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">'float32'</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">'float32'</span><span class="p">)</span>
+<span class="n">X_train</span> <span class="o">/=</span> <span class="mi">255</span>
+<span class="n">X_test</span> <span class="o">/=</span> <span class="mi">255</span>
+
+<span class="n">Y_train</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">Y_test</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">kernel_initializer</span><span class="o">=</span><span class="s">"normal"</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"softmax"</span><span class="p">,</span> <span class="n">kernel_initializer</span><span class="o">=</span><span class="s">"normal"</span><span class="p">))</span>
+
+<span class="n">model</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">"categorical_crossentropy"</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s">"adam"</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">"accuracy"</span><span class="p">])</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Accuracy on test set: {}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+
+
+<span class="c"># Visualize training history</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s">'acc'</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s">'val_acc'</span><span class="p">])</span>
+<span class="c">#plt.title('Model accuracy')</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epoch'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'train'</span><span class="p">,</span> <span class="s">'test'</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s">'lower right'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s">'loss'</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s">'val_loss'</span><span class="p">])</span>
+<span class="c">#plt.title('Model loss')</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epoch'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'train'</span><span class="p">,</span> <span class="s">'test'</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s">'upper right'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="вычисления-в-облаке-с-floydhub">Вычисления в облаке с FloydHub</h3>
+
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
