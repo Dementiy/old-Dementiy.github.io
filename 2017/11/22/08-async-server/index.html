@@ -10,7 +10,7 @@
   
   
   <title>Простой асинхронный веб-сервер</title>
-  <meta name="description" content="В этой работе вашей задачей будет написать простой асинхронный wsgi-сервер.">
+  <meta name="description" content="В этой работе вашей задачей будет написать две вариации простого асинхронного HTTP-сервера (одна реализация будет работать на неблокирующих сокетах с использованием модулей asyncore и asynchat, а вторая с использованием модуля asyncio). По мере описания работы мы рассмотрим несколько версий простого TCP-сервера, каждую из которых подвергнем нагрузочному тестированию с помощью locustio. В конце работы вам надо будет написать простой WSGI-сервер и запустить на нем один из фреймворков (bottle, django, falcon и т.д.).">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary">
   
   <meta name="twitter:title" content="Простой асинхронный веб-сервер">
-  <meta name="twitter:description" content="В этой работе вашей задачей будет написать простой асинхронный wsgi-сервер.">
+  <meta name="twitter:description" content="В этой работе вашей задачей будет написать две вариации простого асинхронного HTTP-сервера (одна реализация будет работать на неблокирующих сокетах с использованием модулей asyncore и asynchat, а в...">
   
   
 
@@ -212,58 +212,69 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>В этой работе вашей задачей будет написать простой асинхронный wsgi-сервер.</p>
+    <p>В этой работе вашей задачей будет написать две вариации простого асинхронного HTTP-сервера (одна реализация будет работать на неблокирующих сокетах с использованием модулей <code class="highlighter-rouge">asyncore</code> и <code class="highlighter-rouge">asynchat</code>, а вторая с использованием модуля <code class="highlighter-rouge">asyncio</code>). По мере описания работы мы рассмотрим несколько версий простого TCP-сервера, каждую из которых подвергнем нагрузочному тестированию с помощью <code class="highlighter-rouge">locustio</code>. В конце работы вам надо будет написать простой WSGI-сервер и запустить на нем один из фреймворков (<code class="highlighter-rouge">bottle</code>, <code class="highlighter-rouge">django</code>, <code class="highlighter-rouge">falcon</code> и т.д.).</p>
 
 <h3 id="простой-tcp-сервер">Простой TCP-сервер</h3>
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Узнать больше о сетевом программировании можно в материалах к курсу <a href="http://lecturesnet.readthedocs.io/net/low-level/ipc/socket/intro.html">Сетевое программирование</a> ИнФО УРфУ и в книжке Джона Гоерзена <a href="http://www.apress.com/us/book/9781430230038">Foundations of Python Network Programming</a>. Также можно прочитать <a href="http://micromind.me/posts/writing-python-web-server-part-1">эту</a> небольшую статью с примерами на python.</p>
+</div>
+
 <p>Давайте рассмотрим пример простого однопоточного TCP-сервера:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9090</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9090</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">serversocket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">clientsocket</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"New client {client_address}:{client_port}"</span><span class="p">)</span>
-
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Starting TCP Echo Server at {host}:{port}"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {data}"</span><span class="p">)</span>
-            <span class="k">except</span> <span class="nb">OSError</span><span class="p">:</span>
-                <span class="k">break</span>
+            <span class="n">clientsocket</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"New client {client_address}:{client_port}"</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">break</span>
-
-            <span class="n">sent_data</span> <span class="o">=</span> <span class="n">data</span>
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">sent_len</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+                    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {data}"</span><span class="p">)</span>
+                <span class="k">except</span> <span class="nb">OSError</span><span class="p">:</span>
                     <span class="k">break</span>
-                <span class="n">sent_data</span> <span class="o">=</span> <span class="n">sent_data</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {data}"</span><span class="p">)</span>
 
-        <span class="n">clientsocket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Bye-bye: {client_address}:{client_port}"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                    <span class="k">break</span>
 
+                <span class="n">sent_data</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="n">sent_len</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">sent_data</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                        <span class="k">break</span>
+                    <span class="n">sent_data</span> <span class="o">=</span> <span class="n">sent_data</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {data}"</span><span class="p">)</span>
+
+            <span class="n">clientsocket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Bye-bye: {client_address}:{client_port}"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down"</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">serversocket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div></div>
 
-<blockquote>
-  <p>Узнать больше о сетевом программировании можно в материалах к курсу <a href="http://lecturesnet.readthedocs.io/net/low-level/ipc/socket/intro.html">Сетевое программирование</a> ИнФО УРфУ и в книжке Джона Гоерзена <a href="http://www.apress.com/us/book/9781430230038">Foundations of Python Network Programming</a>. Также можно прочитать <a href="http://micromind.me/posts/writing-python-web-server-part-1">эту</a> небольшую статью с примерами на python.</p>
-</blockquote>
-
 <p>Запустите сервер:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python singlethread.py
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python tcp_singlethread.py
 </code></pre></div></div>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last"><code>Ctrl+D</code> - завершение работы с <code>netcat</code>.</p>
+</div>
 
 <p>Откройте другой терминал и запустите <code class="highlighter-rouge">netcat</code>:</p>
 
@@ -282,19 +293,87 @@ Send: Hey server
 Bye-bye: 127.0.0.1:61401
 </code></pre></div></div>
 
-<blockquote>
-  <p><strong>Примечание</strong>: <code class="highlighter-rouge">Ctrl+D</code> - завершение работы с <code class="highlighter-rouge">netcat</code>.</p>
-</blockquote>
-
 <p>Следует отметить несколько моментов:</p>
 <ul>
   <li><code class="highlighter-rouge">recv</code> является <strong>блокирующим вызовом</strong>, то есть, наша программа не продолжит выполнение пока мы не получим данные от клиента;</li>
   <li>клиент сам решает, когда завершить передачу данных, таким образом, пока не будет закрыто текущее соединение (клиентский сокет) мы не можем принимать соединения от других клиентов.</li>
 </ul>
 
+<p>Насколько хорошо такой сервер может справляться с нагрузкой? Ответ зависит от конкретной ситуации. Давайте рассмотрим простой сценарий:</p>
+<ul>
+  <li>каждый клиент шлет запрос раз в 5-15 секунд;</li>
+  <li>размер запроса гарантированно укладывается в 1024 байта;</li>
+  <li>на каждый запрос нам нужно обратиться к базе данных, что в среднем занимает около 300 миллисекунд;</li>
+  <li>в ответ клиент получает HTML-документ;</li>
+  <li>мы ожидаем не больше 100 пользователей.</li>
+</ul>
+
+<p>Ниже приведен пример простого однопоточного веб-сервера:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last"><code>time.sleep(0.3)</code> иммитирует запрос к БД.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">host</span> <span class="o">=</span> <span class="s">"localhost"</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">9090</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Starting Web Server at {host}:{port}"</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">client_sock</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">client_sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">client_sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span>
+            <span class="n">b</span><span class="s">"HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s">"</span>
+            <span class="n">b</span><span class="s">"Content-Type: text/html</span><span class="se">\r\n</span><span class="s">"</span>
+            <span class="n">b</span><span class="s">"Content-Length: 71</span><span class="se">\r\n\r\n</span><span class="s">"</span>
+            <span class="n">b</span><span class="s">"&lt;html&gt;&lt;head&gt;&lt;title&gt;Success&lt;/title&gt;&lt;/head&gt;&lt;body&gt;Index page&lt;/body&gt;&lt;/html&gt;"</span>
+        <span class="p">)</span>
+        <span class="n">client_sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down"</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Теперь опишем поведение пользователя:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">locust</span> <span class="kn">import</span> <span class="n">HttpLocust</span><span class="p">,</span> <span class="n">TaskSet</span><span class="p">,</span> <span class="n">task</span>
+
+<span class="k">class</span> <span class="nc">WebsiteTasks</span><span class="p">(</span><span class="n">TaskSet</span><span class="p">):</span>
+    <span class="nd">@task</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/"</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">WebsiteUser</span><span class="p">(</span><span class="n">HttpLocust</span><span class="p">):</span>
+    <span class="n">task_set</span> <span class="o">=</span> <span class="n">WebsiteTasks</span>
+    <span class="n">min_wait</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="n">max_wait</span> <span class="o">=</span> <span class="mi">15000</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>locust <span class="nt">-f</span> locustfile.py <span class="nt">--host</span><span class="o">=</span>http://127.0.0.1:9090/
+</code></pre></div></div>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Попробуйте поэкспериментировать с различными параметрами, например, изменить максимальное число клиентов в очереди, увеличить скорость запросов от пользователей, увеличить число самих пользователей, изменить время ожидания БД.</p>
+</div>
+
+<p><img src="/assets/images/08-async-server/load_testing_single.png" alt="" /></p>
+
+<p>Мы получили ожидаемые результаты: каждую секунду мы можем обработать не более 3-х запросов, медианное время ожидания ответа составляет 20 секунд.</p>
+
 <p>Чтобы решить проблему мы можем для каждого клиента создавать новый поток:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -303,48 +382,55 @@ Bye-bye: 127.0.0.1:61401
     <span class="n">format</span><span class="o">=</span><span class="s">'[</span><span class="si">%(levelname)</span><span class="s">s] (</span><span class="si">%(threadName)-10</span><span class="s">s) </span><span class="si">%(message)</span><span class="s">s'</span>
 <span class="p">)</span>
 
+
 <span class="k">def</span> <span class="nf">client_handler</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {data} from {address}:{port}"</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {message} from {address}:{port}"</span><span class="p">)</span>
         <span class="k">except</span> <span class="nb">OSError</span><span class="p">:</span>
             <span class="k">break</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">break</span>
 
-        <span class="n">sent_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">sent_message</span> <span class="o">=</span> <span class="n">message</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="n">sent_len</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">sent_len</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">sent_message</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent_message</span><span class="p">):</span>
                 <span class="k">break</span>
-            <span class="n">sent_data</span> <span class="o">=</span> <span class="n">sent_data</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {data} to {address}:{port}"</span><span class="p">)</span>
-
+            <span class="n">sent_message</span> <span class="o">=</span> <span class="n">sent_message</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {message} to {address}:{port}"</span><span class="p">)</span>
     <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Bye-bye: {address}:{port}"</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9090</span><span class="p">):</span>
-    <span class="n">serversocket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
-    <span class="n">serversocket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="n">serversocket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-    <span class="n">serversocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">client_sock</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"New client {client_address}:{client_port}"</span><span class="p">)</span>
-            <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">client_handler</span><span class="p">,</span>
-                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client_sock</span><span class="p">,</span> <span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9090</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Starting TCP Echo Server at {host}:{port}"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">client_sock</span><span class="p">,</span> <span class="p">(</span><span class="n">client_addr</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"New client: {client_addr}:{client_port}"</span><span class="p">)</span>
+            <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">client_handler</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client_sock</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">,</span> <span class="n">client_port</span><span class="p">))</span>
             <span class="n">client_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="n">client_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down"</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python multithread.py
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python tcp_multithread.py
 </code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[DEBUG] (MainThread) New client: 127.0.0.1:53713
@@ -355,6 +441,42 @@ Bye-bye: 127.0.0.1:61401
 [DEBUG] (Thread-2  ) Send: b'Hey server\n' to 127.0.0.1:53966
 ...
 </code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">client_handler</span><span class="p">(</span><span class="n">sock</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span>
+        <span class="n">b</span><span class="s">"HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s">"</span>
+        <span class="n">b</span><span class="s">"Content-Type: text/html</span><span class="se">\r\n</span><span class="s">"</span>
+        <span class="n">b</span><span class="s">"Content-Length: 71</span><span class="se">\r\n\r\n</span><span class="s">"</span>
+        <span class="n">b</span><span class="s">"&lt;html&gt;&lt;head&gt;&lt;title&gt;Success&lt;/title&gt;&lt;/head&gt;&lt;body&gt;Index page&lt;/body&gt;&lt;/html&gt;"</span>
+    <span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">host</span> <span class="o">=</span> <span class="s">'127.0.0.1'</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">9090</span>
+<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">client_sock</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">client_handler</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client_sock</span><span class="p">,))</span>
+        <span class="n">client_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">client_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down"</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/08-async-server/load_testing_multi.png" alt="" /></p>
 
 <p>Как много тредов мы можем создать?</p>
 
@@ -395,46 +517,63 @@ RuntimeError: can't start new thread
     <span class="n">format</span><span class="o">=</span><span class="s">'[</span><span class="si">%(levelname)</span><span class="s">s] (</span><span class="si">%(threadName)-10</span><span class="s">s) </span><span class="si">%(message)</span><span class="s">s'</span>
 <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">worker_thread</span><span class="p">(</span><span class="n">serversocket</span><span class="p">):</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">clientsocket</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"New client {client_address}:{client_port}"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">worker_thread</span><span class="p">(</span><span class="n">serversocket</span><span class="p">,</span> <span class="n">shutdown_event</span><span class="p">):</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">shutdown_event</span><span class="o">.</span><span class="n">isSet</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">clientsock</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"New client: {client_address}:{client_port}"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="nb">OSError</span><span class="p">,</span> <span class="n">ConnectionAbortedError</span><span class="p">):</span>
+            <span class="k">continue</span>
 
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {data} from {client_address}:{client_port}"</span><span class="p">)</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">clientsock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {message} from {client_address}:{client_port}"</span><span class="p">)</span>
             <span class="k">except</span> <span class="nb">OSError</span><span class="p">:</span>
                 <span class="k">break</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">break</span>
 
-            <span class="n">sent_data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">sent_message</span> <span class="o">=</span> <span class="n">message</span>
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">sent_len</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="n">sent_len</span> <span class="o">=</span> <span class="n">clientsock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">sent_message</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent_message</span><span class="p">):</span>
                     <span class="k">break</span>
-                <span class="n">sent_data</span> <span class="o">=</span> <span class="n">sent_data</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {data} to {client_address}:{client_port}"</span><span class="p">)</span>
+                <span class="n">sent_message</span> <span class="o">=</span> <span class="n">sent_message</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {message} to {client_address}:{client_port}"</span><span class="p">)</span>
 
-        <span class="n">clientsocket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">clientsock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Bye-bye: {client_address}:{client_port}"</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">"Shutting down thread"</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9090</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9090</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">serversocket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-    <span class="n">serversocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">serversocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Starting TCP Echo Server at {host}:{port}"</span><span class="p">)</span>
 
-    <span class="n">NUMBER_OF_THREADS</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">NUMBER_OF_THREADS</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">shutdown_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_OF_THREADS</span><span class="p">):</span>
         <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker_thread</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">serversocket</span><span class="p">,))</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">serversocket</span><span class="p">,</span> <span class="n">shutdown_event</span><span class="p">))</span>
         <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
 
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down..."</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">serversocket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">shutdown_event</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
@@ -460,45 +599,48 @@ RuntimeError: can't start new thread
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
+
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
     <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-    <span class="n">format</span><span class="o">=</span><span class="s">'[</span><span class="si">%(levelname)</span><span class="s">s] (</span><span class="si">%(processName)-10</span><span class="s">s) </span><span class="si">%(message)</span><span class="s">s'</span>
+    <span class="n">format</span><span class="o">=</span><span class="s">'[</span><span class="si">%(levelname)</span><span class="s">s] (</span><span class="si">%(processName)-10</span><span class="s">s) (</span><span class="si">%(threadName)-10</span><span class="s">s) </span><span class="si">%(message)</span><span class="s">s'</span>
 <span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">worker_process</span><span class="p">(</span><span class="n">serversocket</span><span class="p">):</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">clientsocket</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"New client {client_address}:{client_port}"</span><span class="p">)</span>
+        <span class="n">clientsock</span><span class="p">,</span> <span class="p">(</span><span class="n">client_address</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"New client: {client_address}:{client_port}"</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {data} from {client_address}:{client_port}"</span><span class="p">)</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">clientsock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Recv: {message} from {client_address}:{client_port}"</span><span class="p">)</span>
             <span class="k">except</span> <span class="nb">OSError</span><span class="p">:</span>
                 <span class="k">break</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">break</span>
 
-            <span class="n">sent_data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">sent_message</span> <span class="o">=</span> <span class="n">message</span>
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">sent_len</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="n">sent_len</span> <span class="o">=</span> <span class="n">clientsock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">sent_message</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">sent_len</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent_message</span><span class="p">):</span>
                     <span class="k">break</span>
-                <span class="n">sent_data</span> <span class="o">=</span> <span class="n">sent_data</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {data} to {client_address}:{client_port}"</span><span class="p">)</span>
+                <span class="n">sent_message</span> <span class="o">=</span> <span class="n">sent_message</span><span class="p">[</span><span class="n">sent_len</span><span class="p">:]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Send: {message} to {client_address}:{client_port}"</span><span class="p">)</span>
 
-        <span class="n">clientsocket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">clientsock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Bye-bye: {client_address}:{client_port}"</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9090</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9090</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">serversocket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">serversocket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-    <span class="n">serversocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">serversocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
 
     <span class="n">NUMBER_OF_PROCESS</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Number of processes {NUMBER_OF_PROCESS}"</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Number of processes: {NUMBER_OF_PROCESS}"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMBER_OF_PROCESS</span><span class="p">):</span>
         <span class="n">process</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker_process</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">serversocket</span><span class="p">,))</span>
@@ -507,6 +649,7 @@ RuntimeError: can't start new thread
 
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
@@ -699,11 +842,12 @@ RuntimeError: can't start new thread
 
 <p>В первой части задания от вас требуется написать простой асинхронный <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview">HTTP-сервер</a> с помощью модулей <a href="https://docs.python.org/3.6/library/asyncore.html">asyncore</a> и <a href="https://docs.python.org/3.6/library/asynchat.html">asynchat</a>, которые предоставляют базовую инфраструктуру для создания сетевых асинхронных приложений.</p>
 
-<p>Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов <code class="highlighter-rouge">asyncore.dispatcher</code> и <code class="highlighter-rouge">asynchat.async_chat</code>. Каждый созданный канал добавляется в глобальный <code class="highlighter-rouge">map</code> (словарь вида: <code class="highlighter-rouge">дескриптор сокета: канал</code>), который используется в функции <code class="highlighter-rouge">loop()</code>. Вызов функции <code class="highlighter-rouge">loop()</code> активирует один из механизмов “пулинга” (<code class="highlighter-rouge">select</code>, <code class="highlighter-rouge">poll</code>, <code class="highlighter-rouge">epoll</code>), который продолжает работать до тех пор, пока все каналы не будут закрыты.</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Начиная с версии Python 3.6 модули <code>asyncore</code> и <code>asynchat</code> считаются устаревшими (deprecated) и рекомендуется использовать модуль <a href="https://docs.python.org/3.6/library/asyncio.html#module-asyncio">asyncio</a>.</p>
+</div>
 
-<blockquote>
-  <p><strong>Замечание</strong>: Начиная с версии Python 3.6 модули <code class="highlighter-rouge">asyncore</code> и <code class="highlighter-rouge">asynchat</code> считаются устаревшими (deprecated) и рекомендуется использовать модуль <a href="https://docs.python.org/3.6/library/asyncio.html#module-asyncio">asyncio</a>.</p>
-</blockquote>
+<p>Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов <code class="highlighter-rouge">asyncore.dispatcher</code> и <code class="highlighter-rouge">asynchat.async_chat</code>. Каждый созданный канал добавляется в глобальный <code class="highlighter-rouge">map</code> (словарь вида: <code class="highlighter-rouge">дескриптор сокета: канал</code>), который используется в функции <code class="highlighter-rouge">loop()</code>. Вызов функции <code class="highlighter-rouge">loop()</code> активирует один из механизмов “пулинга” (<code class="highlighter-rouge">select</code>, <code class="highlighter-rouge">poll</code>, <code class="highlighter-rouge">epoll</code>), который продолжает работать до тех пор, пока все каналы не будут закрыты.</p>
 
 <p>Рассмотрим простой пример сервера, который на каждое новое соединение создает свой обработчик (обратите внимание, что экземпляры классов <code class="highlighter-rouge">AsyncHTTPServer</code> и <code class="highlighter-rouge">AsyncHTTPRequestHandler</code> являются сетевыми каналами):</p>
 
@@ -712,19 +856,19 @@ RuntimeError: can't start new thread
 
 <span class="k">class</span> <span class="nc">AsyncHTTPRequestHandler</span><span class="p">(</span><span class="n">asynchat</span><span class="o">.</span><span class="n">async_chat</span><span class="p">):</span>
     <span class="s">""" Обработчик клиентских запросов """</span>
-    
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sock</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">sock</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">AsyncHTTPServer</span><span class="p">(</span><span class="n">asyncore</span><span class="o">.</span><span class="n">dispatcher</span><span class="p">):</span>
-    
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">"127.0.0.1"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9000</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_socket</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_reuse_addr</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">handle_accepted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sock</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Incoming connection from {addr}"</span><span class="p">)</span>
         <span class="n">AsyncHTTPRequestHandler</span><span class="p">(</span><span class="n">sock</span><span class="p">)</span>
@@ -742,21 +886,21 @@ curl: <span class="o">(</span>52<span class="o">)</span> Empty reply from server
 </code></pre></div></div>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AsyncHTTPRequestHandler</span><span class="p">(</span><span class="n">asynchat</span><span class="o">.</span><span class="n">async_chat</span><span class="p">):</span>
-    
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sock</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">sock</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_terminator</span><span class="p">(</span><span class="n">b</span><span class="s">"</span><span class="se">\r\n\r\n</span><span class="s">"</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">collect_incoming_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s">"Incoming data: {data}"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collect_incoming_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">found_terminator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_request</span><span class="p">()</span>
-    
+
     <span class="k">def</span> <span class="nf">parse_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
-    
+
     <span class="k">def</span> <span class="nf">parse_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </code></pre></div></div>
@@ -979,6 +1123,8 @@ if __name__ == "__main__":
 </code></pre>
 </details>
 
+<h3 id="асинхронный-http-сервер-с-использованием-asyncio">Асинхронный HTTP-сервер с использованием asyncio</h3>
+
 <h3 id="асинхронный-wsgi-server">Асинхронный WSGI-Server</h3>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AsyncWSGIServer</span><span class="p">(</span><span class="n">httpd</span><span class="o">.</span><span class="n">AsyncServer</span><span class="p">):</span>
@@ -1032,7 +1178,6 @@ if __name__ == "__main__":
 <span class="n">api</span> <span class="o">=</span> <span class="n">falcon</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'/quote'</span><span class="p">,</span> <span class="n">QuoteResource</span><span class="p">())</span>
 </code></pre></div></div>
-
 
   </div>
 
