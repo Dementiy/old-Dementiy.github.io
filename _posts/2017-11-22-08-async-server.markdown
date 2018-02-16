@@ -4,58 +4,71 @@ title: Простой асинхронный веб-сервер
 categories: python golang web практики
 ---
 
-В этой работе вашей задачей будет написать простой асинхронный wsgi-сервер.
+В этой работе вашей задачей будет написать две вариации простого асинхронного HTTP-сервера (одна реализация будет работать на неблокирующих сокетах с использованием модулей `asyncore` и `asynchat`, а вторая с использованием модуля `asyncio`). По мере описания работы мы рассмотрим несколько версий простого TCP-сервера, каждую из которых подвергнем нагрузочному тестированию с помощью `locustio`. В конце работы вам надо будет написать простой WSGI-сервер и запустить на нем один из фреймворков (`bottle`, `django`, `falcon` и т.д.).
 
 ### Простой TCP-сервер
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Узнать больше о сетевом программировании можно в материалах к курсу <a href="http://lecturesnet.readthedocs.io/net/low-level/ipc/socket/intro.html">Сетевое программирование</a> ИнФО УРфУ и в книжке Джона Гоерзена <a href="http://www.apress.com/us/book/9781430230038">Foundations of Python Network Programming</a>. Также можно прочитать <a href="http://micromind.me/posts/writing-python-web-server-part-1">эту</a> небольшую статью с примерами на python.</p>
+</div>
+
 Давайте рассмотрим пример простого однопоточного TCP-сервера:
 
-```py
+```python
 import socket
 
-def main(host='localhost', port=9090):
+def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     serversocket.bind((host, port))
     serversocket.listen(5)
 
-    while True:
-        clientsocket, (client_address, client_port) = serversocket.accept()
-        print(f"New client {client_address}:{client_port}")
-
+    print(f"Starting TCP Echo Server at {host}:{port}")
+    try:
         while True:
-            try:
-                data = clientsocket.recv(1024)
-                print(f"Recv: {data}")
-            except OSError:
-                break
+            clientsocket, (client_address, client_port) = serversocket.accept()
+            print(f"New client {client_address}:{client_port}")
 
-            if len(data) == 0:
-                break
-
-            sent_data = data
             while True:
-                sent_len = clientsocket.send(data)
-                if sent_len == len(data):
+                try:
+                    data = clientsocket.recv(1024)
+                    print(f"Recv: {data}")
+                except OSError:
                     break
-                sent_data = sent_data[sent_len:]
-            print(f"Send: {data}")
 
-        clientsocket.close()
-        print(f"Bye-bye: {client_address}:{client_port}")
+                if not len(data):
+                    break
 
+                sent_data = data
+                while True:
+                    sent_len = clientsocket.send(sent_data)
+                    if sent_len == len(data):
+                        break
+                    sent_data = sent_data[sent_len:]
+                print(f"Send: {data}")
+
+            clientsocket.close()
+            print(f"Bye-bye: {client_address}:{client_port}")
+    except KeyboardInterrupt:
+        print("Shutting down")
+    finally:
+        serversocket.close()
 
 if __name__ == "__main__":
     main()
 ```
 
-> Узнать больше о сетевом программировании можно в материалах к курсу [Сетевое программирование](http://lecturesnet.readthedocs.io/net/low-level/ipc/socket/intro.html) ИнФО УРфУ и в книжке Джона Гоерзена [Foundations of Python Network Programming](http://www.apress.com/us/book/9781430230038). Также можно прочитать [эту](http://micromind.me/posts/writing-python-web-server-part-1) небольшую статью с примерами на python.
-
 Запустите сервер:
 
 ```bash
-$ python singlethread.py
+$ python tcp_singlethread.py
 ```
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Подсказка</strong></p>
+  <p class="last"><code>Ctrl+D</code> - завершение работы с <code>netcat</code>.</p>
+</div>
 
 Откройте другой терминал и запустите `netcat`:
 
@@ -76,15 +89,86 @@ Send: Hey server
 Bye-bye: 127.0.0.1:61401
 ```
 
-> **Примечание**: `Ctrl+D` - завершение работы с `netcat`.
-
 Следует отметить несколько моментов:
 - `recv` является **блокирующим вызовом**, то есть, наша программа не продолжит выполнение пока мы не получим данные от клиента;
 - клиент сам решает, когда завершить передачу данных, таким образом, пока не будет закрыто текущее соединение (клиентский сокет) мы не можем принимать соединения от других клиентов.
 
+Насколько хорошо такой сервер может справляться с нагрузкой? Ответ зависит от конкретной ситуации. Давайте рассмотрим простой сценарий:
+ - каждый клиент шлет запрос раз в 5-15 секунд;
+ - размер запроса гарантированно укладывается в 1024 байта;
+ - на каждый запрос нам нужно обратиться к базе данных, что в среднем занимает около 300 миллисекунд;
+ - в ответ клиент получает HTML-документ;
+ - мы ожидаем не больше 100 пользователей.
+
+Ниже приведен пример простого однопоточного веб-сервера:
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last"><code>time.sleep(0.3)</code> иммитирует запрос к БД.</p>
+</div>
+
+```python
+import socket
+import time
+
+host = "localhost"
+port = 9090
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+sock.bind((host, port))
+sock.listen(128)
+
+print(f"Starting Web Server at {host}:{port}")
+try:
+    while True:
+        client_sock, _ = sock.accept()
+        data = client_sock.recv(1024)
+        time.sleep(0.3)
+        client_sock.sendall(
+            b"HTTP/1.1 200 OK\r\n"
+            b"Content-Type: text/html\r\n"
+            b"Content-Length: 71\r\n\r\n"
+            b"<html><head><title>Success</title></head><body>Index page</body></html>"
+        )
+        client_sock.close()
+except KeyboardInterrupt:
+    print("Shutting down")
+finally:
+    sock.close()
+```
+
+Теперь опишем поведение пользователя:
+
+```python
+from locust import HttpLocust, TaskSet, task
+
+class WebsiteTasks(TaskSet):
+    @task
+    def index(self):
+        self.client.get("/")
+
+class WebsiteUser(HttpLocust):
+    task_set = WebsiteTasks
+    min_wait = 5000
+    max_wait = 15000
+```
+
+```bash
+$ locust -f locustfile.py --host=http://127.0.0.1:9090/
+```
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Попробуйте поэкспериментировать с различными параметрами, например, изменить максимальное число клиентов в очереди, увеличить скорость запросов от пользователей, увеличить число самих пользователей, изменить время ожидания БД.</p>
+</div>
+
+![](/assets/images/08-async-server/load_testing_single.png)
+
+Мы получили ожидаемые результаты: каждую секунду мы можем обработать не более 3-х запросов, медианное время ожидания ответа составляет 20 секунд.
+
 Чтобы решить проблему мы можем для каждого клиента создавать новый поток:
 
-```py
+```python
 import socket
 import threading
 import logging
@@ -94,49 +178,56 @@ logging.basicConfig(
     format='[%(levelname)s] (%(threadName)-10s) %(message)s'
 )
 
+
 def client_handler(sock, address, port):
     while True:
         try:
-            data = sock.recv(1024)
-            logging.debug(f"Recv: {data} from {address}:{port}")
+            message = sock.recv(1024)
+            logging.debug(f"Recv: {message} from {address}:{port}")
         except OSError:
             break
 
-        if len(data) == 0:
+        if len(message) == 0:
             break
 
-        sent_data = data
+        sent_message = message
         while True:
-            sent_len = sock.send(data)
-            if sent_len == len(data):
+            sent_len = sock.send(sent_message)
+            if sent_len == len(sent_message):
                 break
-            sent_data = sent_data[sent_len:]
-        logging.debug(f"Send: {data} to {address}:{port}")
-
+            sent_message = sent_message[sent_len:]
+        logging.debug(f"Send: {message} to {address}:{port}")
     sock.close()
     logging.debug(f"Bye-bye: {address}:{port}")
 
-def main(host='localhost', port=9090):
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-    serversocket.bind((host, port))
-    serversocket.listen(5)
 
-    while True:
-        try:
-            client_sock, (client_address, client_port) = serversocket.accept()
-            logging.debug(f"New client {client_address}:{client_port}")
-            client_thread = threading.Thread(target=client_handler,
-                args=(client_sock, client_address, client_port))
+def main(host: str = 'localhost', port: int = 9090) -> None:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    sock.bind((host, port))
+    sock.listen(128)
+    print(f"Starting TCP Echo Server at {host}:{port}")
+    try:
+        while True:
+            client_sock, (client_addr, client_port) = sock.accept()
+            logging.debug(f"New client: {client_addr}:{client_port}")
+            client_thread = threading.Thread(
+                target=client_handler,
+                args=(client_sock, client_addr, client_port))
             client_thread.daemon = True
             client_thread.start()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    finally:
+        sock.close()
+
 
 if __name__ == "__main__":
     main()
 ```
 
 ```
-$ python multithread.py
+$ python tcp_multithread.py
 ```
 
 ```
@@ -148,6 +239,43 @@ $ python multithread.py
 [DEBUG] (Thread-2  ) Send: b'Hey server\n' to 127.0.0.1:53966
 ...
 ```
+
+```python
+import socket
+import threading
+import time
+
+def client_handler(sock):
+    data = sock.recv(1024)
+    time.sleep(0.3)
+    sock.sendall(
+        b"HTTP/1.1 200 OK\r\n"
+        b"Content-Type: text/html\r\n"
+        b"Content-Length: 71\r\n\r\n"
+        b"<html><head><title>Success</title></head><body>Index page</body></html>"
+    )
+    sock.close()
+
+host = '127.0.0.1'
+port = 9090
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+sock.bind((host, port))
+sock.listen(128)
+
+try:
+    while True:
+        client_sock, _ = sock.accept()
+        client_thread = threading.Thread(target=client_handler, args=(client_sock,))
+        client_thread.daemon = True
+        client_thread.start()
+except KeyboardInterrupt:
+    print("Shutting down")
+finally:
+    sock.close()
+```
+
+![](/assets/images/08-async-server/load_testing_multi.png)
 
 Как много тредов мы можем создать?
 
@@ -191,46 +319,63 @@ logging.basicConfig(
     format='[%(levelname)s] (%(threadName)-10s) %(message)s'
 )
 
-def worker_thread(serversocket):
-    while True:
-        clientsocket, (client_address, client_port) = serversocket.accept()
-        logging.debug(f"New client {client_address}:{client_port}")
+
+def worker_thread(serversocket, shutdown_event):
+    while not shutdown_event.isSet():
+        try:
+            clientsock, (client_address, client_port) = serversocket.accept()
+            logging.debug(f"New client: {client_address}:{client_port}")
+        except (OSError, ConnectionAbortedError):
+            continue
 
         while True:
             try:
-                data = clientsocket.recv(1024)
-                logging.debug(f"Recv: {data} from {client_address}:{client_port}")
+                message = clientsock.recv(1024)
+                logging.debug(f"Recv: {message} from {client_address}:{client_port}")
             except OSError:
                 break
 
-            if len(data) == 0:
+            if len(message) == 0:
                 break
 
-            sent_data = data
+            sent_message = message
             while True:
-                sent_len = clientsocket.send(data)
-                if sent_len == len(data):
+                sent_len = clientsock.send(sent_message)
+                if sent_len == len(sent_message):
                     break
-                sent_data = sent_data[sent_len:]
-            logging.debug(f"Send: {data} to {client_address}:{client_port}")
+                sent_message = sent_message[sent_len:]
+            logging.debug(f"Send: {message} to {client_address}:{client_port}")
 
-        clientsocket.close()
+        clientsock.close()
         logging.debug(f"Bye-bye: {client_address}:{client_port}")
+    logging.debug("Shutting down thread")
 
-def main(host='localhost', port=9090):
+
+def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     serversocket.bind((host, port))
-    serversocket.listen(5)
+    serversocket.listen(128)
+    print(f"Starting TCP Echo Server at {host}:{port}")
 
-    NUMBER_OF_THREADS = 2
+    NUMBER_OF_THREADS = 10
+    threads = []
+    shutdown_event = threading.Event()
     for _ in range(NUMBER_OF_THREADS):
         thread = threading.Thread(target=worker_thread,
-            args=(serversocket,))
+            args=(serversocket, shutdown_event))
         thread.daemon = True
         thread.start()
+        threads.append(thread)
 
-    while True:
+    try:
+        for t in threads:
+            t.join()
+    except KeyboardInterrupt:
+        print("Shutting down...")
+    finally:
+        serversocket.close()
+        shutdown_event.set()
         time.sleep(1)
 
 if __name__ == "__main__":
@@ -258,45 +403,48 @@ import multiprocessing
 import time
 import logging
 
+
 logging.basicConfig(
     level=logging.DEBUG,
-    format='[%(levelname)s] (%(processName)-10s) %(message)s'
+    format='[%(levelname)s] (%(processName)-10s) (%(threadName)-10s) %(message)s'
 )
+
 
 def worker_process(serversocket):
     while True:
-        clientsocket, (client_address, client_port) = serversocket.accept()
-        logging.debug(f"New client {client_address}:{client_port}")
+        clientsock, (client_address, client_port) = serversocket.accept()
+        logging.debug(f"New client: {client_address}:{client_port}")
 
         while True:
             try:
-                data = clientsocket.recv(1024)
-                logging.debug(f"Recv: {data} from {client_address}:{client_port}")
+                message = clientsock.recv(1024)
+                logging.debug(f"Recv: {message} from {client_address}:{client_port}")
             except OSError:
                 break
 
-            if len(data) == 0:
+            if len(message) == 0:
                 break
 
-            sent_data = data
+            sent_message = message
             while True:
-                sent_len = clientsocket.send(data)
-                if sent_len == len(data):
+                sent_len = clientsock.send(sent_message)
+                if sent_len == len(sent_message):
                     break
-                sent_data = sent_data[sent_len:]
-            logging.debug(f"Send: {data} to {client_address}:{client_port}")
+                sent_message = sent_message[sent_len:]
+            logging.debug(f"Send: {message} to {client_address}:{client_port}")
 
-        clientsocket.close()
+        clientsock.close()
         logging.debug(f"Bye-bye: {client_address}:{client_port}")
 
-def main(host='localhost', port=9090):
+
+def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     serversocket.bind((host, port))
-    serversocket.listen(5)
+    serversocket.listen(128)
 
     NUMBER_OF_PROCESS = multiprocessing.cpu_count()
-    logging.debug(f"Number of processes {NUMBER_OF_PROCESS}")
+    logging.debug(f"Number of processes: {NUMBER_OF_PROCESS}")
     for _ in range(NUMBER_OF_PROCESS):
         process = multiprocessing.Process(target=worker_process,
             args=(serversocket,))
@@ -305,6 +453,7 @@ def main(host='localhost', port=9090):
 
     while True:
         time.sleep(1)
+
 
 if __name__ == "__main__":
     main()
@@ -502,9 +651,12 @@ if __name__ == "__main__":
 
 В первой части задания от вас требуется написать простой асинхронный [HTTP-сервер](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) с помощью модулей [asyncore](https://docs.python.org/3.6/library/asyncore.html) и [asynchat](https://docs.python.org/3.6/library/asynchat.html), которые предоставляют базовую инфраструктуру для создания сетевых асинхронных приложений.
 
-Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов `asyncore.dispatcher` и `asynchat.async_chat`. Каждый созданный канал добавляется в глобальный `map` (словарь вида: `дескриптор сокета: канал`), который используется в функции `loop()`. Вызов функции `loop()` активирует один из механизмов "пулинга" (`select`, `poll`, `epoll`), который продолжает работать до тех пор, пока все каналы не будут закрыты.
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Начиная с версии Python 3.6 модули <code>asyncore</code> и <code>asynchat</code> считаются устаревшими (deprecated) и рекомендуется использовать модуль <a href="https://docs.python.org/3.6/library/asyncio.html#module-asyncio">asyncio</a>.</p>
+</div>
 
-> **Замечание**: Начиная с версии Python 3.6 модули `asyncore` и `asynchat` считаются устаревшими (deprecated) и рекомендуется использовать модуль [asyncio](https://docs.python.org/3.6/library/asyncio.html#module-asyncio).
+Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов `asyncore.dispatcher` и `asynchat.async_chat`. Каждый созданный канал добавляется в глобальный `map` (словарь вида: `дескриптор сокета: канал`), который используется в функции `loop()`. Вызов функции `loop()` активирует один из механизмов "пулинга" (`select`, `poll`, `epoll`), который продолжает работать до тех пор, пока все каналы не будут закрыты.
 
 Рассмотрим простой пример сервера, который на каждое новое соединение создает свой обработчик (обратите внимание, что экземпляры классов `AsyncHTTPServer` и `AsyncHTTPRequestHandler` являются сетевыми каналами):
 
@@ -514,19 +666,19 @@ import asynchat
 
 class AsyncHTTPRequestHandler(asynchat.async_chat):
     """ Обработчик клиентских запросов """
-    
+
     def __init__(self, sock):
         super().__init__(sock)
 
 class AsyncHTTPServer(asyncore.dispatcher):
-    
+
     def __init__(self, host="127.0.0.1", port=9000):
         super().__init__()
         self.create_socket()
         self.set_reuse_addr()
         self.bind((host, port))
         self.listen(5)
-    
+
     def handle_accepted(self, sock, addr):
         log.debug(f"Incoming connection from {addr}")
         AsyncHTTPRequestHandler(sock)
@@ -548,21 +700,21 @@ curl: (52) Empty reply from server
 
 ```python
 class AsyncHTTPRequestHandler(asynchat.async_chat):
-    
+
     def __init__(self, sock):
         super().__init__(sock)
         self.set_terminator(b"\r\n\r\n")
-    
+
     def collect_incoming_data(self, data):
         log.debug(f"Incoming data: {data}")
         self._collect_incoming_data(data)
-    
+
     def found_terminator(self):
         self.parse_request()
-    
+
     def parse_request(self):
         pass
-    
+
     def parse_headers(self):
         pass
 ```
@@ -594,7 +746,7 @@ parse_request():
         Получить тело запроса (может быть пустым)
         Вызвать обработчик запроса (handle_request())
 ```
- 
+
 
 ```bash
 {
@@ -791,6 +943,9 @@ if __name__ == "__main__":
 </code></pre>
 </details>
 
+
+### Асинхронный HTTP-сервер с использованием asyncio
+
 ### Асинхронный WSGI-Server
 
 ```py
@@ -848,4 +1003,3 @@ class QuoteResource:
 api = falcon.API()
 api.add_route('/quote', QuoteResource())
 ```
-
