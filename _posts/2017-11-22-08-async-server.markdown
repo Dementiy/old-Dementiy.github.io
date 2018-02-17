@@ -8,12 +8,12 @@ categories: python golang web практики
 
 ### Простой TCP-сервер
 
+Давайте рассмотрим пример простого однопоточного TCP-сервера:
+
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
   <p class="last">Узнать больше о сетевом программировании можно в материалах к курсу <a href="http://lecturesnet.readthedocs.io/net/low-level/ipc/socket/intro.html">Сетевое программирование</a> ИнФО УРфУ и в книжке Джона Гоерзена <a href="http://www.apress.com/us/book/9781430230038">Foundations of Python Network Programming</a>. Также можно прочитать <a href="http://micromind.me/posts/writing-python-web-server-part-1">эту</a> небольшую статью с примерами на python.</p>
 </div>
-
-Давайте рассмотрим пример простого однопоточного TCP-сервера:
 
 ```python
 import socket
@@ -24,7 +24,7 @@ def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket.bind((host, port))
     serversocket.listen(5)
 
-    print(f"Starting TCP Echo Server at {host}:{port}")
+    print(f"Starting Echo Server at {host}:{port}")
     try:
         while True:
             clientsocket, (client_address, client_port) = serversocket.accept()
@@ -63,14 +63,15 @@ if __name__ == "__main__":
 
 ```bash
 $ python tcp_singlethread.py
+Starting TCP Echo Server at localhost:9090
 ```
+
+Откройте другой терминал и запустите `netcat`:
 
 <div class="admonition note">
   <p class="first admonition-title"><strong>Подсказка</strong></p>
   <p class="last"><code>Ctrl+D</code> - завершение работы с <code>netcat</code>.</p>
 </div>
-
-Откройте другой терминал и запустите `netcat`:
 
 ```bash
 $ nc localhost 9090
@@ -91,7 +92,7 @@ Bye-bye: 127.0.0.1:61401
 
 Следует отметить несколько моментов:
 - `recv` является **блокирующим вызовом**, то есть, наша программа не продолжит выполнение пока мы не получим данные от клиента;
-- клиент сам решает, когда завершить передачу данных, таким образом, пока не будет закрыто текущее соединение (клиентский сокет) мы не можем принимать соединения от других клиентов.
+- клиент сам решает, когда завершить передачу данных, таким образом, пока не будет закрыто текущее соединение (клиентский сокет) мы **не можем** принимать соединения от других клиентов.
 
 Насколько хорошо такой сервер может справляться с нагрузкой? Ответ зависит от конкретной ситуации. Давайте рассмотрим простой сценарий:
  - каждый клиент шлет запрос раз в 5-15 секунд;
@@ -111,33 +112,35 @@ Bye-bye: 127.0.0.1:61401
 import socket
 import time
 
-host = "localhost"
-port = 9090
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-sock.bind((host, port))
-sock.listen(128)
+def main(host: str = 'localhost', port: int = 9090) -> None:
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    serversocket.bind((host, port))
+    serversocket.listen(128)
 
-print(f"Starting Web Server at {host}:{port}")
-try:
-    while True:
-        client_sock, _ = sock.accept()
-        data = client_sock.recv(1024)
-        time.sleep(0.3)
-        client_sock.sendall(
-            b"HTTP/1.1 200 OK\r\n"
-            b"Content-Type: text/html\r\n"
-            b"Content-Length: 71\r\n\r\n"
-            b"<html><head><title>Success</title></head><body>Index page</body></html>"
-        )
-        client_sock.close()
-except KeyboardInterrupt:
-    print("Shutting down")
-finally:
-    sock.close()
+    print(f"Starting Web Server at {host}:{port}")
+    try:
+        while True:
+            clientsocket, _ = serversocket.accept()
+            data = clientsocket.recv(1024)
+            time.sleep(0.3)
+            clientsocket.sendall(
+                b"HTTP/1.1 200 OK\r\n"
+                b"Content-Type: text/html\r\n"
+                b"Content-Length: 71\r\n\r\n"
+                b"<html><head><title>Success</title></head><body>Index page</body></html>"
+            )
+            clientsocket.close()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    finally:
+        serversocket.close()
+
+if __name__ == "__main__":
+    main()
 ```
 
-Теперь опишем поведение пользователя:
+Нагрузочное тестирование мы будем проивзодить с помощью модуля [locustio](https://locust.io/). Опишем поведение пользователя:
 
 ```python
 from locust import HttpLocust, TaskSet, task
@@ -154,6 +157,7 @@ class WebsiteUser(HttpLocust):
 ```
 
 ```bash
+$ python web_singlethread.py &
 $ locust -f locustfile.py --host=http://127.0.0.1:9090/
 ```
 
@@ -277,6 +281,11 @@ finally:
 
 ![](/assets/images/08-async-server/load_testing_multi.png)
 
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про процессы и потоки доступным языком можно почитать <a href="http://anuragjain67.github.io/writing/2016/01/15/problem-with-multithreading-in-python">тут</a>.</p>
+</div>
+
 Как много тредов мы можем создать?
 
 ```py
@@ -293,6 +302,11 @@ def main():
         t.start()
         print(threading.active_count())
 ```
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Mac OS X Specific</strong></p>
+  <p class="last">Указанное ограничение является специфичным для Mac OS X. Лимит на создание потоков задан параметром ядра <code>kern.num_taskthreads</code>. Получить текщее значение можно с помощью команды <code>sysctl -n kern.num_taskthreads</code> (по умолчанию <code>2048</code>).</p>
+</div>
 
 ```
 ...
@@ -645,6 +659,39 @@ if __name__ == "__main__":
 [DEBUG] (MainProcess) (MainThread) Recv: b'Hey server\n' from 127.0.0.1:56187
 [DEBUG] (MainProcess) (MainThread) Send: b'Hey server\n' to 127.0.0.1:56187
 ...
+```
+
+```python
+import asyncio
+from asyncio import StreamReader, StreamWriter
+
+
+async def client_handler(reader: StreamReader, writer: StreamWriter) -> None:
+    data: bytes = await reader.read(1024)
+    await asyncio.sleep(0.3)
+    writer.write(
+        b"HTTP/1.1 200 OK\r\n"
+        b"Content-Type: text/html\r\n"
+        b"Content-Length: 71\r\n\r\n"
+        b"<html><head><title>Success</title></head><body>Index page</body></html>"
+    )
+    await writer.drain()
+    writer.close()
+
+
+loop = asyncio.get_event_loop()
+coro = asyncio.start_server(client_handler, '127.0.0.1', 9090, loop=loop)
+server = loop.run_until_complete(coro)
+
+print('Serving on {}'.format(server.sockets[0].getsockname()))
+try:
+    loop.run_forever()
+except KeyboardInterrupt:
+    pass
+
+server.close()
+loop.run_until_complete(server.wait_closed())
+loop.close()
 ```
 
 ### Асинхронный HTTP-сервер
