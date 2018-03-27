@@ -122,7 +122,7 @@ def main(host: str = 'localhost', port: int = 9090) -> None:
     try:
         while True:
             clientsocket, _ = serversocket.accept()
-            data = clientsocket.recv(1024)
+            _ = clientsocket.recv(1024)
             time.sleep(0.3)
             clientsocket.sendall(
                 b"HTTP/1.1 200 OK\r\n"
@@ -169,6 +169,11 @@ $ locust -f locustfile.py --host=http://127.0.0.1:9090/
 ![](/assets/images/08-async-server/load_testing_single.png)
 
 Мы получили ожидаемые результаты: каждую секунду мы можем обработать не более 3-х запросов, медианное время ожидания ответа составляет 20 секунд.
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про работу с модулем <code>threading</code> можно почитать на <a href="https://pymotw.com/3/threading/index.html">PyMOTW</a>.</p>
+</div>
 
 Чтобы решить проблему мы можем для каждого клиента создавать новый поток:
 
@@ -249,8 +254,9 @@ import socket
 import threading
 import time
 
+
 def client_handler(sock):
-    data = sock.recv(1024)
+    _ = sock.recv(1024)
     time.sleep(0.3)
     sock.sendall(
         b"HTTP/1.1 200 OK\r\n"
@@ -260,23 +266,29 @@ def client_handler(sock):
     )
     sock.close()
 
-host = '127.0.0.1'
-port = 9090
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-sock.bind((host, port))
-sock.listen(128)
 
-try:
-    while True:
-        client_sock, _ = sock.accept()
-        client_thread = threading.Thread(target=client_handler, args=(client_sock,))
-        client_thread.daemon = True
-        client_thread.start()
-except KeyboardInterrupt:
-    print("Shutting down")
-finally:
-    sock.close()
+def main(host: str = 'localhost', port: int = 9090) -> None:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    sock.bind((host, port))
+    sock.listen(128)
+    print(f"Starting Web Server at {host}:{port}")
+    try:
+        while True:
+            client_sock, (client_addr, client_port) = sock.accept()
+            client_thread = threading.Thread(
+                target=client_handler,
+                args=(client_sock,))
+            client_thread.daemon = True
+            client_thread.start()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    finally:
+        sock.close()
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 ![](/assets/images/08-async-server/load_testing_multi.png)
