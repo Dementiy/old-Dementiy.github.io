@@ -329,7 +329,7 @@ Bye-bye: 127.0.0.1:61401
     <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
             <span class="n">clientsocket</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">serversocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">clientsocket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
             <span class="n">clientsocket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span>
                 <span class="n">b</span><span class="s">"HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s">"</span>
@@ -374,6 +374,11 @@ Bye-bye: 127.0.0.1:61401
 <p><img src="/assets/images/08-async-server/load_testing_single.png" alt="" /></p>
 
 <p>Мы получили ожидаемые результаты: каждую секунду мы можем обработать не более 3-х запросов, медианное время ожидания ответа составляет 20 секунд.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про работу с модулем <code>threading</code> можно почитать на <a href="https://pymotw.com/3/threading/index.html">PyMOTW</a>.</p>
+</div>
 
 <p>Чтобы решить проблему мы можем для каждого клиента создавать новый поток:</p>
 
@@ -450,8 +455,9 @@ Bye-bye: 127.0.0.1:61401
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
+
 <span class="k">def</span> <span class="nf">client_handler</span><span class="p">(</span><span class="n">sock</span><span class="p">):</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
     <span class="n">sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span>
         <span class="n">b</span><span class="s">"HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s">"</span>
@@ -461,23 +467,29 @@ Bye-bye: 127.0.0.1:61401
     <span class="p">)</span>
     <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<span class="n">host</span> <span class="o">=</span> <span class="s">'127.0.0.1'</span>
-<span class="n">port</span> <span class="o">=</span> <span class="mi">9090</span>
-<span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
-<span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-<span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-<span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">client_sock</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">client_handler</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client_sock</span><span class="p">,))</span>
-        <span class="n">client_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">client_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down"</span><span class="p">)</span>
-<span class="k">finally</span><span class="p">:</span>
-    <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9090</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Starting Web Server at {host}:{port}"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">client_sock</span><span class="p">,</span> <span class="p">(</span><span class="n">client_addr</span><span class="p">,</span> <span class="n">client_port</span><span class="p">)</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+            <span class="n">client_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">client_handler</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client_sock</span><span class="p">,))</span>
+            <span class="n">client_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">client_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Shutting down"</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p><img src="/assets/images/08-async-server/load_testing_multi.png" alt="" /></p>
