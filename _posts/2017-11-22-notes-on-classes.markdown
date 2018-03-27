@@ -466,6 +466,112 @@ False
 
 > **Замечание**: Больше про нижние подчеркивания можно узнать [тут](https://shahriar.svbtle.com/underscores-in-python).
 
+### Магические методы
+
+
+### Пример: Классы «Column» и «DataTable»
+
+```python
+from statistics import mean, median, stdev
+
+
+class Column:
+
+    def __init__(self, values, dtype=None):
+        self.shape = (len(values),)
+        self.dtype = dtype
+        if not dtype:
+            types_set = set(map(lambda v: type(v), values)) - {type(None)}
+            if len(types_set) == 1:
+                [self.dtype] = types_set
+            elif {int, float} == types_set:
+                self.dtype = float
+            elif bool in types_set:
+                self.dtype = bool
+            else:
+                self.dtype = str
+        self.values = [self.dtype(v) if v is not None else None for v in values]
+
+    def _filter_na(self):
+        return [v for v in self.values if v is not None]
+
+    def dropna(self):
+        return Column(self._filter_na(), dtype=self.dtype)
+
+    def astype(self, dtype):
+        return Column(self.values, dtype=dtype)
+
+    def mean(self):
+        return mean(self._filter_na())
+
+    def median(self):
+        return median(self._filter_na())
+
+    def std(self):
+        return stdev(self._filter_na())
+
+    def min(self):
+        return min(self._filter_na())
+
+    def max(self):
+        return max(self._filter_na())
+
+    def head(self, n=5):
+        return self[:n]
+
+    def tail(self, n=5):
+        return self[-n:]
+
+    def __len__(self):
+        return len(self.values)
+
+    def __str__(self):
+        return str(self.values)
+
+    def __repr__(self):
+        return repr(self.values)
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.values[key]
+        if isinstance(key, slice):
+            return Column(self.values[key], dtype=self.dtype)
+        if isinstance(key, Column) and all(isinstance(v, bool) for v in key):
+            return Column([v for v, keep in zip(self.values, key) if keep], dtype=self.dtype)
+        raise Exception()
+
+    def __eq__(self, other):
+        if isinstance(other, Column):
+            return Column([v1 == v2 for v1, v2 in zip(self, other)], dtype=bool)
+        return Column([v == other for v in self], dtype=bool)
+
+    def __gt__(self, other):
+        if isinstance(other, Column):
+            return Column([v1 > v2 for v1, v2 in zip(self, other)], dtype=bool)
+        return Column([v > other for v in self], dtype=bool)
+
+    def __ge__(self, other):
+        if isinstance(other, Column):
+            return Column([v1 >= v2 for v1, v2 in zip(self, other)], dtype=bool)
+        return Column([v >= other for v in self], dtype=bool)
+
+    def __lt__(self, other):
+        if isinstance(other, Column):
+            return Column([v1 < v2 for v1, v2 in zip(self, other)], dtype=bool)
+        return Column([v < other for v in self], dtype=bool)
+
+    def __le__(self, other):
+        if isinstance(other, Column):
+            return Column([v1 <= v2 for v1, v2 in zip(self, other)], dtype=bool)
+        return Column([v <= other for v in self], dtype=bool)
+
+    def __and__(self, other):
+        return Column([v1 and v2 for v1, v2 in zip(self, other)], dtype=bool)
+
+    def __or__(self, other):
+        return Column([v1 or v2 for v1, v2 in zip(self, other)], dtype=bool)
+```
+
 ### Свойства \(property\)
 
 Давайте рассмотрим следующий пример: пусть у нас есть класс "Профиль пользователя" и поле дата рождения,
