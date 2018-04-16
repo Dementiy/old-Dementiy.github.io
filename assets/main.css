@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic");
+@import url("https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200,300,400&subset=cyrillic");
 /** Reset some basic elements */
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
@@ -40,7 +41,7 @@ blockquote > :last-child { margin-bottom: 0; }
 hr { height: 4px; margin: 15px 0; border: 0; background-color: #e8e8e8; }
 
 /** Code formatting */
-pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
+pre, code { font-family: "IBM Plex Mono", Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
 
 code { padding: 1px 5px; }
 
@@ -179,7 +180,7 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 /* --- Post title --- */
 .post-meta { font-size: 18px; font-family: "Alegreya Sans"; }
 
-pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 14px; border: 1px solid #e8e8e8; border-radius: 0; background-color: #fcfcfc; }
+pre, code { font-family: "IBM Plex Mono", Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 14px; border: 1px solid #e8e8e8; border-radius: 0; background-color: #fcfcfc; }
 
 .highlighter-rouge .highlight { background-color: #fcfcfc; }
 
