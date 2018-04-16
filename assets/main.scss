@@ -3,11 +3,12 @@
 @charset "utf-8";
 
 @import url('https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic');
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200,300,400&subset=cyrillic');
 //@import url('https://fonts.googleapis.com/css?family=Alegreya:400,400i,700,700i&amp;subset=cyrillic|Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic');
 
 // Our variables
 $base-font-family: "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif;
-$monospace-font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace;
+$monospace-font-family: 'IBM Plex Mono', Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace;
 $base-font-size:   18px; // 24px;
 $base-font-weight: 400;
 $small-font-size:  $base-font-size * 0.875;
