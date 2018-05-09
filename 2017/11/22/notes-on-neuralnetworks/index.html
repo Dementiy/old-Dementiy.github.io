@@ -126,6 +126,8 @@
   
     
   
+    
+  
 
   
   
@@ -133,6 +135,8 @@
   
     
       <a href="/categories/datascience/">datascience</a>
+    
+  
     
   
     
@@ -180,8 +184,7 @@
 
 <p>Где <script type="math/tex">x</script> исходный набор данных (все машины), <script type="math/tex">\bar{x}</script> является средним значением в этом наборе данных, а <script type="math/tex">\sigma</script> стандартным отклонением в этом наборе данных. Позже мы проделаем эти шаги на Python.</p>
 
-<p>Тип топлива (бинарный признак) будет закодирован с помощью <script type="math/tex">-1</script> для одного типа и <script type="math/tex">+1</script> для другого. There is no categorical data here in order to keep the number of features light because each categorical feature would become a sparse matrix of the size of the number of classes.
-Если среди ваших признаков есть категориальные данные (например, какой-то признак может принимать следующие значения: «красный», «зеленый», «розовый» и «голубой»), то вы должны использовать <a href="https://visualstudiomagazine.com/articles/2013/07/01/neural-network-data-normalization-and-encoding.aspx">effect encoding или dummy encoding</a>.</p>
+<p>Тип топлива (бинарный признак) будет закодирован с помощью <script type="math/tex">-1</script> для одного типа и <script type="math/tex">+1</script> для другого. В нашем примере нет категориальных данных, чтобы сохранить признаки простыми, так как в противном случае нам пришлось бы представить каждый категориальный признак в виде разреженной матрицы с числом столбцов равным количеству возможных классов (значений). Если среди ваших признаков есть категориальные данные (например, какой-то признак может принимать следующие значения: «красный», «зеленый», «розовый» и «голубой»), то вы должны использовать <a href="https://visualstudiomagazine.com/articles/2013/07/01/neural-network-data-normalization-and-encoding.aspx">effect encoding или dummy encoding</a>.</p>
 
 <p>Мы нормализуем цены на автомобили, так чтобы все значения находились в промежутке <script type="math/tex">[0, 1]</script>. Это необходимый шаг, потому что наша нейронная сеть будет выдавать значения именно в этом промежутке. Если нейронная сеть прогнозирует, что цена автомобиля <script type="math/tex">0.45</script>, в то время как действительная цена 17 тысяч, то ошибка между прогнозом и действительной ценой будет огромной - <script type="math/tex">16 999.55€</script>. Если прогноз составит <script type="math/tex">1</script>, то ошибка будет <script type="math/tex">16 999€</script> и никогда не уменьшится. Цены мы будем нормализовать по следующей формуле:</p>
 
@@ -193,13 +196,11 @@
 
 <h3 id="forward-propagation">Forward propagation</h3>
 
-<p>Итак, у нас есть три входных признака (features): один бинарный, два количественных и одно количественное значение на выходе.</p>
-
-<p>So we have three inputs (features), one binary, two quantitatives and one quantitative output. As we will predict a quantitative variable and we will use past data to train our network, it is called a supervised regression problem.</p>
+<p>Итак, у нас есть три входных признака (features): один бинарный, два количественных и одно количественное значение на выходе. Так как мы будем прогнозировать количественное значение, обучая нашу нейронную сеть на исторических данных (прошлых наблюдениях), то решаемая задача относится к классу задач обучения с учителем (supervised regression problem).</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S1-1.png" alt="" /></p>
 
-<p>One input is a car.</p>
+<p>Пример одного наблюдения:</p>
 
 <table>
   <thead>
@@ -241,7 +242,7 @@
   </tbody>
 </table>
 
-<p>As we will have more than one car, our array will have more lines.</p>
+<p>Пример для множества наблюдений:</p>
 
 <table>
   <thead>
@@ -316,13 +317,11 @@ y = \begin{bmatrix}
 ...
 \end{bmatrix} %]]></script>
 
-<p>Итак, мы имеем две матрицы <script type="math/tex">X</script> и <script type="math/tex">y</script>, настало время завершить нашу сеть. Мы добавим два скрытых слоя (hidden layers) между входами и выходами (входной и выходной слои). В первом скрытом слое будет три нейрона, а во втором два. Количество скрытых слоев и нейронов в них … Это два гиперпараметра, которые вы должны выбрать прежде чем запустить вашу нейронную сеть.</p>
-
-<p>For now we have two matrices <script type="math/tex">X</script> and <script type="math/tex">y</script>, it’s time to complete our network. We choose to have two hidden layers between our inputs and our output, the first layer will have three neurons and the second one two. The number of hidden layers and the number of neurons by layer is up to you. These are two hyper parameters that you have to define before running your neural network.</p>
+<p>Итак, мы имеем две матрицы <script type="math/tex">X</script> и <script type="math/tex">y</script>, настало время завершить нашу сеть. Мы добавим два скрытых слоя (hidden layers) между входами и выходами (входной и выходной слои). В первом скрытом слое будет три нейрона, а во втором два. Количество скрытых слоев и нейронов в них зависит от вашего выбора. Это два гиперпараметра, которые вы должны выбрать прежде чем начать обучать вашу нейронную сеть.</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S2-1.png" alt="" /></p>
 
-<p>Each of our input neuron will reach all the neurons in the next layer because we are using a fully connected network. Each link from one neuron to another is called a synapse and comes with a weight. A weight on a synapse is of the form Wjkl where l denotes the number of the layer, j the number of the neuron from the lth layer and k the number of the neuron from the (l+1)th layer.</p>
+<p>Каждый входной нейрон будет иметь связь со всеми нейронами в следущем слое, так как мы используем полносвязанную сеть (fully connected network). Каждая связь между двумя нейронами называется <strong>синапсом</strong> и имеет вес. Вес синапса будем записывать в виде <script type="math/tex">W^l_{jk}</script>, где <script type="math/tex">l</script> указывает на номер слоя, <script type="math/tex">j</script> на номер нейрона в <script type="math/tex">l</script>-ом слое, а <script type="math/tex">k</script> на номер нейрона в <script type="math/tex">(l+1)</script>-ом слое.</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S3-1.png" alt="" /></p>
 
@@ -335,15 +334,20 @@ W^1 = \begin{bmatrix}
 	W^1_{31} & W^1_{32} & W^1_{33}
 \end{bmatrix} %]]></script>
 
-<p>The number of rows equals the number of features (inputs) and the number of columns equals the number of neurons in the layer number 2. Here we have three features and the first layer has three neurons so our W1 matrix is of the size 3×3. For now I don’t talk about the bias unit to keep things simple.</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Пока не будем говорить про смещение (bias), чтобы не усложнять.</p>
+</div>
 
-<p>Now we compute the values of the neurons of the first hidden layer (the first column of green circles). For each car defined by three features, we will have three neurons computed for the first hidden layer. We do that using matrix calculus.</p>
+<p>Число строк равно количеству признаков, а количество колонок равно количеству нейронов в втором слое (первом скрытом слое). Так как у нас три признака и три нейрона во втором слое, то соответственно матрица весов <script type="math/tex">W^1</script> будет иметь размерность <script type="math/tex">3 \times 3</script>.</p>
 
-<p>Let’s say that we have only one car in our dataset. We don’t need <script type="math/tex">y</script> for now.</p>
+<p>Теперь вычислим значения нейронов в первом скрытом слое (на рисунке это первая колонка с зелеными кружками). Для каждого наблюдения (которое характеризуется тремя признаками), нам нужно вычислить значения для трех нейронов в первом скрытом слое. Для этого воспользуемся матричным исчислением.</p>
+
+<p>Предположим, что в нашем наборе данных есть только одно наблюдение. И мы пока можем не брать во внимание значение цены (<script type="math/tex">y</script>).</p>
 
 <script type="math/tex; mode=display">X = [1.4\quad -1\quad 0.4]</script>
 
-<p>Our W1 matrix is randomly initialized the first time so we can use random values for the weights.</p>
+<p>Матрица весов <script type="math/tex">W^1</script> первый раз инициализируется случайными значениями:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 W^1 = \begin{bmatrix}
@@ -352,7 +356,11 @@ W^1 = \begin{bmatrix}
 	0.04 & 0.56 & 0.13
 \end{bmatrix} %]]></script>
 
-<p>The values of the neurons of the first hidden layer are called the activities of the first hidden layer. They will be saved into a matrix called a(2). We begin by computing Z(2) using the formula:</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Интуитивное понимание того, что означают матрицы <code>Z</code> и <code>a</code> можно найти в первой главе книги Michael Nielsen <a href="http://neuralnetworksanddeeplearning.com/chap1.html">«Нейронные сети и глубокое обучение»</a>.</p>
+</div>
+<p>Значения нейронов первого скрытого слоя называются <strong>значениями активации</strong> (activities) первого скрытого слоя. Эти значения мы будем хранить в матрице с обозначением <script type="math/tex">a^{(2)}</script>. Начнем с вычисления <script type="math/tex">Z^{(2)}</script> по следующей формуле:</p>
 
 <script type="math/tex; mode=display">Z^{(2)} = X.W^1</script>
 
@@ -365,45 +373,45 @@ Z^{(2)} = [1.4\quad -1\quad 0.4].\begin{bmatrix}
 
 <script type="math/tex; mode=display">Z^{(2)} = [-0.17\quad 0.253\quad 0.04]</script>
 
-<p>We can view it on our network.</p>
+<p>Покажем это на нашем рисунке:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S4-1.png" alt="" /></p>
 
-<p>We are almost done with the first hidden layer, we just have to apply an activation function on Z(2). We can view it like that.</p>
+<p>Мы практически закончили с первым скрытым слоем, осталось только применить функцию активации к <script type="math/tex">Z^{(2)}</script>:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S5.png" alt="" /></p>
 
-<p>Once we apply an activation function element wise to Z(2) we obtain a(2), the activities of our second layer.</p>
+<p>После того как мы применили функцию активации к каждому элементу матрицы <script type="math/tex">Z^{(2)}</script> мы получили <script type="math/tex">a^{(2)}</script> - значения активации второго слоя.</p>
 
 <script type="math/tex; mode=display">a^{(2)}=\sigma(Z^{(2)})</script>
 
-<p>Where <script type="math/tex">\sigma(x)</script> is our activation function. The activation function is applied element wise and is non linear, allowing the network to compute complicated problems using only a small number of nodes. The common ones are Sigmoid, Tanh, ReLU, Leaky ReLU, Maxout. The list is actually bigger than that. Which one to choose? Andrej Karpathy says the following:</p>
+<p>Где <script type="math/tex">\sigma(x)</script> является функцией активации. Функция активации применяется поэлементно и не является линейной, тем самым позволяя сети решать сложные задачи, используя небольшое количество узлов (нейронов). Одними из распространенных функций активации являются: сигмоида (Sigmoid), гиперболический тангенс (Tanh), ReLU, Leaky ReLU, Maxout. На самом деле список гораздо больше. Какую функцию активации следует выбрать? Андрей Карпатый (Andrej Karpathy) говорит следующее:</p>
 
 <blockquote>
-  <p>TLDR: “What neuron type should I use?” Use the ReLU non-linearity, be careful with your learning rates and possibly monitor the fraction of “dead” units in a network. If this concerns you, give Leaky ReLU or Maxout a try. Never use sigmoid. Try tanh, but expect it to work worse than ReLU/Maxout.</p>
+  <p>TLDR: «What neuron type should I use?» Use the ReLU non-linearity, be careful with your learning rates and possibly monitor the fraction of «dead» units in a network. If this concerns you, give Leaky ReLU or Maxout a try. Never use sigmoid. Try tanh, but expect it to work worse than ReLU/Maxout.</p>
 </blockquote>
 
-<p>So we should use ReLU as an activation function, it is short for rectified linear unit and is actually quite simple. If x is greater than 0 we take it, else we take 0.</p>
+<p>Итак, нам следовало бы выбрать ReLU (сокарщение от «rectified linear unit») в качестве функции активации: если <script type="math/tex">x</script> больше 0, то оставляем значение <script type="math/tex">x</script>, иначе 0.</p>
 
 <script type="math/tex; mode=display">\sigma(x) = max(0, x)</script>
 
-<p>Nonetheless we have very little neurons and one or two dying neuron will undermine the results of our network (when the value of the neuron becomes zero). Instead we will use the Tanh as an activation function.</p>
+<p>Так как в нашей сети нейронов не так много, то один или два мертвых нейрона могут негативно сказаться на ее работе (в том случае, когда значения нейронов станут равны нулю), поэтому в качестве функции активации мы бдуем использовать гиперболический тангенс.</p>
 
 <script type="math/tex; mode=display">\sigma(x) = tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}</script>
 
-<p>So the first neuron of our first hidden layer will become:</p>
+<p>Значение первого нейрона в первом скрытом слое будет:</p>
 
 <script type="math/tex; mode=display">\sigma(-0.17) = tanh(-0.17) = \frac{e^{-0.17} - e^{0.17}}{e^{-0.17} + e^{0.17}} = -0.168</script>
 
-<p>The second one:</p>
+<p>Значение второго нейрона:</p>
 
 <script type="math/tex; mode=display">\sigma(0.253) = tanh(0.253) = \frac{e^{0.253} - e^{-0.253}}{e^{0.253} + e^{-0.253}} = 0.248</script>
 
-<p>So our first hidden layer with only one car looks like:</p>
+<p>Итак, значения в первом скрытом слое для одного наблюдения будут следующими:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S6.png" alt="" /></p>
 
-<p>Thanks to the matrix calculus property, each neuron of the first hidden layer will receive a weighted sum of the inputs. We have:</p>
+<p><span style="color: red;">Thanks to the matrix calculus property, each neuron of the first hidden layer will receive a weighted sum of the inputs. We have</span>:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 Z^{(2)} = [1.4\quad -1\quad 0.4].\begin{bmatrix}
@@ -414,9 +422,9 @@ Z^{(2)} = [1.4\quad -1\quad 0.4].\begin{bmatrix}
 
 <script type="math/tex; mode=display">Z^{(2)} = [-0.17\quad 0.253\quad 0.04]</script>
 
-<p><script type="math/tex">Z^{(2)}</script> the first neuron of the layer two, for which we found −0.17 is the result of <script type="math/tex">1.4 \times 0.01 + −1 \times 0.2 + 0.4 \times 0.04</script> (cf Matrix Multiplication). If you compare this to the neural network drawing, you see that in fact the first neuron of the layer two is the input 1 (number of kms) times the weight on the synapse plus the input 2 (type of fuel) times the weight on the synapse plus the input 3 (age) times the weight on the synapse. It is exactly what matrix calculus does for us.</p>
+<p><script type="math/tex">Z^{(2)}_1</script> значение первого нейрона во втором слое (первом скрытом слое) равное <script type="math/tex">−0.17</script>, которое мы нашли как <script type="math/tex">1.4 \times 0.01 + −1 \times 0.2 + 0.4 \times 0.04</script> (cf Matrix Multiplication). Если вы сравните это с диаграммой нейронной сети, то заметите тот факт, что первый нейрон второго слоя имеет значение равное признаку 1 (пробег автомобиля, км.) умноженному на вес синапса, плюс значения второго признака (тип топлива) умноженного на вес синапса, плюс значение признака 3 (возраст) умноженного на вес синапса. Это именно то, что мы получаем используя матричное исчисление.</p>
 
-<p>For our example we assumed that only one car was in our dataset, that’s why <script type="math/tex">X=[1.4\quad −1\quad 0.4]</script>. In reality we will have several cars, let’s say five. So our inputs are:</p>
+<p>Пока мы рассматривали пример только для одного наблюдения <script type="math/tex">X = [1.4\quad −1\quad 0.4]</script>. В действительности же мы имеем дело с гораздо большим числом наблюдений. Для примера предположим, что у нас есть пять наблюдений и пусть наша матрица признаков (входов) будет следующей:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 X = \begin{bmatrix}
@@ -427,7 +435,7 @@ X = \begin{bmatrix}
 	1.8 & 1 & 1
 \end{bmatrix} %]]></script>
 
-<p>And our Z(2) calculation will be:</p>
+<p>Тогда значения для <script type="math/tex">Z^{(2)}</script> будут следующими:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 Z^{(2)} = \begin{bmatrix}
@@ -451,7 +459,7 @@ Z^{(2)} = \begin{bmatrix}
 	0.258  & 0.691 & 0.366
 \end{bmatrix} %]]></script>
 
-<p>With the tanh applied element wise:</p>
+<p>Применив поэлементно функцию активации (гиперболический тангенс) получим:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 a^{(2)} = \sigma(Z^{(2)}) = tanh(Z^{(2)}) = \begin{bmatrix}
@@ -471,17 +479,17 @@ a^{(2)} = \begin{bmatrix}
 	0.25242392 & 0.59862403 & 0.35048801
 \end{bmatrix} %]]></script>
 
-<p>Z(2) and a(2) are of size 5×3, one row for each car and one column for each hidden unit (neuron) of the layer 2.</p>
+<p><script type="math/tex">Z^{(2)}</script> и <script type="math/tex">a^{(2)}</script> имеют размерности <script type="math/tex">5 \times 3</script>, каждая строка соответствует одному наблюдению, а столбцы соответствуют нейронам в первом скрытом слое.</p>
 
-<p>To summarise, for now we have three matrices, our input X, our weights W1 between the layer 1 and 2 and our first hidden layer a(2)=tanh(X.W1) (Z(2) is an intermediary matrix that holds the value of X.W1).</p>
+<p>Итак, у нас есть три матрицы: матрица признаков (или входов) <script type="math/tex">X</script>, матрица весов <script type="math/tex">W^1</script> между первым и вторым слоем, и матрица значений активации для первого скрытого слоя <script type="math/tex">a^{(2)} = tanh(X.W^1)</script> (<script type="math/tex">Z^{(2)}</script> является промежуточной матрицей и содержит значения <script type="math/tex">X.W^1</script>).</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S7-1.png" alt="" /></p>
 
-<p>We will repeat the exact same steps but instead of using our matrix X as inputs, we will now use a(2). We add synapses from the layer 2 to the layer 3.</p>
+<p>Для вычисления значений активации во втором скрытом слое мы будем повторять теже самые шаги, но вместо матрицы <script type="math/tex">X</script> мы будем использовать матрицу <script type="math/tex">a^{(2)}</script> в качестве входов. Также добавим синапсы (связи) от слоя 2 (первого скрытого слоя) к слою 3 (второму скрытому слою).</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S8-1.png" alt="" /></p>
 
-<p>We also view the weights as a matrix.</p>
+<p>Также запишем веса в виде матрицы:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 W^2 = \begin{bmatrix}
@@ -490,15 +498,15 @@ W^2 = \begin{bmatrix}
 	W^2_{31} & W^2_{32}
 \end{bmatrix} %]]></script>
 
-<p>The number of rows equals the number of neurons in the layer 2 and the number of columns equals the number of neurons in the layer 3. We will compute the values of our second hidden layer into the matrix Z(3) as we did previously. For a given layer, the input is always the output of the previous layer. For the layer 2, the output of the previous layer are the data from the layer 1, meaning X, for the layer 3 the output of the previous layer are the data from the layer 2, meaning a(2).</p>
+<p>Число строк равно числу нейронов в первом скрытом слое, а число колонок числу нейронов во втором скрытом слое. Мы будем вычислять значения <script type="math/tex">Z^{(3)}</script> для второго скрытого слоя также как делали это раньше для <script type="math/tex">Z^{(2)}</script>. Можно запомнить простое правило: для некоторого слоя <script type="math/tex">l</script> входами всегда являются выходы из предыдущего слоя <script type="math/tex">l-1</script>. Например, для слоя 2 выходами предыдущего слоя являются значения из слоя 1, то есть <script type="math/tex">X</script>, для слоя 3 выходами предыдущего слоя являются значения из слоя 2, то есть <script type="math/tex">a^{(2)}</script> и т.д.</p>
 
 <script type="math/tex; mode=display">Z^{(3)} = a^{(2)}.W^2</script>
 
-<p>And then we apply the activation function, we are keeping tanh(x) as activation function because it is unusual to use different activation functions for each layer.</p>
+<p>Затем мы применяем функцию активации, мы оставим <script type="math/tex">tanh(x)</script> в качестве функции активации, так как редко используют различные функции активации в разных слоях.</p>
 
 <script type="math/tex; mode=display">a^{(3)} = tanh(Z^{(3)})</script>
 
-<p>Previously we found that:</p>
+<p>Ранее мы нашли, что:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 a^{(2)} = \begin{bmatrix}
@@ -509,7 +517,7 @@ a^{(2)} = \begin{bmatrix}
 	0.25242392 & 0.59862403 & 0.35048801
 \end{bmatrix} %]]></script>
 
-<p>Our W2 matrix is randomly initialized the first time so we can use random values for the weights.</p>
+<p>Инициализируем матрицу <script type="math/tex">W^2</script> случайными значениями:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 W^2 = \begin{bmatrix}
@@ -518,7 +526,7 @@ W^2 = \begin{bmatrix}
 	0.65 & 0.23
 \end{bmatrix} %]]></script>
 
-<p>We calculate Z(3):</p>
+<p>Теперь вычислим <script type="math/tex">Z^{(3)}</script>:</p>
 
 <script type="math/tex; mode=display">Z^{(3)}=a^{(2)}.W2</script>
 
@@ -544,7 +552,7 @@ Z^{(3)} = \begin{bmatrix}
 	0.47736378 & 0.54688371
 \end{bmatrix} %]]></script>
 
-<p>We then apply our activation function:</p>
+<p>Применим нашу функцию активации:</p>
 
 <script type="math/tex; mode=display">a^{(3)} = tanh(Z^{(3)})</script>
 
@@ -566,39 +574,39 @@ a^{(3)} = \begin{bmatrix}
 	0.44412987 & 0.49818098
 \end{bmatrix} %]]></script>
 
-<p>Z(3) and a(3) are of size 5×2, one row for each car and one column for each hidden unit (neuron) of the layer 3.</p>
+<p><script type="math/tex">Z^{(3)}</script> и <script type="math/tex">a^{(3)}</script> имеют размерности <script type="math/tex">5 \times 2</script>, каждая строка соответствует одному наблюдению, а столбцы соответствуют нейронам во втором скрытом слое.</p>
 
-<p>Our network looks like:</p>
+<p>Итак, наша нейроная сеть выглядит следюущим образом:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S9.png" alt="" /></p>
 
-<p>We will now connect the last layer, using the same technique as previously seen.</p>
+<p>Теперь добавим связи к последнему слою, также как мы делали это раньше:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S10-1.png" alt="" /></p>
 
-<p>As for the two previous layers, we have:</p>
+<p>Как и для предыдущих двух слоев имеем:</p>
 
 <script type="math/tex; mode=display">Z^{(4)} = a^{(3)}.W^3</script>
 
 <script type="math/tex; mode=display">a^{(4)} = tanh(Z^{(4)})</script>
 
-<p>Where:</p>
+<p>Где:</p>
 
 <script type="math/tex; mode=display">W^3 = \begin{bmatrix}
 	W^3_{11} \\
 	W^3_{21}
 \end{bmatrix}</script>
 
-<p>The number of rows equals the number of neurons in the layer 3 and the number of columns equals the number of neurons in the layer 4.</p>
+<p>Число строк равно числу нейронов во втором скрытом слое, а число колонок числу нейронов в выходном слое.</p>
 
-<p>Our W3 matrix is randomly initialized the first time so we can use random values for the weights. For instance:</p>
+<p>Инициализируем матрицу <script type="math/tex">W^3</script> случайными значениями, например:</p>
 
 <script type="math/tex; mode=display">W^3= \begin{bmatrix}
 	0.04 \\
 	0.41
 \end{bmatrix}</script>
 
-<p>We then calculate Z(4) using a(3) which is the result of the previous layer.</p>
+<p>Вычислим значения для <script type="math/tex">Z^{(4)}</script>, используя значения <script type="math/tex">a^{(3)}</script>, которые являются выходами предыдущего слоя:</p>
 
 <script type="math/tex; mode=display">Z^{(4)} = a^{(3)}.W^3</script>
 
@@ -622,7 +630,7 @@ Z^{(4)} = \begin{bmatrix}
  	0.22201939
 \end{bmatrix}</script>
 
-<p>We then apply the activation function:</p>
+<p>Теперь применим функцию активации:</p>
 
 <script type="math/tex; mode=display">a^{(4)} = tanh(Z^{(4)}) = \begin{bmatrix}
 	tanh(0.00034115) \\
@@ -640,61 +648,76 @@ Z^{(4)} = \begin{bmatrix}
  	0.218442
 \end{bmatrix}</script>
 
-<p>Finally our network looks like the following:</p>
+<p>Наконец наша сеть выглядит следующим образом:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-S11.png" alt="" /></p>
 
-<p>What we did is called the forward propagation, we have an input and we propagate it through the network. Each time we have an hidden layer, we compute the values of its neurons using:</p>
+<p>То что мы проделали называется <strong>forward propagation</strong>, у нас есть входные значения и мы распространяем их через сеть. На каждом скрытом слое мы вычисляем значения нейронов, используя следующую формулу:</p>
 
-<script type="math/tex; mode=display">a(l) = \sigma(a(l−1) \times W(l−1))</script>
+<script type="math/tex; mode=display">a^{(l)} = \sigma(a^{(l−1)} \times W^{(l−1)})</script>
 
-<p>If l=1, a(1)=X (our inputs), <script type="math/tex">\sigma(x)</script> in our case is tanh(x). Each time you see the above formula, you should think “neural network layer”.</p>
+<p>Если <script type="math/tex">l = 1</script>, то <script type="math/tex">a^{(1)} = X</script> (наши входы), <script type="math/tex">\sigma(x)</script> в нашем случае это <script type="math/tex">tanh(x)</script>. Каждый раз, когда вы встречаете формулу выше, вы можете думать, что это «слой нейронной сети».</p>
 
 <h3 id="bias">Bias</h3>
 
-<p>We didn’t used a bias unit to keep things simple, we will add it now. Why do we need a bias? On the above picture we saw that Z1(2)=X1×W111+X2×W211+X3×W311 where X1, X2 and X3 are the attributes of our car. This calculation will produce a number an then our activation function tanh(Z1(2)) will be applied. We have a 3D input (X1, X2, X3), to explain the bias usefulness, we will keep only one feature, for instance the number of kilometers and assume that only the number of kilometers of a car describes its price. We now have a1(2)=X1×W111 where X1 is the car’s number of kilometers. And once the activation function is applied, we have a1(2)=tanh(Z1(2))=tanh(X1×W111).</p>
+<p>До сих пор мы не говорили о смещении. Зачем оно нужно? Из диаграммы выше мы можем видеть, что <script type="math/tex">Z_1^{(2)} = X_1 \times W^1_{11}+X_2 \times W^2_{11}+X_3 \times W^3_{11}</script>, где <script type="math/tex">X_1</script>, <script type="math/tex">X_2</script> и <script type="math/tex">X_3</script> это признаки (атрибуты) нашей машины (наблюдения). К результату вычисления <script type="math/tex">Z_1^{(2)}</script> мы применяем функцию активации <script type="math/tex">tanh(Z_1^{(2)})</script>. У нас есть 3D вектор (<script type="math/tex">X_1, X_2, X_3</script>), но для пояснения полезности смещения мы оставим только один признак, например, пробег автомобиля, и предположим, что этого признака достаточно для описания цены. Таким образом, мы получим <script type="math/tex">Z_1^{(2)}=X_1×W^1_{11}</script>, где <script type="math/tex">X_1</script> - пробег автомобиля. И после применения функции активации получим <script type="math/tex">a_1^{(2)} = tanh(Z_1^{(2)}) = tanh(X_1 \times W^1_{11})</script>.</p>
 
-<p>After the training part described later, our W111 will be a learned value. For instance 1.8. Our X1 is unknown and will be different for each car, a1(2) will be the result of tanh(1.8×X1). We can draw this function:</p>
+<p>После обучения сети (о котором мы будем говорить ниже) мы получим значение для параметра <script type="math/tex">W^1_{11}</script>. Например, <script type="math/tex">1.8</script>. Значение <script type="math/tex">X_1</script> заранее неизвестено и будет меняться от наблюдения к наблюдению, <script type="math/tex">a_1^{(2)}</script>, таким образом, будет результатом вычисления <script type="math/tex">tanh(1.8 \times X_1)</script>. Мы можем отобразить график этой функции:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-FUNC1.png" alt="" /></p>
+
+<p>Как вы можете видеть эта функция отцентрована относительно нуля. <script type="math/tex">W^1_{11}</script> это то, что мы фактически обучаем, таким образом, наша сеть будет пытаться «нащупать» правильное значение. Ранее мы сделали предположение, что <script type="math/tex">W^1_{11} = 1.8</script>, но давайте отобразим график для значения <script type="math/tex">W^1_{11} = 7</script>:</p>
 
 <p>As you can see this function is centered in zero, as our W111 is a learned value, our network will be able to tweak it. We assumed that our network learned 1.8 but let’s draw the graph when W111 is larger, let’s say 7.</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-FUNC2.png" alt="" /></p>
 
-<p>And when W111=0.4:</p>
+<p>Или для <script type="math/tex">W^1_{11} = 0.4</script>:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-FUNC3.png" alt="" /></p>
 
+<p>Можно заметить, что изменения <script type="math/tex">W^1_{11}</script> связаны с «крутостью» нашего графика, а так как обучение сети отражается только на значении весов, то … Является ли это проблемой?</p>
+
 <p>As we can see, changing W111 changes the stiffness of the graph, as our network can only tweak the weights, it will only be able to change the stiffness but will stay centered in zero. Is this a problem ?</p>
 
-<p>Firstly the number of kilometers of a car will always be positive, so all the left part of the graph will be useless, a1(2) will never be negative, is that a good thing ? We don’t really know, but even if it was a good thing, we would have no choice.</p>
+<p>Во-первых, пробег автомобиля всегда положителен, поэтому вся левая часть графика не имеет смысла, соответственно значение <script type="math/tex">a_1^{(2)}</script> никогда не будет отрицательным. Это хорошая новость? На самом деле мы этого не знаем, но даже если так, то у нас все равно нет другого выбора.</p>
 
-<p>Secondly, let’s say that we have two cars, one with 30k kilometers and one with 170k kilometers, once normalized, we will have 0.5 and 2.5. Let’s say that the impact of the number of kilometers is clearly determined, like if the car is less than 50k kilometers the price is high and if the car is more than 50k kilometers the price is low, the limit is clear. Once normalized 50k will be around 0.7, so we need a steep graph that produce -1 when x &lt; 0.7 and produce 1 when x &gt; 0.7. Like this one:</p>
+<p>Во-вторых, предположим теперь, что у нас есть два наблюдения, в одном пробег автомобиля равен 30 тысячам километров, а во втором 170 тысячам километров, после нормализации значений получим 0.5 и 2.5, соответственно. Допустим, что влияние пробега автомобиля на цену сторого детерминировано, например, если пробег меньше 50 тысяч километров, то цена высокая, в противном случае низкая. Нормализованное значение для 50 тысяч будет около 0.7, таким образом, нам нужен достаточно крутой график, который выдает значение <script type="math/tex">-1</script> при <script type="math/tex">% <![CDATA[
+x < 0.7 %]]></script> и <script type="math/tex">1</script> когда <script type="math/tex">x > 0.7</script>. Ниже приведен пример такого графика:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-FUNC4.png" alt="" /></p>
+
+<p>Это было бы идеально, но к сожалению мы не можем подвинуть график вправо, поэтому застраляи с графиком отцентрованным относительно нуля (первое изображение). Мы можем только сделать график более крутым, используя более высокие значения для <script type="math/tex">W^1_{11}</script>. Рисунок выше был бы отличным решением для нас, функция для которого:</p>
 
 <p>That would be perfect but unfortunately we can’t move the graph to the right, so we are stuck with a graph centered in zero (the first image). We can only make the graph steep using a high value for W111. The above picture would be a good solution for us, it is the graph of the function:</p>
 
 <script type="math/tex; mode=display">tanh(10x−8)</script>
 
+<p>Где <script type="math/tex">10</script> это значение для <script type="math/tex">W^1_{11}</script>, а <script type="math/tex">8</script> является подходящей константой - смещением. Теперь вместо <script type="math/tex">a_1^{(2)} = tanh(X_1 \times W^1_{11})</script> мы можем записать <script type="math/tex">a_1^{(2)} = tanh(X_1 \times W^1_{11} + b)</script>, и это маленькое <script type="math/tex">b</script> сильно улучшает проивзодительной нашей сети, так как позволяет сдвинуть график нашей функции влево или вправо, таким образом, позволяя получить более подходящий результат для нашей задачи. В нашем примере (см. рисунок выше) подходящее значение <script type="math/tex">b = −8</script>.</p>
+
 <p>Where 10 is the value for our W111 and 8 is a constant that comes handy, the bias. Instead of a1(2)=tanh(X1×W111) we will have a1(2)=tanh(X1×W111+b) and this little b will greatly improve our network performances because it will move the graph of our activation function to the left or the right and the result produced will be more representative of our problem. In our example (the above picture) b=−8.</p>
+
+<p>Мы использовали только один признак, чтобы было проще отобразить график и показать влияние оказываемое смещением, но все остается тем же самым, когда мы говорим о более высоких размерностях. Если к нашему исходному примеру добавить смещение, то мы получим <script type="math/tex">a_1^{(2)} = tanh(X_1 \times W^1_{11} + X_2 \times W^2_{11} + X_3 \times W^3_{11} + b)</script>.</p>
 
 <p>We used only one feature to easily draw graphs and display the impact of the bias but it is the same thing with more dimensions, our original example with a bias would be <script type="math/tex">a1^{(2)} = tanh(X1×W111+X2×W211+X3×W311+b)</script>.</p>
 
-<p>This value b also needs to be learned, because regarding the problem, the bias will be different. The same bias must be added to each car. We saw previously the origin of the weights and their matrix representation, how can we add a bias?</p>
+<p>Значение для смещения мы также находим в процессе обучения сети, так как оно меняется в зависимости от решаемой задачи. Одно и тоже значение смещения мы должны добавить к каждому наблюдению. Ранее мы видели истоки происхождения весов и их матричное представление, но как мы должны добавить смещение?</p>
 
-<p>We will have a bias for each neuron. For instance for the first neuron of the first hidden layer we have:</p>
+<p>Смещение будет у каждого нейрона. Например, для первого нейрона первого скрытого слоя получим:</p>
 
-<script type="math/tex; mode=display">a_1^{(2)} = tanh(X1×W111+X2×W211+X3×W311+b)</script>
+<script type="math/tex; mode=display">a_1^{(2)} = tanh(X_1 \times W^1_{11}+X_2 \times W^2_{11}+X_3 \times W^3_{11} + b)</script>
 
-<p>As we have three neurons in the first hidden layer, we will need three biases, we could use a bias matrix.</p>
+<p>Так как у нас три нейрона в первом скрытом слое, то нам нужно добавить три смещения, для этого мы можем использовать матрицу (вектор) смещений:</p>
 
 <p><img src="/assets/images/notes-on-nn/BIAS-WITHOUT-TRICK.png" alt="" /></p>
+
+<p>Работа со смещениями и весами представленными в виде отдельных матриц может быть довольно громоздкой. После обучения смещений… Решением является добавление нового признака со значением <script type="math/tex">1</script> к каждому наблюдению, так как такое значение для признака, при его умножении на смещение, не меняет его значения.</p>
 
 <p>Nonetheless managing the biases and the weights in separate matrices can be cumbersome. As the biases are learned, there are not different from the weights nonetheless they should not depend of a car attributes because all the car will have different attributes whereas the biases should be the same for all the cars. The solution is to add an additional feature to each car with a value 1. So that this feature when multiplied with the bias will not change its value.</p>
 
 <p><img src="/assets/images/notes-on-nn/BIAS-TRICK.png" alt="" /></p>
+
+<p>Заметьте, что значения <script type="math/tex">X_4</script> равны <script type="math/tex">1</script>, таким образом, вычисления останутся прежними, но используя этот небольшой трюк, у нас будет только одна матрица весов.</p>
 
 <p>Note that X4 is equal to 1 so the calculations of the two previous pictures are exactly the same but using the bias trick we only have one weights matrix.</p>
 
@@ -702,9 +725,11 @@ Z^{(4)} = \begin{bmatrix}
 
 <p><img src="/assets/images/notes-on-nn/DNN-S12.png" alt="" /></p>
 
+<p>Связь между смещением и нейронами показана пунктирной линией, чтобы диаграмма сети оставалась читаемой, но это обычные веса.</p>
+
 <p>The link between the bias and the neurons are dotted to keep the network readable but they are normal weights. Our cars have a new feature with the value 1. Each hidden layer has also a new neuron 1 because the problem that the bias solve appears each time we use the activation function (so each layer). There is no link between the bias and the previous layer because the bias is added after the calculations, it is not the result of a matrix multiplication.</p>
 
-<p>We will do again all the calculus with the biases. We began by adding the bias unit to our input data, this means adding a new column of 1.</p>
+<p>Снова проделаем все вычисления, но в этот раз учитывая смещения. Мы начнем с того, что добавим смещения в матрицу признаков, фактически просто добавив новую колонку состоящую из единиц.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 X = \begin{bmatrix}
@@ -714,6 +739,8 @@ X = \begin{bmatrix}
 	1.5 & -1 & 1 & 1 \\
 	1.8 & 1 & 1 & 1
 \end{bmatrix} %]]></script>
+
+<p>В матрице весов <script type="math/tex">W_1</script> появится новая строка <script type="math/tex">[W_{41}^1\quad W_{42}^1\quad W_{43}^1]</script>, так как добавление нового столбца к входам приводит к созданию новых связей. Это строка состоит из смещений, мы инициализируем их значениями <script type="math/tex">0.1</script> (они должны быть установлены в значения нуля или значения близкие к нулю).</p>
 
 <p>And our <script type="math/tex">W_1</script> matrix has a new row <script type="math/tex">[W_{41}^1\quad W_{42}^1\quad W_{43}^1]</script>, because adding 1 to our input created new links. This row is the biases, we init them at 0.1 so that we will see the differences with the previous values (they should be initialised at 0 or around 0).</p>
 
@@ -725,7 +752,7 @@ W^1 = \begin{bmatrix}
 	0.1 & 0.1 & 0.1
 \end{bmatrix} %]]></script>
 
-<p>Then we are doing the same calculations as before.</p>
+<p>Теперь повторим все вычисления также как мы делали это прежде.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 Z^{(2)} = \begin{bmatrix}
@@ -750,7 +777,7 @@ Z^{(2)} = \begin{bmatrix}
 	0.358 & 0.791 & 0.466
 \end{bmatrix} %]]></script>
 
-<p>If you compare these <script type="math/tex">Z^{(2)}</script> results to the previous ones where we were not using biases, you see that each <script type="math/tex">Z^{(2)}</script> has +0.1. As before we then apply the activation function.</p>
+<p>Если вы сравните текущие значения <script type="math/tex">Z^{(2)}</script> со значениями полученными до добавления смещений, то заметите, что все значения в <script type="math/tex">Z^{(2)}</script> изменились на <script type="math/tex">+0.1</script>. Теперь применим функцию активации:</p>
 
 <script type="math/tex; mode=display">a^{(2)} = tanh(Z^{(2)})</script>
 
@@ -763,6 +790,8 @@ a^{(2)} = \begin{bmatrix}
 	0.34345116 & 0.65897516 & 0.43496173
 \end{bmatrix} %]]></script>
 
+<p>Мы также добавим смещение к первому скрытому слою. Также как и в случае с матрицей признаков это означает добавление 1 как четвертого нейрона к <script type="math/tex">a^{(2)}</script>. В качестве напоминания, каждая строка содержит данные об одном автомобиле:</p>
+
 <p>We also add a bias to our first hidden layer. As we did with the inputs we must add 1 as a fourth neuron to a(2). As a reminder, each row contains data for one car.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
@@ -773,6 +802,8 @@ a^{(2)} = \begin{bmatrix}
 	−0.04496965 & 0.60054553 & 0.22127847 & 1 \\
 	0.34345116 & 0.65897516 & 0.43496173 & 1
 \end{bmatrix} %]]></script>
+
+<p>После добавления смещения к <script type="math/tex">a^{(2)}</script> будут образованы новые связи между вторым и третьим слоями. Аналогично <script type="math/tex">W_1</script>, мы добавим новую строку в <script type="math/tex">W_2</script> со значениями <script type="math/tex">0.1</script>.</p>
 
 <p>As we added a 1 neuron to a(2) new links are created between the layer 2 and 3, as for W1, W2 will gain a row of biases that we init at 0.1.</p>
 
@@ -847,7 +878,7 @@ Z^{(4)} = \begin{bmatrix}
 	0.38705438
 \end{bmatrix}</script>
 
-<p>Then we apply the activation function.</p>
+<p>Затем мы применяем функцию активации:</p>
 
 <script type="math/tex; mode=display">a^{(4)} = tanh(Z^{(4)}) = \begin{bmatrix}
 	0.2023543 \\
@@ -857,34 +888,54 @@ Z^{(4)} = \begin{bmatrix}
 	0.36881806
 \end{bmatrix}</script>
 
-<p>The values obtained on the output layer are our network predictions. We will save them into the matrix <script type="math/tex">\hat{y} = a^{(4)}</script>. It is the price of the cars predicted by our network whereas y is the real price of the cars (given by the dataset). For instance our network thinks that the car number one is less expensive than the car number five.</p>
+<p>Значения полученные в выходном слое нашей сети являются прогнозами. Мы запишем их в матрицу <script type="math/tex">\hat{y} = a^{(4)}</script>. <script type="math/tex">\hat{y}</script> является спрогнозированной ценой автомобиля, в то время как <script type="math/tex">y</script> (без крышки) является истинной ценой автомобиля. Например, наша сеть «думает», что стоимость первого автомобиля меньше, чем стоимость пятого.</p>
+
+<p>Добавление смещений</p>
 
 <p>Adding the biases is really simple (just add a neuron 1) and will greatly improve our results. The whole calculation that we did, from X to a(4) is called forward propagation. This is how we will infer the price of a car in the future. We will take the car attributes, make the same calculations and get a price in the a(4) matrix.</p>
 
+<p>В настоящий момент, полученные нами результаты не так хороши как хотелось бы, так как мы выбрали случайные значения для матрицы весов. Мы будем обучать нашу сеть шаг за шагом, изменяя значения весов до тех пор пока не начнем получать хорошие прогнозы.</p>
+
 <p>Right now our results are pretty bad because we randomly initialised our weights. We will train our network step by step in order to tweak the weights until it outputs good predictions.</p>
+
+<p>В нашем исходном наборе данных мы имеем дело с атрибитуами автомобиля и его ценой. Признаки (атрибуты) первого автомобиля и смещения были
+<script type="math/tex">X = [1.4\quad −1\quad 0.41]</script>, а его цена <script type="math/tex">y = 0.45</script>. Наша сеть дала прогноз <script type="math/tex">\hat{y}=0.2023543</script>. Посчитав <script type="math/tex">y−\hat{y}</script> становится очевидным, что мы ошиблись на <script type="math/tex">0.25</script>. Это называется ошибкой (невязкой, cost) - как сильно ошибается наша сеть в своем прогнозе относительно истинного значения цены.</p>
 
 <p>In our original dataset we have the car attributes and the car price. The features (attributes) of the first car with the bias was <script type="math/tex">X = [1.4\quad −1\quad 0.41]</script> and its price was y=0.45. Our network output was <script type="math/tex">\hat{y}=0.2023543</script> given in <script type="math/tex">a_{1}^{(4)}</script>. We clearly see that we are missing around 0.25 by doing <script type="math/tex">y−\hat{y}</script>. This is called the cost, how bad our network predicted the price compared to the actual price. Actually we will define a cost function in order to mesure how bad our predictions are.</p>
 
 <script type="math/tex; mode=display">J(W) = \frac{1}{2}(y - \hat{y})^2</script>
 
-<p>This gives us the cost for one example. For instance for our first car, its real price is 0.45, our network outputted 0.2023543, using the above formula we have an error of <script type="math/tex">J(W) = \frac{1}{2}(0.45−0.2023543)^2=0.031</script>
-This gives us the error for the first car, we will do it for all the cars then sum up the errors, so our formula become:</p>
+<p>Так мы можем посчитать значение ошибки для одного наблюдения. Например, для нашего первого наблюдения истинное значение цены <script type="math/tex">0.45</script>, прогноз сети <script type="math/tex">0.2023543</script> и, используя приведенную формулу, мы получаем значение ошибки <script type="math/tex">J(W) = \frac{1}{2}(0.45−0.2023543)^2 = 0.031</script>.</p>
+
+<p>Если повторить эти вычисления для всех наблюдений и посчитать сумму ошибок, то получим следующую формулу:</p>
 
 <script type="math/tex; mode=display">J(W) = \sum^{n}_{1}\frac{1}{2}(y - \hat{y})^2</script>
 
-<p>Where n is the number of cars. We squared the error to get its absolute value but also because the quadratic function <script type="math/tex">x^2</script> is convex, it means that the function has only one minimum. We introduced <script type="math/tex">\frac{1}{2}</script> for later convenience.</p>
+<p>Где <script type="math/tex">n</script> это число наблюдений (автомобилей). Мы считаем квадрат ошибки не только для того, чтобы получить асболютное значение ошибки и, как следствие, ошибки с разным знаком не компенсировали друг друга, но также по той причине, что квадратичная функция <script type="math/tex">x^2</script> является выпуклой (convex), а это означает, что у функции только один минимум. Откуда появился множитель <script type="math/tex">\frac{1}{2}</script> будет объяснено далее.</p>
 
 <h3 id="gradient-descent">Gradient descent</h3>
+
+<p>Функция <script type="math/tex">J(W)</script> показывает величину ошибки работы нашей сети относительно входных значений <script type="math/tex">X</script> и значений весов. Если мы заменим <script type="math/tex">\hat{y}</script> соответствующим выражением, то получим:</p>
+
+<script type="math/tex; mode=display">J(W)=\sum^{n}_{1}\frac{1}{2}(y−tanh⁡(tanh⁡(tanh⁡(X.W_1).W_2).W_3))^2</script>
 
 <p>The function J(W) gives us the error of our network regarding our inputs X and the weights of our network. If we replace y^ by its calculations, our function is:</p>
 
 <script type="math/tex; mode=display">J(W)=\sum^{n}_{1}\frac{1}{2}(y−tanh⁡(tanh⁡(tanh⁡(X.W_1).W_2).W_3))^2</script>
 
+<p><script type="math/tex">J(W)</script> является функцией, которая даем нам . Чем меньше ее значение, тем лучшие прогнозы выдает наша сеть. Наша цель минимизировать функицю <script type="math/tex">J(W)</script>, например, найти ее минимум. Это задача оптимизации. Мы не можем изменять значения в наблюдениях <script type="math/tex">X</script>, поэтому мы будем минимизировать <script type="math/tex">J(W)</script> изменяя значения весов. Мы будем использовать метод градиентного спуска (batch gradient descent) (with a non convex cost function it is better to use the stochastic gradient descent). Хоть мы и выбрали метод градиентного спуска в качестве алгоритма оптимизации, но возможны и другие подходы. Давайте разберемся с тем, что такое градиент.</p>
+
 <p><script type="math/tex">J(W)</script> is a function that gives us the cost regarding our examples (the cars) and the weights (W1, W2 and W3). The minimum the cost is, the better our network predicts. Our goal is to minimize the function J(W), i.e: find its minimum. This is an optimization problem. We can’t touch our examples X so we will minimize our function J(W) by tweaking the weights. We will use the batch gradient descent algorithm (with a non convex cost function it is better to use the stochastic gradient descent). We choose the gradient descent as the optimization algorithm but other alternatives could be used. Let’s see what a gradient is.</p>
 
-<p>In mathematics, a function is a rule explaining how to process an input to give an output. The input is noted as x and the output as y, the function is generally written as <script type="math/tex">y=f(x)</script>. It is possible to have multiple inputs and outputs, multiple inputs is common and looks like <script type="math/tex">z=f(x,y)</script>, multiple outputs is a vector valued function that produces a vector instead of only y.</p>
+<p>В математике фунция это правило указывающее как</p>
+
+<p>In mathematics, a function is a rule explaining how to process an input to give an output. The input is noted as x and the output as y, the function is generally written as <script type="math/tex">y = f(x)</script>. It is possible to have multiple inputs and outputs, multiple inputs is common and looks like <script type="math/tex">z=f(x,y)</script>, multiple outputs is a vector valued function that produces a vector instead of only y.</p>
+
+<p>Строго говоря входные значения называются независимыми переменными, а выходные значения - зависимыми.</p>
 
 <p>Strictly speaking the inputs are called independent variables and the outputs dependent variables. The function explains how the dependent variables depend on the independent variables.</p>
+
+<p>Производная функции играет ключевую роль в машинном обучении и используется среди прочих в методе градиентного спуска.</p>
 
 <p>The derivative of a function is a key tool in machine learning, it is leveraged among others by the gradient descent algorithm. The derivative measures how a change in the independent variables impact the dependent variables (how changing x impacts y). The process of finding the derivative is called differentiation.</p>
 
@@ -2164,6 +2215,16 @@ W_1 = \begin{bmatrix}
 <p>As with our numpy network, the price is less than 16 000 euros. Definitely overpriced. Each launch will give a different price because we are learning the weights from scratch each time and they are randomly initialized.</p>
 
 <p>Thanks for reading this post, if you have questions or see mistakes, do not hesitate to comment.</p>
+
+<h2 id="полезные-ресурсы">Полезные ресурсы</h2>
+
+<ul>
+  <li>Курс Андрея Созыкина</li>
+  <li>Книга Нейронные сети и глубокое обучение</li>
+  <li>Книга Николенко Глубокое обучение</li>
+  <li>Стенфордский курс</li>
+  <li>Курс Нг на курсере</li>
+</ul>
 
   </div>
 
