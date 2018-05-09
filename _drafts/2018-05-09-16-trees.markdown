@@ -1,0 +1,272 @@
+---
+layout: post
+title: Знакомство с деревьями
+categories: python algorithms
+---
+
+### Префиксное дерево
+
+<img src="/assets/images/16-trees/autocomplete.png">
+
+```python
+def generate_trie(words):
+    root = {}
+    for word in words:
+        d = root
+        for letter in word:
+            d = d.setdefault(letter, {})
+        d['$'] = '$'
+    return root
+```
+
+```python
+def offers(prefix, trie):
+    def get_suggests(prefix, trie):
+        suggests = []
+        word = prefix
+        d = trie
+        for letter in d:
+            if letter == '$':
+                suggests.append(word)
+            else:
+                suggests.extend(get_suggests(word + letter, d[letter]))
+        return suggests
+
+    # Ищем префикс
+    d = trie
+    for letter in prefix:
+        if letter in d:
+            d = d[letter]
+        else:
+            return []
+
+    # Для префикса ищем возможные дополнения
+    suggests = get_suggests(prefix, d)
+    return suggests
+```
+
+```python
+def offers_gen(prefix, trie):
+    d = trie
+    for letter in prefix:
+        if letter in d:
+            d = d[letter]
+        else:
+            return None
+
+    suggests = []
+    paths = [(d, prefix)]
+    while paths:
+        path, word = paths.pop()
+        for letter in path:
+            if letter == '$':
+                yield word
+            else:
+                paths.append((path[letter], word+letter))
+```
+
+### Бинарное дерево поиска
+
+[Leaf it up to binary trees](https://medium.com/basecs/leaf-it-up-to-binary-trees-11001aaf746d).
+
+<img src="/assets/images/16-trees/bst1.jpeg">
+
+<img src="/assets/images/16-trees/bst2.jpeg">
+
+<img src="/assets/images/16-trees/bst3.jpeg">
+
+```python
+class Node:
+
+    def __init__(self, value=None):
+        self.value = value
+        self.left = None
+        self.right = None
+
+    def insert(self, value):
+        if self.value is None:
+            self.value = value
+            return
+        if self.value > value:
+            if self.left:
+                self.left.insert(value)
+            else:
+                self.left = Node(value)
+        else:
+            if self.right:
+                self.right.insert(value)
+            else:
+                self.right = Node(value)
+
+    def search(self, value, parent=None):
+        if self.value == value:
+            return self, parent
+        elif self.value > value:
+            if not self.left:
+                return None, None
+            else:
+                return self.left.search(value, self)
+        else:
+            if not self.right:
+                return None, None
+            else:
+                return self.right.search(value, self)
+
+    def __contains__(self, value):
+        node, parent = self.search(value)
+        return node is not None
+
+    def delete(self, value):
+        node, parent = self.search(value)
+        if not node:
+            return
+        if not node.left and not node.right:
+            if parent:
+                if parent.left is node:
+                    parent.left = None
+                else:
+                    parent.right = None
+                del node
+            else:
+                self.value = None
+        elif (node.left or node.right) and not (node.left and node.right):
+            n = node.left or node.right
+            if parent:
+                if parent.left is node:
+                    parent.left = n
+                else:
+                    parent.right = n
+                del node
+            else:
+                self.left = n.left
+                self.right = n.right
+                self.value = n.value
+        else:
+            parent = node
+            successor = node.right
+            while successor.left:
+                parent = successor
+                successor = successor.left
+            node.value = successor.value
+            if parent.left == successor:
+                parent.left = successor.right
+            else:
+                parent.right = successor.right
+
+    def __str__(self):
+        return str(self.value)
+
+def preorder(root, tabs=0):
+    if root is not None:
+        print(" " * tabs, root.value)
+        preorder(root.left, tabs+1)
+        preorder(root.right, tabs+1)
+
+def copy_tree(tree):
+    if not tree:
+        return None
+    new_tree = Node()
+    new_tree.value = tree.value
+    new_tree.left = copy_tree(tree.left)
+    new_tree.right = copy_tree(tree.right)
+    return new_tree
+```
+
+### AVL
+
+```python
+class Node:
+
+    def __init__(self, key=None, value=None):
+        self.key = key
+        self.value = value
+        self.left = None
+        self.right = None
+
+    def __str__(self):
+        return f'Node({self.key}, {self.value})'
+
+class AVLTree:
+
+    def __init__(self):
+        self.root = Node()
+
+    def insert(self, key, value, node=None):
+        if node is None:
+            node = self.root
+        if node.key is None:
+            node.key = key
+            node.value = value
+            return node
+        if node.key > key:
+            if node.left:
+                node.left = self.insert(key, value, node.left)
+            else:
+                node.left = Node(key, value)
+        else:
+            if node.right:
+                node.right = self.insert(key, value, node.right)
+            else:
+                node.right = Node(key, value)
+
+        is_balanced = abs(self.height(node.left) - self.height(node.right)) <= 1
+        if not is_balanced:
+            if self.height(node.left) > self.height(node.right):
+                if key < node.left.key:
+                    # left-left
+                    return self.rotate_right(node)
+                else:
+                    # left-right
+                    node.left = self.rotate_left(node.left)
+                    return self.rotate_right(node)
+            if self.height(node.left) < self.height(node.right):
+                if key > node.right.key:
+                    # right-right
+                    return self.rotate_left(node)
+                else:
+                    # right-left
+                    node.right = self.rotate_right(node.right)
+                    return self.rotate_left(node)
+        return node
+
+    def height(self, node=None):
+        if node is None:
+            return -1
+        return max(self.height(node.left), self.height(node.right)) + 1
+
+    def rotate_left(self, node):
+        right = node.right
+        right_left = right.left
+
+        right.left = node
+        node.right = right_left
+
+        return right
+
+    def rotate_right(self, node):
+        left = node.left
+        left_right = left.right
+
+        left.right = node
+        node.left = left_right
+
+        return left
+
+    def preorder(self, node=None, tabs=0):
+        if node is None:
+            node = self.root
+        print(' ' * tabs, node)
+        if node.left:
+            self.preorder(node.left, tabs+1)
+        if node.right:
+            self.preorder(node.right, tabs+1)
+
+    def sort(self, node=None, tabs=0):
+        if node is None:
+            node = self.root
+        if node.left:
+            yield from self.sort(node.left, tabs+1)
+        if node.right:
+            yield from self.sort(node.right, tabs+1)
+        yield (node.key, node.value)
+```
