@@ -732,11 +732,12 @@ $$J(W) = \sum^{n}_{1}\frac{1}{2}(y - \hat{y})^2$$
 
 ### Gradient descent
 
-Функция $$J(W)$$ показывает величину ошибки работы нашей сети относительно входных значений $$X$$ и значений весов. Если мы заменим $$\hat{y}$$ соответствующим выражением, то получим:
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last"><code>J(W)</code> также называют целевой функцией, функцией ошибок или функцией потерь.</p>
+</div>
 
-$$J(W)=\sum^{n}_{1}\frac{1}{2}(y−tanh⁡(tanh⁡(tanh⁡(X.W_1).W_2).W_3))^2$$
-
-The function J(W) gives us the error of our network regarding our inputs X and the weights of our network. If we replace y^ by its calculations, our function is:
+Функция $$J(W)$$ позволяет оценить качество работы нейронной сети и показывает значение ошибки в зависимости от входных параметров $$X$$ и значений весов $$W$$. Если мы заменим $$\hat{y}$$ соответствующим выражением, то целевая функция примет вид:
 
 $$J(W)=\sum^{n}_{1}\frac{1}{2}(y−tanh⁡(tanh⁡(tanh⁡(X.W_1).W_2).W_3))^2$$
 
@@ -744,43 +745,53 @@ $$J(W)$$ является функцией, которая даем нам . Ч�
 
 $$J(W)$$ is a function that gives us the cost regarding our examples (the cars) and the weights (W1, W2 and W3). The minimum the cost is, the better our network predicts. Our goal is to minimize the function J(W), i.e: find its minimum. This is an optimization problem. We can't touch our examples X so we will minimize our function J(W) by tweaking the weights. We will use the batch gradient descent algorithm (with a non convex cost function it is better to use the stochastic gradient descent). We choose the gradient descent as the optimization algorithm but other alternatives could be used. Let's see what a gradient is.
 
-В математике фунция это правило указывающее как 
+В математике «фунция — это соответствие между двумя множествами, такое, что каждому элементу первого множества соответствует один и только один элемент второго множества», другими словами функция выражает идею зависимости величин: с изменением некоторой величины $$x$$ может изменяться другая величина $$y$$ и когда мы пишем $$y = f(x)$$, мы как раз и имеем в виду эту идею зависимости: переменная $$y$$ зависит от переменной $$x$$ по определённому закону  (предписанию, правилу). Закон этот обозначен буквой $$f$$. Допустимо, чтобы у функции было множество входных и выходных значений. В случае множества входных значений функция обычно обозначается как $$z = f(x,y)$$. В случае множества выходных значений резльутатом функции является вектор этих значений.
 
-In mathematics, a function is a rule explaining how to process an input to give an output. The input is noted as x and the output as y, the function is generally written as $$y = f(x)$$. It is possible to have multiple inputs and outputs, multiple inputs is common and looks like $$z=f(x,y)$$, multiple outputs is a vector valued function that produces a vector instead of only y.
+Строго говоря входные значения называются независимыми переменными (объясняющими переменными), а выходные значения - зависимыми (откликом). Функция отражает свзяь между зависимой и независимыми переменными.
 
-Строго говоря входные значения называются независимыми переменными, а выходные значения - зависимыми.
+Производная функции играет ключевую роль в машинном обучении и используется среди прочих в методе градиентного спуска. The derivative measures how a change in the independent variables impact the dependent variables (как изменения в $$x$$ влияют на $$y$$). Процесс нахождение производной функции называется дифференцированием.
 
-Strictly speaking the inputs are called independent variables and the outputs dependent variables. The function explains how the dependent variables depend on the independent variables.
+Рассмотрим два случая.
 
-Производная функции играет ключевую роль в машинном обучении и используется среди прочих в методе градиентного спуска.
+В первом случае только одна независимая переменная и одна зависимая ($$y = f(x)$$, где $$x \in R$$ и $$y \in R$$). В этом случае «производная функции $$f(x)$$ в заданной точке $$x_0$$ равна тангенсу угла наклона касательной к графику функции $$y=f(x)$$, проведенной в точке $$А$$ с абсциссой $$x_0$$». Это означает, что для заданного значения $$x_0$$ функция хорошо аппроксимируется прямой, а значение производной равно угловому коэффициенту касательной к графику этой функциии, проведённой в точке $$A$$ с абсциссой $$x_0$$.
 
-The derivative of a function is a key tool in machine learning, it is leveraged among others by the gradient descent algorithm. The derivative measures how a change in the independent variables impact the dependent variables (how changing x impacts y). The process of finding the derivative is called differentiation.
+![](/assets/images/notes-on-nn/derivative.png)
 
-There are two cases useful to us.
-
-The first case is when there is only one independent variable and one dependent variable (y=f(x) where $$x \in R$$ and $$y \in R$$). In that case the derivative of a function at a given input is the slope of the tangent line to the graph of the function at the given input. It means that at the given input, the function is well-approximated by a straight line, and the derivative is the slope of this straight line. Let's take an example. For instance if we take the sigmoïd function:
+Давайте в качестве примера рассмотрим сигмоиду:
 
 $$\sigma(x) = \frac{1}{1+e^{-x}}$$
 
-The derivative of this function is:
+Производная этой функции:
 
 $$\frac{e^x}{(e^x + 1)^2}$$
+
+Более подробное вычисление производной можно найти [тут](https://www.derivative-calculator.net/). Давайте воспользуемся этой производной для вычисления углового коэффициента в точке $$x = 2$$:
 
 You can compute the derivative detail here. Let's use this derivative to calculate the slope of the tangent at x=2, we have:
 
 $$\frac{e^2}{(e^2 + 1)^2} \approx 0.105$$
 
+Если мы построим график сигмодиды и касательной в точке $$x = 2$$, то увидим, что угловой коэффициент касательной равен $$\approx 0.105$$:
+
 If we draw the sigmoid function with its tangent at x=2 we see that the slope of the tangent is $$\approx 0.105$$:
 
 ![](/assets/images/notes-on-nn/DNN-FUNC5.png)
 
+Наша функция не похожа на сигмоиду, так как мы использовали одинаковые шкалы для $$x$$ и $$y$$, так проще увидеть что угол наклона действительно $$\approx 0.105$$.
+
 Our function does not looks like the sigmoid function because we used the same scale for the x and y, it is easier to see that the slope of the tangent, the blue line, is indeed $$\approx 0.105$$.
 
+Касательная является лучшей линейной апроксимацией функции в данной точке, она показывает как независимая переменная влияет на зависимую (угол большой или маленький).
+
 The tangent is the best linear approximation of a function at a given value, it shows how the independent variable impacts the dependent variable (small or big slope).
+
+Второй случай это когда есть несколько независимых переменных ($$y=f(x)$$, где $$x \in R^n$$ и $$y \in R$$). Так как функция теперь зависит от нескольких перменных, то мы должны найти частную производную функции 
 
 The second case is when there are several independent variables (y=f(x) where $$x \in R^n$$ and $$y \in R$$). As the function takes as input several variables, we will now compute the partial derivative of the function with respect to each input variable.
 
 The partial derivative of a function w.r.t (with respect to) one of the input variable is the derivative of the function where others variables held constant. It indicates the rate of change of a function with respect to that variable surrounding an infinitesimally small region near a particular point.
+
+Например, если мы возьмем функцию $$z=x^2 + y^3$$ с двумя входными параметрами $$x$$ и $$y$$, то производная функции будет вектором состоящим из двух частных производных:
 
 If we take for example, $$z=x^2+y^3$$, we have two inputs x and y so the derivative of the function will be a vector containing two partial derivatives:
 
@@ -790,15 +801,22 @@ F = \begin{bmatrix}
 \end{bmatrix}
 $$
 
+Для нахождения частной производной $$\frac{\partial f}{\partial x}$$ мы фиксируем $$y^3$$
+
 To calculate the partial derivative $$\frac{\partial f}{\partial x}$$ we held $$y^3$$ as a constant so we have:
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Производная от константы равна нулю.</p>
+</div>
 
 $$\frac{\partial f}{\partial x} = 2x + 0 = 2x$$
 
-To calculate the partial derivative $$\frac{\partial f}{\partial y}$$ we held $$x^2$$ as a constant so we have:
+Для нахождения частной производной $$\frac{\partial f}{\partial y}$$ мы фиксируем $$x^2$$ как константу:
 
 $$\frac{\partial f}{\partial y} = 3y^2 + 0 = 3y^2$$
 
-So the derivative of our initial function is:
+Таким образом, производная нашей функции:
 
 $$
 F = \begin{bmatrix}
@@ -806,9 +824,15 @@ F = \begin{bmatrix}
 \end{bmatrix}
 $$
 
+Это вектор частных производных, который называют градиентом.
+
 This vector of partial derivatives is the gradient. It represents the slope of the tangent of the graph of the function, it means that the gradient points in the direction of the greatest rate of increase of the function and its magnitude is the slope of the graph in that direction.
 
-For instance, for the previous function, if we are at x=4 and y=2, the corresponding gradient is (8,12) (we are using (2x,3y2)). It means that the function increases more in the direction of y than x. Using the two informations, it gives us a vector (a direction) for which Z will increase the most.
+Например, если мы возьмем точку $$x=4$$ и $$y=2$$, то соответствующее значение градиента будет равно $$(8, 12)$$. Это означает, что функция растет в направлении $$y$$ быстрее чем в направлении $$x$$.
+
+For instance, for the previous function, if we are at x=4 and y=2, the corresponding gradient is (8,12) (we are using $$(2x, 3y^2)$$). It means that the function increases more in the direction of y than x. Using the two informations, it gives us a vector (a direction) for which Z will increase the most.
+
+Если мы отобразим график предыдущей функции в трехмерном пространстве, то он будет выглядеть следующим образом:
 
 If we draw the previous function in a 3D space, it looks like the following:
 

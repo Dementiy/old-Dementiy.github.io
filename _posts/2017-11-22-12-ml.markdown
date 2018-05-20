@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Прогнозируем, классифицируем и кластеризуем (draft)
+title: Прогнозируем, классифицируем и кластеризуем
 categories: python golang R datascience практики
 ---
 
@@ -16,45 +16,126 @@ categories: python golang R datascience практики
 
 ### Регрессия
 
-**Линейная регрессия** – метод восстановления зависимости между двумя переменными:
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Подробнее про линейную регрессию можно почитать в <a href="">«Заметки по линейной регрессии»</a>.</p>
+</div>
+
+Линейная регрессия это метод восстановления зависимости между двумя переменными:
 
 $$y = \theta_0 + \theta_1x_1 + \theta_2x_2 + ... + \theta_nx_n$$
 
 Задача заключается в поиске такого набора параметров $$\theta$$, чтобы получать как можно лучшие результаты в предсказании $$y$$. В этом задании мы будем рассмотривать метод градиентного спуска для подбора параметров $$\theta$$ (существуют и другие методы, например, метод наименьших квадратов).
 
-В качестве датасета нам послужат данные собранные в 1991 году Л. Уиллерманом (Willerman Lee) о 40 правополушарных студентах, изучавших курс психологии в Юго-Западном университете. Исследование, проведенное Уиллерманом, заключалось в поиске связи между размером мозга и коэффициентом интеллекта. Для исследования выбирались те студенты, которые не страдали алкоголизмом, потерей сознания, а также повреждениями мозга, эпилепсией или сердечной недостаточностью. Для определения размера мозга испытуемых исследователи использовали магнитно-резонансную томографию. Также каждому студенту было предложено пройти тесты Векслера. Информация о поле, весе и росте также была включена в данные. Таким образом, собранные Уиллерманом данные включают в себя следующие переменные:
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Описание набора данных взято из курса <a href="http://www.uic.unn.ru/~zny/ml/Others/ml_pop.pdf">Н.Ю.Золотых</a>.</p>
+</div>
 
- - пол (Gender) – мужской или женский;
- - значение комбинированного полного коэффициента интеллекта (FSIQ – Full Scale IQ);
- - коэффициент вербального интеллекта (VIQ – Verbal IQ);
- - баллы, набранные по тестам Векслера (PIQ – Performance IQ);
- - вес тела в фунтах (Weight);
- - рост в дюймах (Height);
- - количество пикселей на снимках МРТ (MRI_Count).
+В качестве набора данных мы будем использовать [The Boston Housing Dataset](https://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html).  База содержит информацию о
+загородных домах близ Бостона, собранную службой переписи населения США. Данные были собраны в 1970-х годах. Информация агрегирована: территория поделена на участки и дома, стоящие на одном участке, собраны в группы. Нужно оценить среднюю цену дома. Таким образом, объектами являются сами эти группы. Их общее количество — 506. В качестве признаков рассматриваются:
 
-В качестве простого примера построим двумерную модель для определения (прогнозирования) коэффициента вербального интеллекта VIQ по коэффициенту комбинированного полного интеллекта FSIQ.
+- `CRIM` — уровень преступности на душу населения;
+- `ZN` — процент земли, застроенной жилыми домами (только для участков площадью свыше 25000 кв. - футов);
+- `INDUS` — процент деловой застройки;
+- `CHAS` — 1, если участок граничит с рекой; 0 в противном случае (бинарный признак);
+- `NOX` — концентрация оксида азота, деленная на 10^7;
+- `RM` — среднее число комнат (по всем домам рассматриваемого участка);
+- `AGE` — процент домов, построенных до 1940 г. и занимаемых владельцами;
+- `DIS` — взвешенное расстояние до 5 деловых центров Бостона;
+- `RAD` — индекс удаленности до радиальных магистралей;
+- `TAX` — величина налога в $10000;
+- `PTRATIO` — количество учащихся, приходящихся на одного учителя (по городу);
+- `B = 1000(AA − 0.63)^2`, где `AA` — доля афро-американцев;
+- `LSTAT` — процент жителей с низким социальным статусом.
 
-Загрузим набор данных из репозитория и построим диаграмму рассеяния для соответствующих переменных:
+Признак `CHAS` — бинарный, остальные — количественные. Выходом является переменная `MEDV`, равная медианному значению цены строения (по всем домам участка) в $1000.
 
-```r
-> library(repmis)
-> df <- source_data("https://raw.githubusercontent.com/Dementiy/pybook-assignments/master/homework11/brain_size.csv")
-> head(df)
-  Gender FSIQ VIQ PIQ Weight Height MRI_Count
-1 Female  133 132 124    118   64.5    816932
-2   Male  140 150 124     NA   72.5   1001121
-3   Male  139 123 150    143   73.3   1038437
-4   Male  133 129 128    172   68.8    965353
-5 Female  137 132 134    147   65.0    951545
-6 Female   99  90 110    146   69.0    928799
-> X <- df$FSIQ # input variables
-> y <- df$VIQ  # output variables
-> plot(X, y,
-    main='Full Scale IQ vs Verbal IQ',
-    xlab="FSIQ", ylab="VIQ")
+Для начала загрузим набор данных и выведем пять первых наблюдений:
+
+```python
+import pandas as pd
+from sklearn.datasets import load_boston
+
+boston = load_boston()
+data = pd.DataFrame(data=boston.data, columns=boston.feature_names)
+data['MEDV'] = boston.target
+data.head()
 ```
 
-<img src="/assets/images/11-ml/linreg1_new.png" width="70%">
+```
+      CRIM    ZN  INDUS  CHAS    NOX     RM   AGE     DIS  RAD    TAX  \
+0  0.00632  18.0   2.31   0.0  0.538  6.575  65.2  4.0900  1.0  296.0   
+1  0.02731   0.0   7.07   0.0  0.469  6.421  78.9  4.9671  2.0  242.0   
+2  0.02729   0.0   7.07   0.0  0.469  7.185  61.1  4.9671  2.0  242.0   
+3  0.03237   0.0   2.18   0.0  0.458  6.998  45.8  6.0622  3.0  222.0   
+4  0.06905   0.0   2.18   0.0  0.458  7.147  54.2  6.0622  3.0  222.0   
+
+   PTRATIO       B  LSTAT  MEDV  
+0     15.3  396.90   4.98  24.0  
+1     17.8  396.90   9.14  21.6  
+2     17.8  392.83   4.03  34.7  
+3     18.7  394.63   2.94  33.4  
+4     18.7  396.90   5.33  36.2 
+```
+
+Мы не будем уделять время разведночному анализу данных, но для желающих поближе познакомиться с набором данных можно начать с этой [статьи](http://www.neural.cz/dataset-exploration-boston-house-pricing.html).
+
+### *Простая линейная регрессия*
+
+Мы начнем с построения простой линейной модели с одной переменной. Переменную выберем по значению коэффициента корреляции Пирсона с целевым признаком `MEDV`:
+
+```python
+pearson = data.corr(method='pearson')
+pearson["MEDV"].drop("MEDV").sort_values(ascending=False)
+```
+
+```
+RM         0.695360
+ZN         0.360445
+B          0.333461
+DIS        0.249929
+CHAS       0.175260
+AGE       -0.376955
+RAD       -0.381626
+CRIM      -0.385832
+NOX       -0.427321
+TAX       -0.468536
+INDUS     -0.483725
+PTRATIO   -0.507787
+LSTAT     -0.737663
+Name: MEDV, dtype: float64
+```
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Вопрос</strong></p>
+  <p class="last">Объясните почему значение коэффициента корреляции между <code>MEDV</code> и переменными <code>RM</code> и <code>LSTAT</code> имеет противоположные знаки (исходя из описания переменных).</p>
+</div>
+
+Наиболее высокий коэффициент корреляции у двух переменных: `RM` (среднее число комнат) и `LSTAT` (процент жителей с низким социальным статусом). Выберем переменную `RM` для объяснения `MEDV`.
+
+Давайте построим диаграмму рассеяния и визуально оценим взаимосвязь между средним числом комнат на участке и средней ценой дома на этом участке:
+
+```python
+sns.jointplot(data["RM"], data["MEDV"], kind='scatter', joint_kws={'alpha':0.5});
+```
+
+<img src="/assets/images/11-ml/lr_jointplot.png">
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про аномалии и выбросы можно почитать <a href="https://alexanderdyakonov.wordpress.com/2017/04/19/%D0%BF%D0%BE%D0%B8%D1%81%D0%BA-%D0%B0%D0%BD%D0%BE%D0%BC%D0%B0%D0%BB%D0%B8%D0%B9-anomaly-detection/">блоге Александра Дьяконова</a>.</p>
+</div>
+Из диаграммы рассеяния хорошо видно, что имеет место положительная линейная связь между переменными `RM` и `MEDV`, то есть дома с большим числом комнат имеют более высокую цену. Также можем сделать следующие предположения:
+- 16 наблюдений `MEDV` имеют значение 50.0. Скорее всего эти наблюдения содержали пропуски или не было возможности указать действительную цену дома, поэтому эти наблюдения могут быть исключены из набора данных.
+- одно наблюдение признака `RM` имеет значение 8.78. Это наблюдение может рассматриваться как выброс и может быть исключено из набора данных;
+- два наблюдение признака `RM` имеют значения меньше 4. Наблюдения можно рассматривать как выбросы и должны быть исключены из набора данных.
+
+Итак, модель которую мы будем строить имеет следующий вид:
+
+$$MEDV = \theta_0 + \theta_1 \times RM$$
+
+Нам необходимо найти оптимальные значения для параметров $$\theta$$.
 
 ### *Метод градиентного спуска*
 
@@ -75,47 +156,6 @@ $$J(\theta) = \frac{1}{2m}\sum_{i=1}^{m}(h_{\theta}(x_i) - y_i)^2 \rightarrow \f
 
 $$\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i$$
 
-В репозитории уже есть готовая реализация метода градиентного спуска на языке R, поэтому давайте воспользуемся ей:
-
-```r
-> source("https://raw.githubusercontent.com/Dementiy/pybook-assignments/master/homework11/gradient_descent.R")
-> result <- gradientDescent(X, y, 0.00001, 100)
-> result$theta
-            [, 1]
-[1, ] 0.008634596
-[2, ] 0.987622436
-> plot(X, y,
-    main='Full Scale IQ vs Verbal IQ',
-    xlab="FSIQ", ylab="VIQ")
-> abline(a=result$theta[1], b=result$theta[2])
-```
-
-<img src="/assets/images/11-ml/linreg3.png" width="70%">
-
-Таким образом, итоговая модель для предсказания значения вербального интеллекта будет выглядеть следующим образом:
-
-$$VIQ = 0.008634596 + 0.987622436 \times FSIQ$$
-
-Например, в случае, когда комбинированный полный коэффициент интеллекта принимает значение в 100 баллов, то значение вербального интеллекта будет равно 98.77 баллам:
-
-```r
-> 0.008634596 + 0.987622436 * 100
-[1] 98.77088
-```
-
-Построим графики сходимости целевой функции:
-
-```r
-> plot(result$cost_history, type='l', col='blue', lwd=2, 
-    main='Cost function', ylab='cost', xlab='Iterations')
-```
-
-<img src="/assets/images/11-ml/linreg2.png" width="70%">
-
-Следует заметить, что приведенная реализация метода градиентного спуска основывается на постоянном шаге $$\alpha$$, также мы положили число итераций равное 100, но на графике сходимости целевой функции хорошо видно, что мы можем уменьшить требуемое число итераций.
-
-### *Задание*
-
 Вашей задачей является реализовать метод градиентного спуска:
 
 <div class="admonition legend">
@@ -124,9 +164,9 @@ $$VIQ = 0.008634596 + 0.987622436 \times FSIQ$$
 </div>
 
 ```python
-class GDRegression:
+class GDRegressor:
     
-    def __init__(self, alpha=0.01, n_iter=100):
+    def __init__(self, alpha=0.01, max_iter=100):
         pass
 
     def fit(self, X_train, y_train):
@@ -140,108 +180,289 @@ class GDRegression:
 
 Метод `predict` возвращает вектор прогнозов для новых данных.
 
-Давайте рассмотрим пример использования класса `GDRegression`. Для начала загрузим набор данных, выведем пять первых наблюдений и построим диаграмму рассеивания:
+Давайте рассмотрим пример использования класса `GDRegressor`. Предварительно разобьем выборку на обучающую и тестовую и обучим модель на обучающей выборке, положив значения для параметров `max_iter=2000` и `alpha=0.04`.
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про кросс-валидацию с примерами можно почитать <a href="https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6">тут</a>.<br><br>У вас значения <code>model.coef_</code> и <code>model.intercept_</code> могут немного отличаться от полученных мной.</p>
+</div>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Вопрос</strong></p>
+  <p class="last">Дайте интерпретацию полученным значениям для <code>model.coef_</code> и <code>model.intercept_</code>.</p>
+</div>
 
 ```python
->>> import pandas as pd
->>> import matplotlib.pyplot as plt
->>> data = pd.read_csv("brain_size.csv")
->>> data.head()
-   Gender  FSIQ  VIQ  PIQ  Weight  Height  MRI_Count
-0  Female   133  132  124   118.0    64.5     816932
-1    Male   140  150  124     NaN    72.5    1001121
-2    Male   139  123  150   143.0    73.3    1038437
-3    Male   133  129  128   172.0    68.8     965353
-4  Female   137  132  134   147.0    65.0     951545
->>> plt.scatter(data["FSIQ"], data["VIQ"])
->>> plt.show()
+>>> X = data[["RM"]]
+>>> y = data["MEDV"]
+
+>>> X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.33, random_state=18)
+>>> model = GDRegressor(max_iter=2000, alpha=0.04)
+>>> model.fit(X_train, Y_train)
+
+>>> model.coef_, model.intercept_
+(array([7.07554766]), -21.792447302876575)
+
+>>> data.plot(kind='scatter', x="RM", y="MEDV");
+>>> plt.plot(X_train, model.coef_[0] * X_train + model.intercept_, 'r');
 ```
 
-Теперь создадим модель с параметрами `alpha=0.00001` и `n_iter=100` и обучим ее на всех имеющихся данных:
+<img src="/assets/images/11-ml/lr_fitted1.png">
 
-```python
->>> X = data.iloc[:, 1:2] # to keep it as DataFrame
->>> # X.insert(0, "Ones", np.ones(len(X)))
->>> y = data["VIQ"]
->>> model = GDRegression(alpha=0.00001)
->>> model.fit(X, y)
->>> model.coef_
-array([ 0.98762244])
->>> model.intercept_
-0.0086345960432628564
-```
+### *Оценка качества модели*
 
-Итак, мы получили следующие оценки для параметров $$\theta$$: $$\theta_0 = 0.00863459$$, $$\theta_1 = 0.98762244$$. Не сложно заметить, что они совпадают с предыдущими значениями.
+Итак, мы нашли коэффициенты $$\theta$$, теперь надо как-то оценить качество работы полученной модели. Для этого мы воспользуемся коэффициентом детерминации $$R^2$$:
 
-Давайте сделаем несколько прогнозов для имеющихся данных:
+$$R^2 = 1 - \frac{\sum_{i=1}^{m}(y_i - \hat{y_i})^2}{\sum_{i=1}^{m}(y_i - \overline{y})^2}$$
 
-```python
->>> model.predict(X.iloc[1:5, :])
-array([138.275366, 137.287766, 131.362163, 135.312565])
-```
+и среднеквадратичной ошибкой:
 
-### *Пример с использованием библиотеки sklearn*
+$$RMSE = \sqrt{\frac{\sum_{i=1}^{m}(\hat{y_i} - y_i)^2}{m}}$$
 
-```python
->>> from sklearn.linear_model import SGDRegression
->>> data = pd.read_csv("brain_size.csv")
->>> X = data.iloc[:, 1:2]
->>> y = data["VIQ"]
->>> model = SGDRegression(n_iter=5, penalty='none',
-    learning_rate='constant', eta0=0.00001)
->>> model.fit(X, y)
->>> model.coef_
-array([ 0.97827634])
->>> model.intercept_
-array([ 0.00892904])
->>> model.predict(X.iloc[1:5, :])
-array([ 136.96761663,  135.98934029,  130.11968225,  134.03278761])
-```
+[Коэффициент детерминации](http://www.machinelearning.ru/wiki/index.php?title=%D0%9A%D0%BE%D1%8D%D1%84%D1%84%D0%B8%D1%86%D0%B8%D0%B5%D0%BD%D1%82_%D0%B4%D0%B5%D1%82%D0%B5%D1%80%D0%BC%D0%B8%D0%BD%D0%B0%D1%86%D0%B8%D0%B8) это доля дисперсии зависимой переменной, объясняемая рассматриваемой моделью. Более точно — это единица минус доля необъяснённой дисперсии (дисперсии случайной ошибки модели, или условной по признакам дисперсии зависимой переменной) в дисперсии зависимой переменной.
 
-### *Выбор модели*
+Среднеквадратичная ошибка характеризует отклонение реальных данных от линии регрессии и измеряется в тех же единицах, что и зависимая переменная ($$y$$).
+
+Вашей задачей является написать две функции для вычисления коэфиициента детерминации и среднеквадратичной ошибки:
 
 ```python
 def rmse(y_hat, y):
-    errors = y_hat - y
-    total_error = np.dot(errors, errors)
-    return np.sqrt(total_error/len(y_hat))
-```
+    """ Root mean squared error """
+    pass
 
-
-```python
->>> from sklearn.model_selection import train_test_split
->>> X_train, X_test, y_train, y_test = train_test_split(X, y,
-    test_size=0.3, random_state=0)
->>> X_train.shape, y_train.shape, X_test.shape, y_test.shape
-((28, 1), (12, 1), (28,), (12,))
->>> model = GDRegression(alpha=0.00001)
->>> model.fit(X_train, y_train)
->>> model.coef_
-array([ 0.98536805])
->>> model.intercept_
-array([ 0.00886374])
->>> pred = model.predict(X_test)
->>> rmse(pred, y_test)
-6.7600543165795841
+def r_squared(y_hat, y):
+    """ R-squared score """
+    pass
 ```
 
 ```python
->>> from sklearn.model_selection import KFold
->>> kf = KFold(n_splits=3)
->>> errors = []
->>> for train, test in kf.split(X):
-       X_train = X.iloc[train, :]
-       y_train = y[train]
-       model.fit(X_train, y_train)
-       pred = model.predict(X_test)
-       errors.append(rmse(pred, y_test))
->>> print(errors)
-[10.3443, 7.1500, 6.5616]
+>>> Y_pred = model.predict(X_test)
+>>> rmse(Y_pred, Y_test)
+6.500256917031142
+>>> r_squared(Y_pred, Y_test)
+0.488226294688234
 ```
 
-**Задания**:
-1. Используя кросс-валидацию построить лучшую модель.
-2. Реализовать метод стохастического градиентного спуска.
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про анализ регрессионных остатков можно почитать <a href="http://docs.statwing.com/interpreting-residual-plots-to-improve-your-regression/">тут</a> и <a href="http://www.machinelearning.ru/wiki/index.php?title=%D0%90%D0%BD%D0%B0%D0%BB%D0%B8%D0%B7_%D1%80%D0%B5%D0%B3%D1%80%D0%B5%D1%81%D1%81%D0%B8%D0%BE%D0%BD%D0%BD%D1%8B%D1%85_%D0%BE%D1%81%D1%82%D0%B0%D1%82%D0%BA%D0%BE%D0%B2_(%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80)">тут</a>.</p>
+</div>
+
+Построим график истинных значений и прогнозов:
+
+```python
+plt.scatter(Y_test, Y_pred)
+plt.xlabel("Prices: $Y_i$")
+plt.ylabel("Predicted prices: $\hat{Y}_i$")
+plt.title("Prices vs Predicted prices: $Y_i$ vs $\hat{Y}_i$");
+```
+
+<img src="/assets/images/11-ml/lr_predicted1.png">
+
+Также построим график остатков (residual plot):
+
+```python
+plt.scatter(Y_pred, (Y_pred-Y_test), alpha=0.5);
+```
+
+<img src="/assets/images/11-ml/lr_residuals1.png">
+
+Можем ли мы улучшить качество нашей модели? Мы выбрали значения для параметров `max_iter` и `alpha` «случайным» образом. Воспользуйтесь функцией `plot_cost_function` для того, чтобы найти оптимальные значения для числа итераций `max_iter` и параметра `alpha`. Например:
+
+```python
+plot_cost_function(X, y, GDRegressor, max_iters=2000, alpha=0.04)
+```
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Обратите внимание, что строится график зависимости MSE (RMSE^2) от номера текущей итерации.</p>
+</div>
+
+<img src="/assets/images/11-ml/lr_costfunc1.png">
+
+Очевидно, что на двух тысячах итераций и скорости обучения $$0.04$$ алгоритм еще не сошелся. Попробуйте увеличить число итераций или изменить значение `alpha` (или и то и другое). В итоге вы должны получить значение для среднеквадратичной ошибки $$6.433$$, а для коэффициента детерминации $$0.498$$.
+
+В начале мы сделали несколько предположений о выбросах, давайте проверим одно из них. Удалите из набора данных наблюдения, значения которых для признака `MEDV` равны 50. И снова воспользуйтесь функцией `plot_cost_function` для определения числа итераций и скорости обучения. Также ответье на вопрос «Улучшилось ли качество модели?».
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про важность нормализации признаков можно почитать <a href="https://www.robertoreif.com/blog/2017/12/16/importance-of-feature-scaling-in-data-modeling-part-1-h8nla">тут</a> и <a href="http://sebastianraschka.com/Articles/2014_about_feature_scaling.html#z-score-standardization-or-min-max-scaling">тут</a>.</p>
+</div>
+
+Вы должны были обратить внимание, что увеличилось необходимое число итераций для сходимости алгоритма. Одним из способов повлиять на это является нормализация признаков. Мы будем использовать один из самых простых и распространенных способов нормализации - Standart Scaling (Z-score normalization):
+
+$$x' = \frac{x - \overline{x}}{\sigma_x}$$
+
+Напишите функцию `z_scaler` для нормализации значений:
+
+```python
+def z_scaler(feature):
+    pass
+
+>>> X_scaled = z_scaler(X)
+>>> y_scaled = z_scaler(y)
+```
+
+Снова воспользуйтесь функцией `plot_cost_function`, но начните с небольшого числа итераций и при необходимости постепенно его увеличивайте.
+
+### *Пример с использованием библиотеки sklearn*
+
+Проделайте теже шаги с использованием библиотеки `sklearn`: с помощью функции `plot_cost_function` с параметром `normalize=True` найдите оптимальное число итераций и значение для скорости обучения, вычислите значение среднеквадратичной ошибки и коэффициента детерминации, постройте графики остатков.
+
+Для того, чтобы построить модель:
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Обратите внимание, что скорость обучение задается с помощью параметра <code>eta0</code>.</p>
+</div>
+
+```python
+>>> from sklearn.linear_model import SGDRegressor
+>>> model = SGDRegressor(
+        loss='squared_loss',
+        learning_rate='constant',
+        max_iter=max_iter,
+        eta0=eta0)
+```
+
+Чтобы нормализовать значения для обучения и валидации модели воспользуйтесь `StandardScaler` из библиотеки `sklearn`:
+
+```python
+>>> from sklearn.preprocessing import StandardScaler
+>>> X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = 0.33, random_state = 18)
+>>> X_train = StandardScaler().fit_transform(X_train)
+>>> Y_train = StandardScaler().fit_transform(Y_train.values.reshape(-1, 1))
+>>> X_test = StandardScaler().fit_transform(X_test)
+>>> Y_test = StandardScaler().fit_transform(Y_test.values.reshape(-1, 1))
+```
+
+Чтобы найти среднеквадратичную ошибку и коэффициент детерминации:
+
+```python
+>>> from sklearn.metrics import r2_score
+>>> r2_score(Y_test, Y_pred)
+
+>>> from sklearn.metrics import mean_squared_error
+>>> mean_squared_error(Y_test, Y_pred)
+```
+
+В результате вы должны получить следующие значения:
+ - коэффициенты модели - $$\theta_0 = 5.85827955e-05, \theta_1 = 0.64210931$$;
+ - коэффициент детерминации - $$0.561$$;
+ - среднеквадратичная ошибка - $$0.439$$.
+
+### *Многомерная линейная регрессия*
+
+До этого мы рассматривали только один признак - среднее число комнат на участке. Давайте в нашу модель добавим еще один признак - процент жителей с низким социальным статусом (`LSTAT`).
+
+```python
+sns.jointplot(data["LSTAT"], data["MEDV"], kind='scatter', joint_kws={'alpha':0.5});
+```
+
+<img src="/assets/images/11-ml/lr_jointplot2.png">
+
+Снова воспользуемся функцией `plot_cost_function`:
+
+```python
+X_filtered = data[(data["MEDV"] < 50)][["RM", "LSTAT"]]
+y_filtered = data[(data["MEDV"] < 50)]["MEDV"]
+
+plot_cost_function(
+    X_filtered,
+    y_filtered,
+    estimator=SGDRegressor,
+    normalize=True,
+    max_iters=???, # PUT YOUR VALUE HERE
+    eta0=???       # PUT YOUR VALUE HERE
+)
+```
+
+Постройте и обучите модель для найденных значений `max_iter` и `alpha`. Вы должны получить следующие значения для среднеквадратичной ошибки и коэффициента детерминации:
+
+```python
+>>> Y_pred = model.predict(X_test)
+>>> mean_squared_error(Y_test, Y_pred), r2_score(Y_test, Y_pred)
+(0.29456340651451396, 0.7054365934854863)
+```
+
+Добавление нового признака значительно снизило среднеквадратичную ошибку и повысило описательную способность нашей модели. Давайте построим график остатков:
+
+```python
+plt.scatter(Y_pred, (Y_pred - Y_test.ravel()), alpha=0.5);
+```
+
+<img src="/assets/images/11-ml/lr_residuals2.png">
+
+Из графика хорошо видно, что есть нелинейная зависимость в остатках. Это связано с тем, что процент жителей с низким социальным статусом нелинейно зависит от средней цены на дом и среднего числа комнат: 
+
+<img src="/assets/images/11-ml/lr_scatter3d.png">
+
+Эту зависимость наша модель в настоящий момент не описывает. Таким образом, мы должны добавить в нашу модель нелинейные признаки.
+
+### *Добавление полиномиальных признаков*
+
+Итак, для описания нелинейной зависимости мы будем использовать полиномиальную модель. Предположим, что полинома четвертой степени достаточно для описания зависимости. Возможно будет достаточно полинома второй или третьей степени, поэтому, чтобы «занулить» некоторые коэффициенты $$\theta$$, мы будем использовать L1-регуляризацию.
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+
+poly = PolynomialFeatures(4, include_bias=False)
+X = poly.fit_transform(X_filtered)
+```
+
+```python
+plot_cost_function(
+    X_filtered,
+    y_filtered,
+    SGDRegressor,
+    normalize=True,
+    max_iters=???, # PUT YOUR VALUE HERE
+    eta0=???,      # PUT YOUR VALUE HERE
+    params={
+        'penalty': 'l1',
+        'alpha': ??? # PUT YOUR VALUE HERE
+    }
+)
+```
+
+Постройте и обучите модель для найденных значений `max_iter` и `alpha`. Вы должны получить примерно следующие значения для среднеквадратичной ошибки и коэффициента детерминации:
+
+```python
+Y_pred = model.predict(X_test)
+mean_squared_error(Y_test, Y_pred), r2_score(Y_test, Y_pred)
+(0.17508905829300977, 0.8249109417069903)
+```
+
+И снова мы значительно снизили значение среднеквадратичной ошибки и повысили описательную способность нашей модели. Давайте посмотрим на график остатков:
+
+```python
+plt.scatter(Y_pred, (Y_pred-Y_test.reshape(1, -1)), alpha=0.5);
+```
+
+<img src="/assets/images/11-ml/lr_residuals3.png">
+
+Также давайте посмотрим на полученные значения коэффициентов модели:
+
+```python
+model.coef_, model.intercept_
+#        RM           LSTAT        RM^2         RM*LSTAT     LSTAT^2
+(array([ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ,
+#        RM^3         RM^2*LSTAT   RM*LSTAT^2   LSTAT^3      RM^4
+         0.62890582,  0.        ,  0.        ,  0.        ,  0.        ,
+#        RM^3*LSTAT   RM^2*LSTAT^2 RM*LSTAT^3   LSTAT^4
+        -0.52099058,  0.        ,  0.        ,  0.0317591 ]),
+ array([0.0018161]))
+```
+
+Итак, если мы подставим значения ненулевых коэффициентов, то получим следующиую модель:
+
+$$
+\text{MEDV} = 0.0018161 + 0.62890582 \times \text{RM}^3 - 0.52099058 \times \text{RM}^3 \times \text{LSTAT} + 0.0317591 \times \text{LSTAT}^4
+$$
+
+Модель стала немного сложнее, появился также эффект взаимодействия между признаками `RM` и `LSTAT`.
+
+Определите какие еще признаки имеет смысл включить в модель.
 
 ### Классификация
 
