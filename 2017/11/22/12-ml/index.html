@@ -9,7 +9,7 @@
   
   
   
-  <title>Прогнозируем, классифицируем и кластеризуем (draft)</title>
+  <title>Прогнозируем, классифицируем и кластеризуем</title>
   <meta name="description" content="Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.">
   
 
@@ -25,7 +25,7 @@
   
   <meta name="twitter:card" content="summary">
   
-  <meta name="twitter:title" content="Прогнозируем, классифицируем и кластеризуем (draft)">
+  <meta name="twitter:title" content="Прогнозируем, классифицируем и кластеризуем">
   <meta name="twitter:description" content="Эта работа знакомит вас с некоторыми задачами из области машинного обучения, а именно задачами регрессии, классификации и кластеризации.">
   
   
@@ -97,7 +97,7 @@
 
   <header class="post-header">
     
-      <h1 class="post-title" itemprop="name headline">Прогнозируем, классифицируем и кластеризуем (draft)</h1>
+      <h1 class="post-title" itemprop="name headline">Прогнозируем, классифицируем и кластеризуем</h1>
     
     <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
   
@@ -260,46 +260,125 @@
 
 <h3 id="регрессия">Регрессия</h3>
 
-<p><strong>Линейная регрессия</strong> – метод восстановления зависимости между двумя переменными:</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Подробнее про линейную регрессию можно почитать в <a href="">«Заметки по линейной регрессии»</a>.</p>
+</div>
+
+<p>Линейная регрессия это метод восстановления зависимости между двумя переменными:</p>
 
 <script type="math/tex; mode=display">y = \theta_0 + \theta_1x_1 + \theta_2x_2 + ... + \theta_nx_n</script>
 
 <p>Задача заключается в поиске такого набора параметров <script type="math/tex">\theta</script>, чтобы получать как можно лучшие результаты в предсказании <script type="math/tex">y</script>. В этом задании мы будем рассмотривать метод градиентного спуска для подбора параметров <script type="math/tex">\theta</script> (существуют и другие методы, например, метод наименьших квадратов).</p>
 
-<p>В качестве датасета нам послужат данные собранные в 1991 году Л. Уиллерманом (Willerman Lee) о 40 правополушарных студентах, изучавших курс психологии в Юго-Западном университете. Исследование, проведенное Уиллерманом, заключалось в поиске связи между размером мозга и коэффициентом интеллекта. Для исследования выбирались те студенты, которые не страдали алкоголизмом, потерей сознания, а также повреждениями мозга, эпилепсией или сердечной недостаточностью. Для определения размера мозга испытуемых исследователи использовали магнитно-резонансную томографию. Также каждому студенту было предложено пройти тесты Векслера. Информация о поле, весе и росте также была включена в данные. Таким образом, собранные Уиллерманом данные включают в себя следующие переменные:</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Описание набора данных взято из курса <a href="http://www.uic.unn.ru/~zny/ml/Others/ml_pop.pdf">Н.Ю.Золотых</a>.</p>
+</div>
+
+<p>В качестве набора данных мы будем использовать <a href="https://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html">The Boston Housing Dataset</a>.  База содержит информацию о
+загородных домах близ Бостона, собранную службой переписи населения США. Данные были собраны в 1970-х годах. Информация агрегирована: территория поделена на участки и дома, стоящие на одном участке, собраны в группы. Нужно оценить среднюю цену дома. Таким образом, объектами являются сами эти группы. Их общее количество — 506. В качестве признаков рассматриваются:</p>
 
 <ul>
-  <li>пол (Gender) – мужской или женский;</li>
-  <li>значение комбинированного полного коэффициента интеллекта (FSIQ – Full Scale IQ);</li>
-  <li>коэффициент вербального интеллекта (VIQ – Verbal IQ);</li>
-  <li>баллы, набранные по тестам Векслера (PIQ – Performance IQ);</li>
-  <li>вес тела в фунтах (Weight);</li>
-  <li>рост в дюймах (Height);</li>
-  <li>количество пикселей на снимках МРТ (MRI_Count).</li>
+  <li><code class="highlighter-rouge">CRIM</code> — уровень преступности на душу населения;</li>
+  <li><code class="highlighter-rouge">ZN</code> — процент земли, застроенной жилыми домами (только для участков площадью свыше 25000 кв. - футов);</li>
+  <li><code class="highlighter-rouge">INDUS</code> — процент деловой застройки;</li>
+  <li><code class="highlighter-rouge">CHAS</code> — 1, если участок граничит с рекой; 0 в противном случае (бинарный признак);</li>
+  <li><code class="highlighter-rouge">NOX</code> — концентрация оксида азота, деленная на 10^7;</li>
+  <li><code class="highlighter-rouge">RM</code> — среднее число комнат (по всем домам рассматриваемого участка);</li>
+  <li><code class="highlighter-rouge">AGE</code> — процент домов, построенных до 1940 г. и занимаемых владельцами;</li>
+  <li><code class="highlighter-rouge">DIS</code> — взвешенное расстояние до 5 деловых центров Бостона;</li>
+  <li><code class="highlighter-rouge">RAD</code> — индекс удаленности до радиальных магистралей;</li>
+  <li><code class="highlighter-rouge">TAX</code> — величина налога в $10000;</li>
+  <li><code class="highlighter-rouge">PTRATIO</code> — количество учащихся, приходящихся на одного учителя (по городу);</li>
+  <li><code class="highlighter-rouge">B = 1000(AA − 0.63)^2</code>, где <code class="highlighter-rouge">AA</code> — доля афро-американцев;</li>
+  <li><code class="highlighter-rouge">LSTAT</code> — процент жителей с низким социальным статусом.</li>
 </ul>
 
-<p>В качестве простого примера построим двумерную модель для определения (прогнозирования) коэффициента вербального интеллекта VIQ по коэффициенту комбинированного полного интеллекта FSIQ.</p>
+<p>Признак <code class="highlighter-rouge">CHAS</code> — бинарный, остальные — количественные. Выходом является переменная <code class="highlighter-rouge">MEDV</code>, равная медианному значению цены строения (по всем домам участка) в $1000.</p>
 
-<p>Загрузим набор данных из репозитория и построим диаграмму рассеяния для соответствующих переменных:</p>
+<p>Для начала загрузим набор данных и выведем пять первых наблюдений:</p>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">library</span><span class="p">(</span><span class="n">repmis</span><span class="p">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">source_data</span><span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/Dementiy/pybook-assignments/master/homework11/brain_size.csv"</span><span class="p">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
-  </span><span class="n">Gender</span><span class="w"> </span><span class="n">FSIQ</span><span class="w"> </span><span class="n">VIQ</span><span class="w"> </span><span class="n">PIQ</span><span class="w"> </span><span class="n">Weight</span><span class="w"> </span><span class="n">Height</span><span class="w"> </span><span class="n">MRI_Count</span><span class="w">
-</span><span class="m">1</span><span class="w"> </span><span class="n">Female</span><span class="w">  </span><span class="m">133</span><span class="w"> </span><span class="m">132</span><span class="w"> </span><span class="m">124</span><span class="w">    </span><span class="m">118</span><span class="w">   </span><span class="m">64.5</span><span class="w">    </span><span class="m">816932</span><span class="w">
-</span><span class="m">2</span><span class="w">   </span><span class="n">Male</span><span class="w">  </span><span class="m">140</span><span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="m">124</span><span class="w">     </span><span class="kc">NA</span><span class="w">   </span><span class="m">72.5</span><span class="w">   </span><span class="m">1001121</span><span class="w">
-</span><span class="m">3</span><span class="w">   </span><span class="n">Male</span><span class="w">  </span><span class="m">139</span><span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">150</span><span class="w">    </span><span class="m">143</span><span class="w">   </span><span class="m">73.3</span><span class="w">   </span><span class="m">1038437</span><span class="w">
-</span><span class="m">4</span><span class="w">   </span><span class="n">Male</span><span class="w">  </span><span class="m">133</span><span class="w"> </span><span class="m">129</span><span class="w"> </span><span class="m">128</span><span class="w">    </span><span class="m">172</span><span class="w">   </span><span class="m">68.8</span><span class="w">    </span><span class="m">965353</span><span class="w">
-</span><span class="m">5</span><span class="w"> </span><span class="n">Female</span><span class="w">  </span><span class="m">137</span><span class="w"> </span><span class="m">132</span><span class="w"> </span><span class="m">134</span><span class="w">    </span><span class="m">147</span><span class="w">   </span><span class="m">65.0</span><span class="w">    </span><span class="m">951545</span><span class="w">
-</span><span class="m">6</span><span class="w"> </span><span class="n">Female</span><span class="w">   </span><span class="m">99</span><span class="w">  </span><span class="m">90</span><span class="w"> </span><span class="m">110</span><span class="w">    </span><span class="m">146</span><span class="w">   </span><span class="m">69.0</span><span class="w">    </span><span class="m">928799</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">FSIQ</span><span class="w"> </span><span class="c1"># input variables</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">VIQ</span><span class="w">  </span><span class="c1"># output variables</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
-    </span><span class="n">main</span><span class="o">=</span><span class="s1">'Full Scale IQ vs Verbal IQ'</span><span class="p">,</span><span class="w">
-    </span><span class="n">xlab</span><span class="o">=</span><span class="s2">"FSIQ"</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"VIQ"</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
 
-<p><img src="/assets/images/11-ml/linreg1_new.png" width="70%" /></p>
+<span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">boston</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">boston</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s">'MEDV'</span><span class="p">]</span> <span class="o">=</span> <span class="n">boston</span><span class="o">.</span><span class="n">target</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      CRIM    ZN  INDUS  CHAS    NOX     RM   AGE     DIS  RAD    TAX  \
+0  0.00632  18.0   2.31   0.0  0.538  6.575  65.2  4.0900  1.0  296.0   
+1  0.02731   0.0   7.07   0.0  0.469  6.421  78.9  4.9671  2.0  242.0   
+2  0.02729   0.0   7.07   0.0  0.469  7.185  61.1  4.9671  2.0  242.0   
+3  0.03237   0.0   2.18   0.0  0.458  6.998  45.8  6.0622  3.0  222.0   
+4  0.06905   0.0   2.18   0.0  0.458  7.147  54.2  6.0622  3.0  222.0   
+
+   PTRATIO       B  LSTAT  MEDV  
+0     15.3  396.90   4.98  24.0  
+1     17.8  396.90   9.14  21.6  
+2     17.8  392.83   4.03  34.7  
+3     18.7  394.63   2.94  33.4  
+4     18.7  396.90   5.33  36.2 
+</code></pre></div></div>
+
+<p>Мы не будем уделять время разведночному анализу данных, но для желающих поближе познакомиться с набором данных можно начать с этой <a href="http://www.neural.cz/dataset-exploration-boston-house-pricing.html">статьи</a>.</p>
+
+<h3 id="простая-линейная-регрессия"><em>Простая линейная регрессия</em></h3>
+
+<p>Мы начнем с построения простой линейной модели с одной переменной. Переменную выберем по значению коэффициента корреляции Пирсона с целевым признаком <code class="highlighter-rouge">MEDV</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pearson</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">'pearson'</span><span class="p">)</span>
+<span class="n">pearson</span><span class="p">[</span><span class="s">"MEDV"</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s">"MEDV"</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>RM         0.695360
+ZN         0.360445
+B          0.333461
+DIS        0.249929
+CHAS       0.175260
+AGE       -0.376955
+RAD       -0.381626
+CRIM      -0.385832
+NOX       -0.427321
+TAX       -0.468536
+INDUS     -0.483725
+PTRATIO   -0.507787
+LSTAT     -0.737663
+Name: MEDV, dtype: float64
+</code></pre></div></div>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Вопрос</strong></p>
+  <p class="last">Объясните почему значение коэффициента корреляции между <code>MEDV</code> и переменными <code>RM</code> и <code>LSTAT</code> имеет противоположные знаки (исходя из описания переменных).</p>
+</div>
+
+<p>Наиболее высокий коэффициент корреляции у двух переменных: <code class="highlighter-rouge">RM</code> (среднее число комнат) и <code class="highlighter-rouge">LSTAT</code> (процент жителей с низким социальным статусом). Выберем переменную <code class="highlighter-rouge">RM</code> для объяснения <code class="highlighter-rouge">MEDV</code>.</p>
+
+<p>Давайте построим диаграмму рассеяния и визуально оценим взаимосвязь между средним числом комнат на участке и средней ценой дома на этом участке:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">"RM"</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">"MEDV"</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s">'scatter'</span><span class="p">,</span> <span class="n">joint_kws</span><span class="o">=</span><span class="p">{</span><span class="s">'alpha'</span><span class="p">:</span><span class="mf">0.5</span><span class="p">});</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/lr_jointplot.png" /></p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про аномалии и выбросы можно почитать <a href="https://alexanderdyakonov.wordpress.com/2017/04/19/%D0%BF%D0%BE%D0%B8%D1%81%D0%BA-%D0%B0%D0%BD%D0%BE%D0%BC%D0%B0%D0%BB%D0%B8%D0%B9-anomaly-detection/">блоге Александра Дьяконова</a>.</p>
+</div>
+<p>Из диаграммы рассеяния хорошо видно, что имеет место положительная линейная связь между переменными <code class="highlighter-rouge">RM</code> и <code class="highlighter-rouge">MEDV</code>, то есть дома с большим числом комнат имеют более высокую цену. Также можем сделать следующие предположения:</p>
+<ul>
+  <li>16 наблюдений <code class="highlighter-rouge">MEDV</code> имеют значение 50.0. Скорее всего эти наблюдения содержали пропуски или не было возможности указать действительную цену дома, поэтому эти наблюдения могут быть исключены из набора данных.</li>
+  <li>одно наблюдение признака <code class="highlighter-rouge">RM</code> имеет значение 8.78. Это наблюдение может рассматриваться как выброс и может быть исключено из набора данных;</li>
+  <li>два наблюдение признака <code class="highlighter-rouge">RM</code> имеют значения меньше 4. Наблюдения можно рассматривать как выбросы и должны быть исключены из набора данных.</li>
+</ul>
+
+<p>Итак, модель которую мы будем строить имеет следующий вид:</p>
+
+<script type="math/tex; mode=display">MEDV = \theta_0 + \theta_1 \times RM</script>
+
+<p>Нам необходимо найти оптимальные значения для параметров <script type="math/tex">\theta</script>.</p>
 
 <h3 id="метод-градиентного-спуска"><em>Метод градиентного спуска</em></h3>
 
@@ -320,44 +399,6 @@
 
 <script type="math/tex; mode=display">\theta := \theta - \alpha\frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x_i)-y_i)x_i</script>
 
-<p>В репозитории уже есть готовая реализация метода градиентного спуска на языке R, поэтому давайте воспользуемся ей:</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">source</span><span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/Dementiy/pybook-assignments/master/homework11/gradient_descent.R"</span><span class="p">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">gradientDescent</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="m">0.00001</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="o">$</span><span class="n">theta</span><span class="w">
-            </span><span class="p">[,</span><span class="w"> </span><span class="m">1</span><span class="p">]</span><span class="w">
-</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="m">0.008634596</span><span class="w">
-</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="m">0.987622436</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
-    </span><span class="n">main</span><span class="o">=</span><span class="s1">'Full Scale IQ vs Verbal IQ'</span><span class="p">,</span><span class="w">
-    </span><span class="n">xlab</span><span class="o">=</span><span class="s2">"FSIQ"</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"VIQ"</span><span class="p">)</span><span class="w">
-</span><span class="o">&gt;</span><span class="w"> </span><span class="n">abline</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">result</span><span class="o">$</span><span class="n">theta</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="n">result</span><span class="o">$</span><span class="n">theta</span><span class="p">[</span><span class="m">2</span><span class="p">])</span><span class="w">
-</span></code></pre></div></div>
-
-<p><img src="/assets/images/11-ml/linreg3.png" width="70%" /></p>
-
-<p>Таким образом, итоговая модель для предсказания значения вербального интеллекта будет выглядеть следующим образом:</p>
-
-<script type="math/tex; mode=display">VIQ = 0.008634596 + 0.987622436 \times FSIQ</script>
-
-<p>Например, в случае, когда комбинированный полный коэффициент интеллекта принимает значение в 100 баллов, то значение вербального интеллекта будет равно 98.77 баллам:</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="m">0.008634596</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">0.987622436</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">100</span><span class="w">
-</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="m">98.77088</span><span class="w">
-</span></code></pre></div></div>
-
-<p>Построим графики сходимости целевой функции:</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="o">$</span><span class="n">cost_history</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s1">'l'</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> 
-    </span><span class="n">main</span><span class="o">=</span><span class="s1">'Cost function'</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s1">'cost'</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s1">'Iterations'</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
-<p><img src="/assets/images/11-ml/linreg2.png" width="70%" /></p>
-
-<p>Следует заметить, что приведенная реализация метода градиентного спуска основывается на постоянном шаге <script type="math/tex">\alpha</script>, также мы положили число итераций равное 100, но на графике сходимости целевой функции хорошо видно, что мы можем уменьшить требуемое число итераций.</p>
-
-<h3 id="задание"><em>Задание</em></h3>
-
 <p>Вашей задачей является реализовать метод градиентного спуска:</p>
 
 <div class="admonition legend">
@@ -365,9 +406,9 @@
   <p class="last">Имена методов выбраны в соответствии с тем как они названы в <code>sklearn</code>.</p>
 </div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">GDRegression</span><span class="p">:</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">GDRegressor</span><span class="p">:</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
@@ -381,102 +422,270 @@
 
 <p>Метод <code class="highlighter-rouge">predict</code> возвращает вектор прогнозов для новых данных.</p>
 
-<p>Давайте рассмотрим пример использования класса <code class="highlighter-rouge">GDRegression</code>. Для начала загрузим набор данных, выведем пять первых наблюдений и построим диаграмму рассеивания:</p>
+<p>Давайте рассмотрим пример использования класса <code class="highlighter-rouge">GDRegressor</code>. Предварительно разобьем выборку на обучающую и тестовую и обучим модель на обучающей выборке, положив значения для параметров <code class="highlighter-rouge">max_iter=2000</code> и <code class="highlighter-rouge">alpha=0.04</code>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"brain_size.csv"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-   <span class="n">Gender</span>  <span class="n">FSIQ</span>  <span class="n">VIQ</span>  <span class="n">PIQ</span>  <span class="n">Weight</span>  <span class="n">Height</span>  <span class="n">MRI_Count</span>
-<span class="mi">0</span>  <span class="n">Female</span>   <span class="mi">133</span>  <span class="mi">132</span>  <span class="mi">124</span>   <span class="mf">118.0</span>    <span class="mf">64.5</span>     <span class="mi">816932</span>
-<span class="mi">1</span>    <span class="n">Male</span>   <span class="mi">140</span>  <span class="mi">150</span>  <span class="mi">124</span>     <span class="n">NaN</span>    <span class="mf">72.5</span>    <span class="mi">1001121</span>
-<span class="mi">2</span>    <span class="n">Male</span>   <span class="mi">139</span>  <span class="mi">123</span>  <span class="mi">150</span>   <span class="mf">143.0</span>    <span class="mf">73.3</span>    <span class="mi">1038437</span>
-<span class="mi">3</span>    <span class="n">Male</span>   <span class="mi">133</span>  <span class="mi">129</span>  <span class="mi">128</span>   <span class="mf">172.0</span>    <span class="mf">68.8</span>     <span class="mi">965353</span>
-<span class="mi">4</span>  <span class="n">Female</span>   <span class="mi">137</span>  <span class="mi">132</span>  <span class="mi">134</span>   <span class="mf">147.0</span>    <span class="mf">65.0</span>     <span class="mi">951545</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">"FSIQ"</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">"VIQ"</span><span class="p">])</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про кросс-валидацию с примерами можно почитать <a href="https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6">тут</a>.<br /><br />У вас значения <code>model.coef_</code> и <code>model.intercept_</code> могут немного отличаться от полученных мной.</p>
+</div>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Вопрос</strong></p>
+  <p class="last">Дайте интерпретацию полученным значениям для <code>model.coef_</code> и <code>model.intercept_</code>.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s">"RM"</span><span class="p">]]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">"MEDV"</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">GDRegressor</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span>
+<span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">7.07554766</span><span class="p">]),</span> <span class="o">-</span><span class="mf">21.792447302876575</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">'scatter'</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">"RM"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">"MEDV"</span><span class="p">);</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">X_train</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span><span class="p">,</span> <span class="s">'r'</span><span class="p">);</span>
 </code></pre></div></div>
 
-<p>Теперь создадим модель с параметрами <code class="highlighter-rouge">alpha=0.00001</code> и <code class="highlighter-rouge">n_iter=100</code> и обучим ее на всех имеющихся данных:</p>
+<p><img src="/assets/images/11-ml/lr_fitted1.png" /></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c"># to keep it as DataFrame</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="c"># X.insert(0, "Ones", np.ones(len(X)))</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">"VIQ"</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">GDRegression</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span>
-<span class="n">array</span><span class="p">([</span> <span class="mf">0.98762244</span><span class="p">])</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span>
-<span class="mf">0.0086345960432628564</span>
+<h3 id="оценка-качества-модели"><em>Оценка качества модели</em></h3>
+
+<p>Итак, мы нашли коэффициенты <script type="math/tex">\theta</script>, теперь надо как-то оценить качество работы полученной модели. Для этого мы воспользуемся коэффициентом детерминации <script type="math/tex">R^2</script>:</p>
+
+<script type="math/tex; mode=display">R^2 = 1 - \frac{\sum_{i=1}^{m}(y_i - \hat{y_i})^2}{\sum_{i=1}^{m}(y_i - \overline{y})^2}</script>
+
+<p>и среднеквадратичной ошибкой:</p>
+
+<script type="math/tex; mode=display">RMSE = \sqrt{\frac{\sum_{i=1}^{m}(\hat{y_i} - y_i)^2}{m}}</script>
+
+<p><a href="http://www.machinelearning.ru/wiki/index.php?title=%D0%9A%D0%BE%D1%8D%D1%84%D1%84%D0%B8%D1%86%D0%B8%D0%B5%D0%BD%D1%82_%D0%B4%D0%B5%D1%82%D0%B5%D1%80%D0%BC%D0%B8%D0%BD%D0%B0%D1%86%D0%B8%D0%B8">Коэффициент детерминации</a> это доля дисперсии зависимой переменной, объясняемая рассматриваемой моделью. Более точно — это единица минус доля необъяснённой дисперсии (дисперсии случайной ошибки модели, или условной по признакам дисперсии зависимой переменной) в дисперсии зависимой переменной.</p>
+
+<p>Среднеквадратичная ошибка характеризует отклонение реальных данных от линии регрессии и измеряется в тех же единицах, что и зависимая переменная (<script type="math/tex">y</script>).</p>
+
+<p>Вашей задачей является написать две функции для вычисления коэфиициента детерминации и среднеквадратичной ошибки:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="s">""" Root mean squared error """</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">r_squared</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="s">""" R-squared score """</span>
+    <span class="k">pass</span>
 </code></pre></div></div>
 
-<p>Итак, мы получили следующие оценки для параметров <script type="math/tex">\theta</script>: <script type="math/tex">\theta_0 = 0.00863459</script>, <script type="math/tex">\theta_1 = 0.98762244</script>. Не сложно заметить, что они совпадают с предыдущими значениями.</p>
-
-<p>Давайте сделаем несколько прогнозов для имеющихся данных:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:])</span>
-<span class="n">array</span><span class="p">([</span><span class="mf">138.275366</span><span class="p">,</span> <span class="mf">137.287766</span><span class="p">,</span> <span class="mf">131.362163</span><span class="p">,</span> <span class="mf">135.312565</span><span class="p">])</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">Y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">rmse</span><span class="p">(</span><span class="n">Y_pred</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">)</span>
+<span class="mf">6.500256917031142</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r_squared</span><span class="p">(</span><span class="n">Y_pred</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">)</span>
+<span class="mf">0.488226294688234</span>
 </code></pre></div></div>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про анализ регрессионных остатков можно почитать <a href="http://docs.statwing.com/interpreting-residual-plots-to-improve-your-regression/">тут</a> и <a href="http://www.machinelearning.ru/wiki/index.php?title=%D0%90%D0%BD%D0%B0%D0%BB%D0%B8%D0%B7_%D1%80%D0%B5%D0%B3%D1%80%D0%B5%D1%81%D1%81%D0%B8%D0%BE%D0%BD%D0%BD%D1%8B%D1%85_%D0%BE%D1%81%D1%82%D0%B0%D1%82%D0%BA%D0%BE%D0%B2_(%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80)">тут</a>.</p>
+</div>
+
+<p>Построим график истинных значений и прогнозов:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">"Prices: $Y_i$"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">"Predicted prices: $</span><span class="err">\</span><span class="s">hat{Y}_i$"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">"Prices vs Predicted prices: $Y_i$ vs $</span><span class="err">\</span><span class="s">hat{Y}_i$"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/lr_predicted1.png" /></p>
+
+<p>Также построим график остатков (residual plot):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Y_pred</span><span class="p">,</span> <span class="p">(</span><span class="n">Y_pred</span><span class="o">-</span><span class="n">Y_test</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/lr_residuals1.png" /></p>
+
+<p>Можем ли мы улучшить качество нашей модели? Мы выбрали значения для параметров <code class="highlighter-rouge">max_iter</code> и <code class="highlighter-rouge">alpha</code> «случайным» образом. Воспользуйтесь функцией <code class="highlighter-rouge">plot_cost_function</code> для того, чтобы найти оптимальные значения для числа итераций <code class="highlighter-rouge">max_iter</code> и параметра <code class="highlighter-rouge">alpha</code>. Например:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot_cost_function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">GDRegressor</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Обратите внимание, что строится график зависимости MSE (RMSE^2) от номера текущей итерации.</p>
+</div>
+
+<p><img src="/assets/images/11-ml/lr_costfunc1.png" /></p>
+
+<p>Очевидно, что на двух тысячах итераций и скорости обучения <script type="math/tex">0.04</script> алгоритм еще не сошелся. Попробуйте увеличить число итераций или изменить значение <code class="highlighter-rouge">alpha</code> (или и то и другое). В итоге вы должны получить значение для среднеквадратичной ошибки <script type="math/tex">6.433</script>, а для коэффициента детерминации <script type="math/tex">0.498</script>.</p>
+
+<p>В начале мы сделали несколько предположений о выбросах, давайте проверим одно из них. Удалите из набора данных наблюдения, значения которых для признака <code class="highlighter-rouge">MEDV</code> равны 50. И снова воспользуйтесь функцией <code class="highlighter-rouge">plot_cost_function</code> для определения числа итераций и скорости обучения. Также ответье на вопрос «Улучшилось ли качество модели?».</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про важность нормализации признаков можно почитать <a href="https://www.robertoreif.com/blog/2017/12/16/importance-of-feature-scaling-in-data-modeling-part-1-h8nla">тут</a> и <a href="http://sebastianraschka.com/Articles/2014_about_feature_scaling.html#z-score-standardization-or-min-max-scaling">тут</a>.</p>
+</div>
+
+<p>Вы должны были обратить внимание, что увеличилось необходимое число итераций для сходимости алгоритма. Одним из способов повлиять на это является нормализация признаков. Мы будем использовать один из самых простых и распространенных способов нормализации - Standart Scaling (Z-score normalization):</p>
+
+<script type="math/tex; mode=display">x' = \frac{x - \overline{x}}{\sigma_x}</script>
+
+<p>Напишите функцию <code class="highlighter-rouge">z_scaler</code> для нормализации значений:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">z_scaler</span><span class="p">(</span><span class="n">feature</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X_scaled</span> <span class="o">=</span> <span class="n">z_scaler</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y_scaled</span> <span class="o">=</span> <span class="n">z_scaler</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Снова воспользуйтесь функцией <code class="highlighter-rouge">plot_cost_function</code>, но начните с небольшого числа итераций и при необходимости постепенно его увеличивайте.</p>
 
 <h3 id="пример-с-использованием-библиотеки-sklearn"><em>Пример с использованием библиотеки sklearn</em></h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">SGDRegression</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"brain_size.csv"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">"VIQ"</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">SGDRegression</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="s">'none'</span><span class="p">,</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="s">'constant'</span><span class="p">,</span> <span class="n">eta0</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span>
-<span class="n">array</span><span class="p">([</span> <span class="mf">0.97827634</span><span class="p">])</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span>
-<span class="n">array</span><span class="p">([</span> <span class="mf">0.00892904</span><span class="p">])</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:])</span>
-<span class="n">array</span><span class="p">([</span> <span class="mf">136.96761663</span><span class="p">,</span>  <span class="mf">135.98934029</span><span class="p">,</span>  <span class="mf">130.11968225</span><span class="p">,</span>  <span class="mf">134.03278761</span><span class="p">])</span>
+<p>Проделайте теже шаги с использованием библиотеки <code class="highlighter-rouge">sklearn</code>: с помощью функции <code class="highlighter-rouge">plot_cost_function</code> с параметром <code class="highlighter-rouge">normalize=True</code> найдите оптимальное число итераций и значение для скорости обучения, вычислите значение среднеквадратичной ошибки и коэффициента детерминации, постройте графики остатков.</p>
+
+<p>Для того, чтобы построить модель:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Обратите внимание, что скорость обучение задается с помощью параметра <code>eta0</code>.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">SGDRegressor</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">SGDRegressor</span><span class="p">(</span>
+        <span class="n">loss</span><span class="o">=</span><span class="s">'squared_loss'</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="s">'constant'</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+        <span class="n">eta0</span><span class="o">=</span><span class="n">eta0</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="выбор-модели"><em>Выбор модели</em></h3>
+<p>Чтобы нормализовать значения для обучения и валидации модели воспользуйтесь <code class="highlighter-rouge">StandardScaler</code> из библиотеки <code class="highlighter-rouge">sklearn</code>:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">errors</span> <span class="o">=</span> <span class="n">y_hat</span> <span class="o">-</span> <span class="n">y</span>
-    <span class="n">total_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">errors</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">total_error</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">y_hat</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.33</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X_train</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Y_train</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Y_train</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Y_test</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Y_test</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
-    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y_test</span><span class="o">.</span><span class="n">shape</span>
-<span class="p">((</span><span class="mi">28</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">28</span><span class="p">,),</span> <span class="p">(</span><span class="mi">12</span><span class="p">,))</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">GDRegression</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span>
-<span class="n">array</span><span class="p">([</span> <span class="mf">0.98536805</span><span class="p">])</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span>
-<span class="n">array</span><span class="p">([</span> <span class="mf">0.00886374</span><span class="p">])</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">rmse</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-<span class="mf">6.7600543165795841</span>
+<p>Чтобы найти среднеквадратичную ошибку и коэффициент детерминации:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">)</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
-       <span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train</span><span class="p">,</span> <span class="p">:]</span>
-       <span class="n">y_train</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">train</span><span class="p">]</span>
-       <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-       <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-       <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
-<span class="p">[</span><span class="mf">10.3443</span><span class="p">,</span> <span class="mf">7.1500</span><span class="p">,</span> <span class="mf">6.5616</span><span class="p">]</span>
+<p>В результате вы должны получить следующие значения:</p>
+<ul>
+  <li>коэффициенты модели - <script type="math/tex">\theta_0 = 5.85827955e-05, \theta_1 = 0.64210931</script>;</li>
+  <li>коэффициент детерминации - <script type="math/tex">0.561</script>;</li>
+  <li>среднеквадратичная ошибка - <script type="math/tex">0.439</script>.</li>
+</ul>
+
+<h3 id="многомерная-линейная-регрессия"><em>Многомерная линейная регрессия</em></h3>
+
+<p>До этого мы рассматривали только один признак - среднее число комнат на участке. Давайте в нашу модель добавим еще один признак - процент жителей с низким социальным статусом (<code class="highlighter-rouge">LSTAT</code>).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="o">.</span><span class="n">jointplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">"LSTAT"</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">"MEDV"</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s">'scatter'</span><span class="p">,</span> <span class="n">joint_kws</span><span class="o">=</span><span class="p">{</span><span class="s">'alpha'</span><span class="p">:</span><span class="mf">0.5</span><span class="p">});</span>
 </code></pre></div></div>
 
-<p><strong>Задания</strong>:</p>
-<ol>
-  <li>Используя кросс-валидацию построить лучшую модель.</li>
-  <li>Реализовать метод стохастического градиентного спуска.</li>
-</ol>
+<p><img src="/assets/images/11-ml/lr_jointplot2.png" /></p>
+
+<p>Снова воспользуемся функцией <code class="highlighter-rouge">plot_cost_function</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">X_filtered</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s">"MEDV"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">)][[</span><span class="s">"RM"</span><span class="p">,</span> <span class="s">"LSTAT"</span><span class="p">]]</span>
+<span class="n">y_filtered</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s">"MEDV"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">)][</span><span class="s">"MEDV"</span><span class="p">]</span>
+
+<span class="n">plot_cost_function</span><span class="p">(</span>
+    <span class="n">X_filtered</span><span class="p">,</span>
+    <span class="n">y_filtered</span><span class="p">,</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">SGDRegressor</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">max_iters</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="c"># PUT YOUR VALUE HERE</span>
+    <span class="n">eta0</span><span class="o">=</span><span class="err">???</span>       <span class="c"># PUT YOUR VALUE HERE</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Постройте и обучите модель для найденных значений <code class="highlighter-rouge">max_iter</code> и <code class="highlighter-rouge">alpha</code>. Вы должны получить следующие значения для среднеквадратичной ошибки и коэффициента детерминации:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">Y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">),</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">)</span>
+<span class="p">(</span><span class="mf">0.29456340651451396</span><span class="p">,</span> <span class="mf">0.7054365934854863</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Добавление нового признака значительно снизило среднеквадратичную ошибку и повысило описательную способность нашей модели. Давайте построим график остатков:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Y_pred</span><span class="p">,</span> <span class="p">(</span><span class="n">Y_pred</span> <span class="o">-</span> <span class="n">Y_test</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/lr_residuals2.png" /></p>
+
+<p>Из графика хорошо видно, что есть нелинейная зависимость в остатках. Это связано с тем, что процент жителей с низким социальным статусом нелинейно зависит от средней цены на дом и среднего числа комнат:</p>
+
+<p><img src="/assets/images/11-ml/lr_scatter3d.png" /></p>
+
+<p>Эту зависимость наша модель в настоящий момент не описывает. Таким образом, мы должны добавить в нашу модель нелинейные признаки.</p>
+
+<h3 id="добавление-полиномиальных-признаков"><em>Добавление полиномиальных признаков</em></h3>
+
+<p>Итак, для описания нелинейной зависимости мы будем использовать полиномиальную модель. Предположим, что полинома четвертой степени достаточно для описания зависимости. Возможно будет достаточно полинома второй или третьей степени, поэтому, чтобы «занулить» некоторые коэффициенты <script type="math/tex">\theta</script>, мы будем использовать L1-регуляризацию.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">PolynomialFeatures</span>
+
+<span class="n">poly</span> <span class="o">=</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_filtered</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plot_cost_function</span><span class="p">(</span>
+    <span class="n">X_filtered</span><span class="p">,</span>
+    <span class="n">y_filtered</span><span class="p">,</span>
+    <span class="n">SGDRegressor</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">max_iters</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="c"># PUT YOUR VALUE HERE</span>
+    <span class="n">eta0</span><span class="o">=</span><span class="err">???</span><span class="p">,</span>      <span class="c"># PUT YOUR VALUE HERE</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">'penalty'</span><span class="p">:</span> <span class="s">'l1'</span><span class="p">,</span>
+        <span class="s">'alpha'</span><span class="p">:</span> <span class="err">???</span> <span class="c"># PUT YOUR VALUE HERE</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Постройте и обучите модель для найденных значений <code class="highlighter-rouge">max_iter</code> и <code class="highlighter-rouge">alpha</code>. Вы должны получить примерно следующие значения для среднеквадратичной ошибки и коэффициента детерминации:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">mean_squared_error</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">),</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">)</span>
+<span class="p">(</span><span class="mf">0.17508905829300977</span><span class="p">,</span> <span class="mf">0.8249109417069903</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>И снова мы значительно снизили значение среднеквадратичной ошибки и повысили описательную способность нашей модели. Давайте посмотрим на график остатков:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Y_pred</span><span class="p">,</span> <span class="p">(</span><span class="n">Y_pred</span><span class="o">-</span><span class="n">Y_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/11-ml/lr_residuals3.png" /></p>
+
+<p>Также давайте посмотрим на полученные значения коэффициентов модели:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span>
+<span class="c">#        RM           LSTAT        RM^2         RM*LSTAT     LSTAT^2</span>
+<span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>
+<span class="c">#        RM^3         RM^2*LSTAT   RM*LSTAT^2   LSTAT^3      RM^4</span>
+         <span class="mf">0.62890582</span><span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>
+<span class="c">#        RM^3*LSTAT   RM^2*LSTAT^2 RM*LSTAT^3   LSTAT^4</span>
+        <span class="o">-</span><span class="mf">0.52099058</span><span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.</span>        <span class="p">,</span>  <span class="mf">0.0317591</span> <span class="p">]),</span>
+ <span class="n">array</span><span class="p">([</span><span class="mf">0.0018161</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<p>Итак, если мы подставим значения ненулевых коэффициентов, то получим следующиую модель:</p>
+
+<script type="math/tex; mode=display">\text{MEDV} = 0.0018161 + 0.62890582 \times \text{RM}^3 - 0.52099058 \times \text{RM}^3 \times \text{LSTAT} + 0.0317591 \times \text{LSTAT}^4</script>
+
+<p>Модель стала немного сложнее, появился также эффект взаимодействия между признаками <code class="highlighter-rouge">RM</code> и <code class="highlighter-rouge">LSTAT</code>.</p>
+
+<p>Определите какие еще признаки имеет смысл включить в модель.</p>
 
 <h3 id="классификация">Классификация</h3>
 
@@ -747,7 +956,7 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
 
-<h3 id="задание-1"><em>Задание</em></h3>
+<h3 id="задание"><em>Задание</em></h3>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LogisticRegression</span><span class="p">:</span>
     

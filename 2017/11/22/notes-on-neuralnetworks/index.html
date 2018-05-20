@@ -915,11 +915,12 @@ Z^{(4)} = \begin{bmatrix}
 
 <h3 id="gradient-descent">Gradient descent</h3>
 
-<p>Функция <script type="math/tex">J(W)</script> показывает величину ошибки работы нашей сети относительно входных значений <script type="math/tex">X</script> и значений весов. Если мы заменим <script type="math/tex">\hat{y}</script> соответствующим выражением, то получим:</p>
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last"><code>J(W)</code> также называют целевой функцией, функцией ошибок или функцией потерь.</p>
+</div>
 
-<script type="math/tex; mode=display">J(W)=\sum^{n}_{1}\frac{1}{2}(y−tanh⁡(tanh⁡(tanh⁡(X.W_1).W_2).W_3))^2</script>
-
-<p>The function J(W) gives us the error of our network regarding our inputs X and the weights of our network. If we replace y^ by its calculations, our function is:</p>
+<p>Функция <script type="math/tex">J(W)</script> позволяет оценить качество работы нейронной сети и показывает значение ошибки в зависимости от входных параметров <script type="math/tex">X</script> и значений весов <script type="math/tex">W</script>. Если мы заменим <script type="math/tex">\hat{y}</script> соответствующим выражением, то целевая функция примет вид:</p>
 
 <script type="math/tex; mode=display">J(W)=\sum^{n}_{1}\frac{1}{2}(y−tanh⁡(tanh⁡(tanh⁡(X.W_1).W_2).W_3))^2</script>
 
@@ -927,43 +928,53 @@ Z^{(4)} = \begin{bmatrix}
 
 <p><script type="math/tex">J(W)</script> is a function that gives us the cost regarding our examples (the cars) and the weights (W1, W2 and W3). The minimum the cost is, the better our network predicts. Our goal is to minimize the function J(W), i.e: find its minimum. This is an optimization problem. We can’t touch our examples X so we will minimize our function J(W) by tweaking the weights. We will use the batch gradient descent algorithm (with a non convex cost function it is better to use the stochastic gradient descent). We choose the gradient descent as the optimization algorithm but other alternatives could be used. Let’s see what a gradient is.</p>
 
-<p>В математике фунция это правило указывающее как</p>
+<p>В математике «фунция — это соответствие между двумя множествами, такое, что каждому элементу первого множества соответствует один и только один элемент второго множества», другими словами функция выражает идею зависимости величин: с изменением некоторой величины <script type="math/tex">x</script> может изменяться другая величина <script type="math/tex">y</script> и когда мы пишем <script type="math/tex">y = f(x)</script>, мы как раз и имеем в виду эту идею зависимости: переменная <script type="math/tex">y</script> зависит от переменной <script type="math/tex">x</script> по определённому закону  (предписанию, правилу). Закон этот обозначен буквой <script type="math/tex">f</script>. Допустимо, чтобы у функции было множество входных и выходных значений. В случае множества входных значений функция обычно обозначается как <script type="math/tex">z = f(x,y)</script>. В случае множества выходных значений резльутатом функции является вектор этих значений.</p>
 
-<p>In mathematics, a function is a rule explaining how to process an input to give an output. The input is noted as x and the output as y, the function is generally written as <script type="math/tex">y = f(x)</script>. It is possible to have multiple inputs and outputs, multiple inputs is common and looks like <script type="math/tex">z=f(x,y)</script>, multiple outputs is a vector valued function that produces a vector instead of only y.</p>
+<p>Строго говоря входные значения называются независимыми переменными (объясняющими переменными), а выходные значения - зависимыми (откликом). Функция отражает свзяь между зависимой и независимыми переменными.</p>
 
-<p>Строго говоря входные значения называются независимыми переменными, а выходные значения - зависимыми.</p>
+<p>Производная функции играет ключевую роль в машинном обучении и используется среди прочих в методе градиентного спуска. The derivative measures how a change in the independent variables impact the dependent variables (как изменения в <script type="math/tex">x</script> влияют на <script type="math/tex">y</script>). Процесс нахождение производной функции называется дифференцированием.</p>
 
-<p>Strictly speaking the inputs are called independent variables and the outputs dependent variables. The function explains how the dependent variables depend on the independent variables.</p>
+<p>Рассмотрим два случая.</p>
 
-<p>Производная функции играет ключевую роль в машинном обучении и используется среди прочих в методе градиентного спуска.</p>
+<p>В первом случае только одна независимая переменная и одна зависимая (<script type="math/tex">y = f(x)</script>, где <script type="math/tex">x \in R</script> и <script type="math/tex">y \in R</script>). В этом случае «производная функции <script type="math/tex">f(x)</script> в заданной точке <script type="math/tex">x_0</script> равна тангенсу угла наклона касательной к графику функции <script type="math/tex">y=f(x)</script>, проведенной в точке <script type="math/tex">А</script> с абсциссой <script type="math/tex">x_0</script>». Это означает, что для заданного значения <script type="math/tex">x_0</script> функция хорошо аппроксимируется прямой, а значение производной равно угловому коэффициенту касательной к графику этой функциии, проведённой в точке <script type="math/tex">A</script> с абсциссой <script type="math/tex">x_0</script>.</p>
 
-<p>The derivative of a function is a key tool in machine learning, it is leveraged among others by the gradient descent algorithm. The derivative measures how a change in the independent variables impact the dependent variables (how changing x impacts y). The process of finding the derivative is called differentiation.</p>
+<p><img src="/assets/images/notes-on-nn/derivative.png" alt="" /></p>
 
-<p>There are two cases useful to us.</p>
-
-<p>The first case is when there is only one independent variable and one dependent variable (y=f(x) where <script type="math/tex">x \in R</script> and <script type="math/tex">y \in R</script>). In that case the derivative of a function at a given input is the slope of the tangent line to the graph of the function at the given input. It means that at the given input, the function is well-approximated by a straight line, and the derivative is the slope of this straight line. Let’s take an example. For instance if we take the sigmoïd function:</p>
+<p>Давайте в качестве примера рассмотрим сигмоиду:</p>
 
 <script type="math/tex; mode=display">\sigma(x) = \frac{1}{1+e^{-x}}</script>
 
-<p>The derivative of this function is:</p>
+<p>Производная этой функции:</p>
 
 <script type="math/tex; mode=display">\frac{e^x}{(e^x + 1)^2}</script>
+
+<p>Более подробное вычисление производной можно найти <a href="https://www.derivative-calculator.net/">тут</a>. Давайте воспользуемся этой производной для вычисления углового коэффициента в точке <script type="math/tex">x = 2</script>:</p>
 
 <p>You can compute the derivative detail here. Let’s use this derivative to calculate the slope of the tangent at x=2, we have:</p>
 
 <script type="math/tex; mode=display">\frac{e^2}{(e^2 + 1)^2} \approx 0.105</script>
 
+<p>Если мы построим график сигмодиды и касательной в точке <script type="math/tex">x = 2</script>, то увидим, что угловой коэффициент касательной равен <script type="math/tex">\approx 0.105</script>:</p>
+
 <p>If we draw the sigmoid function with its tangent at x=2 we see that the slope of the tangent is <script type="math/tex">\approx 0.105</script>:</p>
 
 <p><img src="/assets/images/notes-on-nn/DNN-FUNC5.png" alt="" /></p>
 
+<p>Наша функция не похожа на сигмоиду, так как мы использовали одинаковые шкалы для <script type="math/tex">x</script> и <script type="math/tex">y</script>, так проще увидеть что угол наклона действительно <script type="math/tex">\approx 0.105</script>.</p>
+
 <p>Our function does not looks like the sigmoid function because we used the same scale for the x and y, it is easier to see that the slope of the tangent, the blue line, is indeed <script type="math/tex">\approx 0.105</script>.</p>
 
+<p>Касательная является лучшей линейной апроксимацией функции в данной точке, она показывает как независимая переменная влияет на зависимую (угол большой или маленький).</p>
+
 <p>The tangent is the best linear approximation of a function at a given value, it shows how the independent variable impacts the dependent variable (small or big slope).</p>
+
+<p>Второй случай это когда есть несколько независимых переменных (<script type="math/tex">y=f(x)</script>, где <script type="math/tex">x \in R^n</script> и <script type="math/tex">y \in R</script>). Так как функция теперь зависит от нескольких перменных, то мы должны найти частную производную функции</p>
 
 <p>The second case is when there are several independent variables (y=f(x) where <script type="math/tex">x \in R^n</script> and <script type="math/tex">y \in R</script>). As the function takes as input several variables, we will now compute the partial derivative of the function with respect to each input variable.</p>
 
 <p>The partial derivative of a function w.r.t (with respect to) one of the input variable is the derivative of the function where others variables held constant. It indicates the rate of change of a function with respect to that variable surrounding an infinitesimally small region near a particular point.</p>
+
+<p>Например, если мы возьмем функцию <script type="math/tex">z=x^2 + y^3</script> с двумя входными параметрами <script type="math/tex">x</script> и <script type="math/tex">y</script>, то производная функции будет вектором состоящим из двух частных производных:</p>
 
 <p>If we take for example, <script type="math/tex">z=x^2+y^3</script>, we have two inputs x and y so the derivative of the function will be a vector containing two partial derivatives:</p>
 
@@ -971,23 +982,36 @@ Z^{(4)} = \begin{bmatrix}
 	\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}
 \end{bmatrix}</script>
 
+<p>Для нахождения частной производной <script type="math/tex">\frac{\partial f}{\partial x}</script> мы фиксируем <script type="math/tex">y^3</script></p>
+
 <p>To calculate the partial derivative <script type="math/tex">\frac{\partial f}{\partial x}</script> we held <script type="math/tex">y^3</script> as a constant so we have:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Производная от константы равна нулю.</p>
+</div>
 
 <script type="math/tex; mode=display">\frac{\partial f}{\partial x} = 2x + 0 = 2x</script>
 
-<p>To calculate the partial derivative <script type="math/tex">\frac{\partial f}{\partial y}</script> we held <script type="math/tex">x^2</script> as a constant so we have:</p>
+<p>Для нахождения частной производной <script type="math/tex">\frac{\partial f}{\partial y}</script> мы фиксируем <script type="math/tex">x^2</script> как константу:</p>
 
 <script type="math/tex; mode=display">\frac{\partial f}{\partial y} = 3y^2 + 0 = 3y^2</script>
 
-<p>So the derivative of our initial function is:</p>
+<p>Таким образом, производная нашей функции:</p>
 
 <script type="math/tex; mode=display">F = \begin{bmatrix}
 	2x, 3y^2
 \end{bmatrix}</script>
 
+<p>Это вектор частных производных, который называют градиентом.</p>
+
 <p>This vector of partial derivatives is the gradient. It represents the slope of the tangent of the graph of the function, it means that the gradient points in the direction of the greatest rate of increase of the function and its magnitude is the slope of the graph in that direction.</p>
 
-<p>For instance, for the previous function, if we are at x=4 and y=2, the corresponding gradient is (8,12) (we are using (2x,3y2)). It means that the function increases more in the direction of y than x. Using the two informations, it gives us a vector (a direction) for which Z will increase the most.</p>
+<p>Например, если мы возьмем точку <script type="math/tex">x=4</script> и <script type="math/tex">y=2</script>, то соответствующее значение градиента будет равно <script type="math/tex">(8, 12)</script>. Это означает, что функция растет в направлении <script type="math/tex">y</script> быстрее чем в направлении <script type="math/tex">x</script>.</p>
+
+<p>For instance, for the previous function, if we are at x=4 and y=2, the corresponding gradient is (8,12) (we are using <script type="math/tex">(2x, 3y^2)</script>). It means that the function increases more in the direction of y than x. Using the two informations, it gives us a vector (a direction) for which Z will increase the most.</p>
+
+<p>Если мы отобразим график предыдущей функции в трехмерном пространстве, то он будет выглядеть следующим образом:</p>
 
 <p>If we draw the previous function in a 3D space, it looks like the following:</p>
 
