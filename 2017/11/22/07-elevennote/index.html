@@ -413,12 +413,17 @@ src/config
 
 <p>Создадим docker-окружение для разработки и запуска нашего проекта. Установите докер для вашей системы (инструкции можно получить <a href="https://docs.docker.com/engine/installation/">тут</a>) и создайте <code class="highlighter-rouge">Dockerfile</code> в корне вашего проекта:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM python:3.6
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>touch Dockerfile
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">Dockerfile</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM python:3.6
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /config
 COPY requirements /config/requirements
-RUN pip install <span class="nt">-r</span> /config/requirements/dev.txt
-RUN mkdir /src<span class="p">;</span>
+RUN pip install -r /config/requirements/dev.txt
+RUN mkdir /src;
 WORKDIR /src
 </code></pre></div></div>
 
@@ -431,6 +436,10 @@ WORKDIR /src
   <p class="last">Обратите внимание на <code>sleep 5</code>. Это очень наивное решение <a href="https://8thlight.com/blog/dariusz-pasciak/2016/10/17/docker-compose-wait-for-dependencies.html">проблемы зависимостей</a> между контейнерами.</p>
 </div>
 
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>touch docker-compose.yml
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">docker-compose.yml</code></p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: '3'
 services:
     nginx:
@@ -461,6 +470,7 @@ services:
 <p><strong>TODO</strong>: Пояснения к docker-compose.yml</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir <span class="nt">-p</span> deploy/uwsgi
+<span class="nv">$ </span>touch deploy/uwsgi/elevennote.ini
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">deploy/uwsgi/elevennote.ini</code></p>
@@ -478,6 +488,7 @@ services:
 <p><strong>TODO</strong>: Пояснения к конфигурации uwsgi</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir deploy/nginx
+<span class="nv">$ </span>touch deploy/nginx/elevennote.conf
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">deploy/nginx/elevennote.conf</code></p>
@@ -628,12 +639,14 @@ server {
 <span class="nv">$ </span>docker-compose restart web
 </code></pre></div></div>
 
+<p><code class="highlighter-rouge">src/notes/tests.py</code></p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
 
 <span class="kn">from</span> <span class="nn">notes.models</span> <span class="kn">import</span> <span class="n">Note</span>
 
 
-<span class="k">class</span> <span class="nc">TestNoteModel</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NoteModelTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">test_can_create_a_new_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">note</span> <span class="o">=</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">'Note title'</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">'Note body'</span><span class="p">)</span>
@@ -657,15 +670,18 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir src/notes/tests
 <span class="nv">$ </span>mv src/notes/tests.py src/notes/tests/test_models.py
-<span class="nv">$ </span>touch src/notest/tests/__init__.py
+<span class="nv">$ </span>touch src/notes/tests/__init__.py
 </code></pre></div></div>
 
 <p>Ваши тесты должны по прежнему проходить.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker-compose run web coverage run --source='.' manage.py test notes
-$ docker-compose run web coverage report
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"coverage==4.5.1"</span> <span class="o">&gt;&gt;</span> requirements/dev.txt
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker-compose run web coverage run <span class="nt">--source</span><span class="o">=</span><span class="s1">'.'</span> manage.py <span class="nb">test </span>notes
+<span class="nv">$ </span>docker-compose run web coverage report
 Name                               Stmts   Miss  Cover
-------------------------------------------------------
+<span class="nt">------------------------------------------------------</span>
 config/__init__.py                     0      0   100%
 config/settings/__init__.py            0      0   100%
 config/settings/base.py               20      0   100%
@@ -683,7 +699,7 @@ notes/models.py                        7      0   100%
 notes/test_models.py                   9      0   100%
 notes/tests/__init__.py                0      0   100%
 notes/views.py                         1      1     0%
-------------------------------------------------------
+<span class="nt">------------------------------------------------------</span>
 TOTAL                                 66     10    85%
 </code></pre></div></div>
 
@@ -703,12 +719,12 @@ TOTAL                                 66     10    85%
 <p>Напишем тест, который будет проверять, что отложенная заметка не является недавно опубликованной:</p>
 
 <p><code class="highlighter-rouge">src/notes/tests/test_models.py</code></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
-<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
 
 <span class="kn">from</span> <span class="nn">notes.models</span> <span class="kn">import</span> <span class="n">Note</span>
 
-<span class="k">class</span> <span class="nc">NoteMethodTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NoteModelTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="c"># ...</span>
 
     <span class="k">def</span> <span class="nf">test_was_published_recently</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1009,7 +1025,7 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 </code></pre></div></div>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir src/accounts/tests
-<span class="nv">$ </span>mv src/accounts/tests.py src/accounts/test_models.py
+<span class="nv">$ </span>mv src/accounts/tests.py src/accounts/tests/test_models.py
 <span class="nv">$ </span>touch src/accounts/tests/__init__.py
 </code></pre></div></div>
 
@@ -1037,6 +1053,10 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
     <span class="k">def</span> <span class="nf">test_string_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s">'user@example.com'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="p">),</span> <span class="s">'user@example.com'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+dg01     | django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency accounts.0001_initial on database 'default'.
 </code></pre></div></div>
 
 <h3 id="добавление-авторизации">Добавление авторизации</h3>
@@ -1135,7 +1155,7 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
         <span class="c"># ...</span>
 </code></pre></div></div>
 
-<p>Далее предлагается загрузить набор стилевых компонентов <a href="https://getbootstrap.com/">bootstrap</a> и поместить их в папку со статичными файлами. Это, в свою очередь, решит обозначенную в начале работы проблему и преобразит внешний вид формы входа.</p>
+<p>Далее предлагается загрузить набор стилевых компонентов <a href="https://getbootstrap.com/">bootstrap</a> и поместить их в папку со статичными файлами.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir src/static
 <span class="nv">$ </span><span class="nb">cd </span>src/static
@@ -1157,7 +1177,7 @@ Destroying <span class="nb">test </span>database <span class="k">for </span><spa
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker <span class="nb">exec</span> <span class="nt">-it</span> dg01 bash
 root@67a3bcc5c881:/src# pip install django-widget-tweaks
 root@67a3bcc5c881:/src# <span class="nb">exit</span>
-<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"django-widget-tweaks==1.4.1"</span> <span class="o">&gt;&gt;</span> requirements/base.txt
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"django-widget-tweaks==1.4.2"</span> <span class="o">&gt;&gt;</span> requirements/base.txt
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">src/config/settings/base.py</code></p>
@@ -1172,7 +1192,7 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 <span class="nv">$ </span>unzip templates01.zip   <span class="c"># If prompted to replace, say (Y)es</span>
 <span class="nv">$ </span>cp <span class="nt">-r</span> templates01/<span class="k">*</span> <span class="nb">.</span>
 <span class="nv">$ </span>rm <span class="nt">-rf</span> templates01 templates01.zip
-<span class="nv">$ </span><span class="nb">cd</span> ..
+<span class="nv">$ </span><span class="nb">cd</span> ../..
 </code></pre></div></div>
 
 <p><img src="/assets/images/07-elevennote/elevennote_signin_new.png" /></p>
@@ -1200,6 +1220,38 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
         <span class="n">login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RegisterView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>touch src/accounts/forms.py
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">src/accounts/forms.py</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+
+<span class="kn">from</span> <span class="nn">accounts.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+
+<span class="k">class</span> <span class="nc">UserCreationForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="n">password1</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">'Password'</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">PasswordInput</span><span class="p">)</span>
+    <span class="n">password2</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">'Password confirmation'</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="o">.</span><span class="n">PasswordInput</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">(</span><span class="s">'email'</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">clean_password2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">password1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password1"</span><span class="p">)</span>
+        <span class="n">password2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"password2"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">password1</span> <span class="ow">and</span> <span class="n">password2</span> <span class="ow">and</span> <span class="n">password1</span> <span class="o">!=</span> <span class="n">password2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">forms</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s">"Passwords don't match"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">password2</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s">"password1"</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">commit</span><span class="p">:</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">user</span>
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">src/accounts/urls.py</code></p>
@@ -1315,7 +1367,9 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 
 <p><code class="highlighter-rouge">src/notes/models.py</code></p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ...</span>
-<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
+
+<span class="n">User</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span>
 
 
 <span class="k">class</span> <span class="nc">Note</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
@@ -1456,6 +1510,37 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s">'notes:detail'</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">'note_id'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">note</span><span class="o">.</span><span class="n">pk</span><span class="p">})</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">404</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">src/notes/tests/test_models.py</code></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
+
+<span class="kn">from</span> <span class="nn">notes.models</span> <span class="kn">import</span> <span class="n">Note</span>
+
+<span class="n">User</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">NoteModelTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
+            <span class="n">email</span><span class="o">=</span><span class="s">"test_user@example.com"</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s">"secret"</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">test_can_create_a_new_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">note</span> <span class="o">=</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">'Note title'</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">'Note body'</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_user</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_string_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">note</span> <span class="o">=</span> <span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">'Note title'</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">'Note body'</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_user</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">note</span><span class="p">),</span> <span class="s">'Note title'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_was_published_recently</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timezone</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">future_note</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">pub_date</span><span class="o">=</span><span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">future_note</span><span class="o">.</span><span class="n">was_published_recently</span><span class="p">(),</span> <span class="bp">False</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h3 id="class-based-views">Class-based views</h3>
@@ -2012,7 +2097,7 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
 
 <h3 id="добавляем-api-с-помощью-drf">Добавляем API с помощью DRF</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"djangorestframework==3.7.7"</span> <span class="o">&gt;&gt;</span> requirements/base.txt
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"djangorestframework==3.8.2"</span> <span class="o">&gt;&gt;</span> requirements/base.txt
 <span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"djangorestframework-jwt==1.11.0"</span> <span class="o">&gt;&gt;</span> requirements/base.txt
 </code></pre></div></div>
 
@@ -2216,6 +2301,13 @@ root@67a3bcc5c881:/src# <span class="nb">exit</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">reverse</span><span class="p">(</span><span class="s">'api:note-detail'</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">"pk"</span><span class="p">:</span> <span class="n">pk</span><span class="p">}))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s">"detail"</span><span class="p">],</span> <span class="s">"Not found."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">Note</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_user2</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="vue">Vue</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ vue create elevennote-frontend
+$ npm install --save router
+$ npm install --save axios
 </code></pre></div></div>
 
 <h3 id="задание">Задание</h3>

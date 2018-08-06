@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Энтропия и кросс-энтропия</title>
+  <meta name="description" content="Энтропия">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2018/07/05/crossentropy/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Энтропия и кросс-энтропия">
+  <meta name="twitter:description" content="Энтропия">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Энтропия и кросс-энтропия</h1>
+    
+    <p class="post-meta"><time datetime="2018-07-05T00:00:00+03:00" itemprop="datePublished">Jul 5, 2018</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/datascience/">datascience</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h3 id="энтропия">Энтропия</h3>
+
+<p><a href="https://www.khanacademy.org/computing/computer-science/informationtheory/moderninfotheory/v/information-entropy">Академия Хана: Information Entropy</a></p>
+
+<script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<p>Допустим у нас есть две механических машины, которые печатают сообщения из алфавита <script type="math/tex">{A, B, C, D}</script>. Символы, печатаемые первой машиной, распределены равновероятно, то есть, появление каждого нового символа имеет вероятность <script type="math/tex">0.25</script>:</p>
+
+<script type="math/tex; mode=display">P(A) = 0.25 \\
+P(B) = 0.25 \\
+P(C) = 0.25 \\
+P(D) = 0.25</script>
+
+<p>Символы, печатаемые второй машиной, имеют иное распределение:</p>
+
+<script type="math/tex; mode=display">P(A) = 0.5 \\
+P(B) = 0.125 \\
+P(C) = 0.125 \\
+P(D) = 0.25</script>
+
+<p><img src="/assets/images/notes-on-entropy/entropy1.jpg" /></p>
+
+<p>Вопрос «Какая из двух машин предоставляет нам больше информации?» или мы можем переформулировать вопрос: «Если вам необходимо предсказать следующий символ, то сколько вопросов, на которые можно ответить <em>да</em> или <em>нет</em>, потребуется задать?».</p>
+
+<p>Давайте рассмотрим первую машину. Нашим первым вопросом может быть «Это символ A или B?». Так все символы появляются равновероятно, то с вероятностью <script type="math/tex">0.5</script> это будет «A или B» и с вероятностью <script type="math/tex">0.5</script> это будет «C или D». После того как мы получим ответ, нам останется задать еще один вопрос, например, «Это A?». И после того как мы получим ответ на наш последний вопрос, мы будем знать какой именно символ был следующим в последовательности, выдаваемой машиной один. Таким образом, нам достаточно двух вопросов, чтобы предсказать какой символ был сгенерирован машиной номер один.</p>
+
+<p><img src="/assets/images/notes-on-entropy/entropy2.jpg" /></p>
+
+<p>Что же касается второй машины, то мы конечно же можем задавть теже самые вопросы, но мы знаем, что у символов другое распределение, например, вероятность появления символа A равна <script type="math/tex">0.5</script>, соответственно он будет появляться в последовательности чаще остальных символов, поэтому более разумным было бы задать первый вопрос «Это A?». Если же ответ отрицательный, то следующий символ, который имеет более высокий шанс появиться в последовательности D, поэтому следующим вопросом может быть «Это D?». Если же ответ и на этот вопрос отрицательный, то мы задаем третий и последний вопрос, например, «Это B?».</p>
+
+<p><img src="/assets/images/notes-on-entropy/entropy3.jpg" /></p>
+
+<p>Сколько в среднем вопросов нам нужно задать, чтобы определить символ в последовательности генерируемой второй машиной?</p>
+
+<p>Для этого мы можем воспользоваться формулой для вычисления математического ожидания дискретной случайной величины:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\textit{#вопросов} =& p_A \times 1 + p_B \times 2 + p_C \times 3 + p_D \times 2 \\
+=& 0.5 \times 1 + 0.125 \times 3 + 0.125 \times 3 + 0.25 \times 2 \\
+=& 1.75
+\end{aligned} %]]></script>
+
+<p>Аналогично посчитаем среднее число вопросов для первой машины:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\textit{#вопросов} =& p_A \times 2 + p_B \times 2 + p_C \times 2 + p_D \times 2 \\
+=& 0.25 \times 2 + 0.25 \times 2 + 0.25 \times 2 + 0.25 \times 2 \\
+=& 2.0
+\end{aligned} %]]></script>
+
+<p>Запишем в общем виде:</p>
+
+<script type="math/tex; mode=display">H = \sum_{i=1}^{n}p_i \times \textit{число_вопросов}_i</script>
+
+<p>Где:</p>
+
+<script type="math/tex; mode=display">\textit{число_вопросов}_i = \log_2\left(\frac{1}{p_i}\right)</script>
+
+<p><img src="/assets/images/notes-on-entropy/entropy4.jpg" /></p>
+
+<p>Окончательно можем записать формулу для вычисления энтропии как:</p>
+
+<script type="math/tex; mode=display">H = \sum_{i=1}^{n}p_i \times \log_2\left(\frac{1}{p_i}\right) = -\sum_{i=1}^{n}p_i \times \log_2(p_i)</script>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choices</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log2</span>
+
+<span class="n">distribution1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'A'</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="s">'B'</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="s">'C'</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="s">'D'</span><span class="p">:</span> <span class="mf">0.25</span>
+<span class="p">}</span>
+
+<span class="n">sequence1</span> <span class="o">=</span> <span class="n">choices</span><span class="p">(</span>
+    <span class="n">population</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">distribution1</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">distribution1</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="n">distribution2</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'A'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s">'B'</span><span class="p">:</span> <span class="mf">0.125</span><span class="p">,</span>
+    <span class="s">'C'</span><span class="p">:</span> <span class="mf">0.125</span><span class="p">,</span>
+    <span class="s">'D'</span><span class="p">:</span> <span class="mf">0.25</span>
+<span class="p">}</span>
+
+<span class="n">sequence2</span> <span class="o">=</span> <span class="n">choices</span><span class="p">(</span>
+    <span class="n">population</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">distribution2</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">distribution2</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ch</span><span class="p">:</span> <span class="n">log2</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">distribution1</span><span class="p">[</span><span class="n">ch</span><span class="p">]),</span> <span class="n">sequence1</span><span class="p">))</span>
+<span class="mf">200.0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ch</span><span class="p">:</span> <span class="n">log2</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">distribution2</span><span class="p">[</span><span class="n">ch</span><span class="p">]),</span> <span class="n">sequence2</span><span class="p">))</span>
+<span class="mf">170.0</span>
+</code></pre></div></div>
+
+<h3 id="кросс-энтропия">Кросс-энтропия</h3>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

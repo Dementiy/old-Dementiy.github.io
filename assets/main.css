@@ -1,10 +1,11 @@
 @import url("https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic");
 @import url("https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200,300,400&subset=cyrillic");
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600,600i,700,700i&subset=cyrillic");
 /** Reset some basic elements */
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
-body { font: 400 18px/1.5 "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif; color: #111; background-color: #ffffff; -webkit-text-size-adjust: 100%; -webkit-font-feature-settings: "kern" 1; -moz-font-feature-settings: "kern" 1; -o-font-feature-settings: "kern" 1; font-feature-settings: "kern" 1; font-kerning: normal; }
+body { font: 300 18px/1.5 "Source Sans Pro", "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif; color: #111; background-color: #ffffff; -webkit-text-size-adjust: 100%; -webkit-font-feature-settings: "kern" 1; -moz-font-feature-settings: "kern" 1; -o-font-feature-settings: "kern" 1; font-feature-settings: "kern" 1; font-kerning: normal; }
 
 table { width: 100%; margin: 0 0 20px 0; text-align: left; }
 
@@ -25,7 +26,7 @@ ul, ol { margin-left: 30px; }
 li > ul, li > ol { margin-bottom: 0; }
 
 /** Headings */
-h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+h1, h2, h3, h4, h5, h6 { font-weight: 300; }
 h1 code, h2 code, h3 code, h4 code, h5 code, h6 code { font-size: inherit; }
 
 /** Links */
@@ -189,7 +190,7 @@ a { color: #06e; text-decoration: none; }
 
 a:visited { color: #06e; }
 
-blockquote { font-size: 16px; }
+blockquote { font-family: "Alegreya Sans"; font-size: 18px; }
 
 h1, h2, h3, h4, h5, h6 { font-family: "Alegreya Sans"; }
 
