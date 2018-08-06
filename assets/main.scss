@@ -4,13 +4,14 @@
 
 @import url('https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic');
 @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200,300,400&subset=cyrillic');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600,600i,700,700i&subset=cyrillic');
 //@import url('https://fonts.googleapis.com/css?family=Alegreya:400,400i,700,700i&amp;subset=cyrillic|Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic');
 
 // Our variables
-$base-font-family: "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif;
+$base-font-family: "Source Sans Pro", "PT Serif", "Roboto", Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif;
 $monospace-font-family: 'IBM Plex Mono', Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace;
 $base-font-size:   18px; // 24px;
-$base-font-weight: 400;
+$base-font-weight: 300;
 $small-font-size:  $base-font-size * 0.875;
 $base-line-height: 1.5;
 
@@ -78,7 +79,8 @@ a:visited {
 }
 
 blockquote {
-    font-size: 16px;
+    font-family: "Alegreya Sans";
+    font-size: 18px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -222,3 +224,4 @@ td {
     padding: 2px;
     padding-left: 4px;
 }
+
