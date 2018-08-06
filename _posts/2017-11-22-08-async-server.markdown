@@ -15,6 +15,11 @@ categories: python golang web практики
   <p class="last">Узнать больше о сетевом программировании можно в материалах к курсу <a href="http://lecturesnet.readthedocs.io/net/low-level/ipc/socket/intro.html">Сетевое программирование</a> ИнФО УРфУ и в книжке Джона Гоерзена <a href="http://www.apress.com/us/book/9781430230038">Foundations of Python Network Programming</a>. Также можно прочитать <a href="http://micromind.me/posts/writing-python-web-server-part-1">эту</a> небольшую статью с примерами на python.</p>
 </div>
 
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Большинство методов работы с сокетами (<code>accept</code>, <code>recv</code>, <code>send</code> и т.д.) в CPython являются обертками над соответствующими системными вызовами, которые реализованы в модуле <a href="https://github.com/python/cpython/blob/master/Modules/socketmodule.c">socketmodule.c</a>, например, реализацию метода <code>accept</code> можно посмотреть <a href="https://github.com/python/cpython/blob/master/Modules/socketmodule.c#L2466">тут</a>.</p>
+</div>
+
 ```python
 import socket
 
@@ -23,6 +28,7 @@ def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     serversocket.bind((host, port))
     serversocket.listen(5)
+    socket.setdefaulttimeout(10)
 
     print(f"Starting Echo Server at {host}:{port}")
     try:
@@ -91,6 +97,12 @@ Bye-bye: 127.0.0.1:61401
 ```
 
 Следует отметить несколько моментов:
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">С помощью <code>setdefaulttimeout</code> мы указали, что сервер должен ожидать данные от клиента не более десяти секунд, а затем закрывать соединение. Указание таймаутов является хорошей практикой при написании приложений взаимодействующих по сети. Вы можете увеличить это время для экспериментов.</p>
+</div>
+
 - `recv` является **блокирующим вызовом**, то есть, наша программа не продолжит выполнение пока мы не получим данные от клиента;
 - клиент сам решает, когда завершить передачу данных, таким образом, пока не будет закрыто текущее соединение (клиентский сокет) мы **не можем** принимать соединения от других клиентов.
 
@@ -140,7 +152,12 @@ if __name__ == "__main__":
     main()
 ```
 
-Нагрузочное тестирование мы будем проивзодить с помощью модуля [locustio](https://locust.io/). Опишем поведение пользователя:
+Нагрузочное тестирование мы будем проводить с помощью модуля [locustio](https://locust.io/). Опишем поведение пользователя:
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Попробуйте поэкспериментировать с различными параметрами, например, изменить максимальное число клиентов в очереди, увеличить скорость запросов от пользователей, увеличить число самих пользователей, изменить время ожидания БД.</p>
+</div>
 
 ```python
 from locust import HttpLocust, TaskSet, task
@@ -161,21 +178,16 @@ $ python web_singlethread.py &
 $ locust -f locustfile.py --host=http://127.0.0.1:9090/
 ```
 
-<div class="admonition legend">
-  <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">Попробуйте поэкспериментировать с различными параметрами, например, изменить максимальное число клиентов в очереди, увеличить скорость запросов от пользователей, увеличить число самих пользователей, изменить время ожидания БД.</p>
-</div>
-
 ![](/assets/images/08-async-server/load_testing_single.png)
 
 Мы получили ожидаемые результаты: каждую секунду мы можем обработать не более 3-х запросов, медианное время ожидания ответа составляет 20 секунд.
+
+Чтобы решить проблему мы можем для каждого клиента создавать новый поток:
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
   <p class="last">Про работу с модулем <code>threading</code> можно почитать на <a href="https://pymotw.com/3/threading/index.html">PyMOTW</a>.</p>
 </div>
-
-Чтобы решить проблему мы можем для каждого клиента создавать новый поток:
 
 ```python
 import socket
@@ -188,7 +200,7 @@ logging.basicConfig(
 )
 
 
-def client_handler(sock, address, port):
+def client_handler(sock: socket.socket, address: str, port: int) -> None:
     while True:
         try:
             message = sock.recv(1024)
@@ -211,33 +223,40 @@ def client_handler(sock, address, port):
 
 
 def main(host: str = 'localhost', port: int = 9090) -> None:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-    sock.bind((host, port))
-    sock.listen(128)
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    serversocket.bind((host, port))
+    serversocket.listen(128)
+    socket.setdefaulttimeout(10)
+
     print(f"Starting TCP Echo Server at {host}:{port}")
     try:
         while True:
-            client_sock, (client_addr, client_port) = sock.accept()
-            logging.debug(f"New client: {client_addr}:{client_port}")
+            clientsocket, (client_address, client_port) = serversocket.accept()
+            logging.debug(f"New client: {client_address}:{client_port}")
             client_thread = threading.Thread(
                 target=client_handler,
-                args=(client_sock, client_addr, client_port))
+                args=(clientsocket, client_address, client_port))
             client_thread.daemon = True
             client_thread.start()
     except KeyboardInterrupt:
         print("Shutting down")
     finally:
-        sock.close()
+        serversocket.close()
 
 
 if __name__ == "__main__":
     main()
 ```
 
+Запустите сервер:
+
 ```
 $ python tcp_multithread.py
+Starting TCP Echo Server at localhost:9090
 ```
+
+В этот раз выполните несколько параллельных соединений с разных терминалов с помощью `netcat`, на стороне сервера вы должны видеть примерно следующее:
 
 ```
 [DEBUG] (MainThread) New client: 127.0.0.1:53713
@@ -249,13 +268,15 @@ $ python tcp_multithread.py
 ...
 ```
 
+Итак, для каждого нового клиента мы запускаем обработчик  `client_handler` в новом потоке, что позволяет нам не блокировать основной поток выполнения и продолжать принимать новые соединения. Давайте теперь проверим как многопоточный сервер будет выдерживать нагрузку:
+
 ```python
 import socket
 import threading
 import time
 
 
-def client_handler(sock):
+def client_handler(sock: socket.socket):
     _ = sock.recv(1024)
     time.sleep(0.3)
     sock.sendall(
@@ -293,12 +314,9 @@ if __name__ == "__main__":
 
 ![](/assets/images/08-async-server/load_testing_multi.png)
 
-<div class="admonition legend">
-  <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">Про процессы и потоки доступным языком можно почитать <a href="http://anuragjain67.github.io/writing/2016/01/15/problem-with-multithreading-in-python">тут</a>.</p>
-</div>
+Ситуация значительно улучшилась, теперь среднее время ответа на клиентский запрос равно времени ожидания «ответа от БД».
 
-Как много тредов мы можем создать?
+Как много потоков мы можем создать?
 
 ```py
 import threading
@@ -334,6 +352,10 @@ Traceback (most recent call last):
 RuntimeError: can't start new thread
 ```
 
+> If the requests require a lot of CPU time, RAM or network bandwidth, this may slow down the server if many requests are processed at the same time. For instance, if memory consumption causes the server to swap memory in and out of disk, this will result in a serious performance penalty. By controlling the maximum number of threads you can minimize the risk of resource depletion, both due to limiting the memory taken by the processing of the requests, but also due to the limitation and reuse of the threads. Each thread take up a certain amount of memory too, just to represent the thread itself.
+
+Вместо создания нового потока на каждого нового клиента, мы создадим простейший пул потоков. Все потоки в пуле разделяют серверный сокет и могут выполнять на нем `accept`. Если все потоки заняты обработкой клиентских запросов, то клиент будет ждать в очереди, пока не осовободится один из потоков в пуле.
+
 ```py
 import socket
 import threading
@@ -346,7 +368,7 @@ logging.basicConfig(
 )
 
 
-def worker_thread(serversocket, shutdown_event):
+def worker_thread(serversocket: socket.socket, shutdown_event: threading.Event) -> None:
     while not shutdown_event.isSet():
         try:
             clientsock, (client_address, client_port) = serversocket.accept()
@@ -382,6 +404,7 @@ def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     serversocket.bind((host, port))
     serversocket.listen(128)
+
     print(f"Starting TCP Echo Server at {host}:{port}")
 
     NUMBER_OF_THREADS = 10
@@ -423,6 +446,19 @@ if __name__ == "__main__":
 ...
 ```
 
+Важно понимать, что потоки не выполнялись парарллельно, потому что в Python есть **глобальная блокировка интерпретатора** (Global Interpreter Lock, GIL), которая не позволяет потокам действительно выполняться параллельно. Небольшая выдержка из официальной [документации](https://docs.python.org/3/c-api/init.html#thread-state-and-the-global-interpreter-lock):
+
+> **The Python interpreter is not fully thread-safe**. In order to support multi-threaded Python programs, there’s a global lock, called the global interpreter lock or GIL, that must be held by the current thread before it can safely access Python objects. Without the lock, even the simplest operations could cause problems in a multi-threaded program: for example, **when two threads simultaneously increment the reference count of the same object, the reference count could end up being incremented only once instead of twice**.
+
+> Therefore, the rule exists that only the thread that has acquired the GIL may operate on Python objects or call Python/C API functions. In order to emulate concurrency of execution, the interpreter regularly tries to switch threads (see sys.setswitchinterval()). **The lock is also released around potentially blocking I/O operations like reading or writing a file, so that other Python threads can run in the meantime.**
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Про процессы и потоки доступным языком можно почитать <a href="http://anuragjain67.github.io/writing/2016/01/15/problem-with-multithreading-in-python">тут</a>.</p>
+</div>
+
+Таким образом, мы не утилизируем в полном объеме доступные ресурсы процессора. Для решения этой проблемы мы можем создавать процессы, вместо потоков.
+
 ```py
 import socket
 import multiprocessing
@@ -436,14 +472,14 @@ logging.basicConfig(
 )
 
 
-def worker_process(serversocket):
+def worker_process(serversocket: socket.socket) -> None:
     while True:
-        clientsock, (client_address, client_port) = serversocket.accept()
+        clientsocket, (client_address, client_port) = serversocket.accept()
         logging.debug(f"New client: {client_address}:{client_port}")
 
         while True:
             try:
-                message = clientsock.recv(1024)
+                message = clientsocket.recv(1024)
                 logging.debug(f"Recv: {message} from {client_address}:{client_port}")
             except OSError:
                 break
@@ -453,13 +489,13 @@ def worker_process(serversocket):
 
             sent_message = message
             while True:
-                sent_len = clientsock.send(sent_message)
+                sent_len = clientsocket.send(sent_message)
                 if sent_len == len(sent_message):
                     break
                 sent_message = sent_message[sent_len:]
             logging.debug(f"Send: {message} to {client_address}:{client_port}")
 
-        clientsock.close()
+        clientsocket.close()
         logging.debug(f"Bye-bye: {client_address}:{client_port}")
 
 
@@ -469,16 +505,26 @@ def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket.bind((host, port))
     serversocket.listen(128)
 
+    print(f"Starting TCP Echo Server at {host}:{port}")
+
     NUMBER_OF_PROCESS = multiprocessing.cpu_count()
+    processes = []
     logging.debug(f"Number of processes: {NUMBER_OF_PROCESS}")
     for _ in range(NUMBER_OF_PROCESS):
         process = multiprocessing.Process(target=worker_process,
             args=(serversocket,))
-        process.daemon = True
         process.start()
+        processes.append(process)
 
-    while True:
-        time.sleep(1)
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Shutting down...")
+    finally:
+        for p in processes:
+            p.terminate()
+        serversocket.close()
 
 
 if __name__ == "__main__":
@@ -588,6 +634,15 @@ if __name__ == "__main__":
 ...
 ```
 
+До этого мы рассматривали примеры с блокирующими операциями чтения/записи. Давайте рассмотрим пример с использованием [неблокирующих операций и мультиплексирования](https://eklitzke.org/blocking-io-nonblocking-io-and-epoll):
+
+> There’s a few I/O multiplexing system calls. Examples of I/O multiplexing calls include select (defined by POSIX), the epoll family on Linux, and the kqueue family on BSD. These all work fundamentally the same way: they let the kernel know what events (typically read events and write events) are of interest on a set of file descriptors, and then they block until something of interest happens. For instance, you might tell the kernel you are interested in just read events on file descriptor X, both read and write events on file descriptor Y, and just write events on file descriptor Z.
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">В библиотеке Python, начиная с версии 3.4, есть модуль <a href="https://docs.python.org/3/library/selectors.html"><code>selectors</code></a>, который построен поверх модуля <code>select</code> и позволяет автоматически выбрать наиболее эффективную реализация мультиплексирования для целевой ОС.</p>
+</div>
+
 ```py
 import socket
 import select
@@ -602,7 +657,7 @@ read_waiters = {}
 write_waiters = {}
 connections = {}
 
-def accept_handler(serversocket):
+def accept_handler(serversocket: socket.socket) -> None:
     clientsocket, (client_address, client_port) = serversocket.accept()
     clientsocket.setblocking(False)
     logging.debug(f"New client: {client_address}:{client_port}")
@@ -610,7 +665,7 @@ def accept_handler(serversocket):
     read_waiters[clientsocket.fileno()] = (recv_handler, (clientsocket.fileno(),))
     read_waiters[serversocket.fileno()] = (accept_handler, (serversocket,))
 
-def recv_handler(fileno):
+def recv_handler(fileno) -> None:
     def terminate():
         del connections[clientsocket.fileno()]
         clientsocket.close()
@@ -631,7 +686,7 @@ def recv_handler(fileno):
     logging.debug(f"Recv: {message} from {client_address}:{client_port}")
     write_waiters[fileno] = (send_handler, (fileno, message))
 
-def send_handler(fileno, message):
+def send_handler(fileno, message) -> None:
     clientsocket, client_address, client_port = connections[fileno]
     sent_len = clientsocket.send(message)
     logging.debug("Send: {} to {}:{}".format(message[:sent_len], client_address, client_port))
@@ -640,7 +695,7 @@ def send_handler(fileno, message):
     else:
         write_waiters[fileno] = (send_handler, (fileno, message[sent_len:]))
 
-def main(host='localhost', port=9090):
+def main(host: str = 'localhost', port: int = 9090) -> None:
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.setblocking(False)
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
@@ -715,7 +770,7 @@ loop.close()
   <p class="last">Начиная с версии Python 3.6 модули <code>asyncore</code> и <code>asynchat</code> считаются устаревшими (deprecated) и рекомендуется использовать модуль <a href="https://docs.python.org/3.6/library/asyncio.html#module-asyncio">asyncio</a>.</p>
 </div>
 
-Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов `asyncore.dispatcher` и `asynchat.async_chat`. Каждый созданный канал добавляется в глобальный `map` (словарь вида: `дескриптор сокета: канал`), который используется в функции `loop()`. Вызов функции `loop()` активирует один из механизмов "пулинга" (`select`, `poll`, `epoll`), который продолжает работать до тех пор, пока все каналы не будут закрыты.
+Идея лежащая в основе модулей заключается в создании одного или нескольких сетевых каналов (network channels) - экземпляров классов `asyncore.dispatcher` и `asynchat.async_chat`. Каждый созданный канал добавляется в глобальный `map` (словарь вида: `дескриптор сокета: канал`), который используется в функции `loop()`. Вызов функции `loop()` активирует один из механизмов опроса сокетов (`select`, `poll`, `epoll`), который продолжает работать до тех пор, пока все каналы не будут закрыты.
 
 Рассмотрим простой пример сервера, который на каждое новое соединение создает свой обработчик (обратите внимание, что экземпляры классов `AsyncHTTPServer` и `AsyncHTTPRequestHandler` являются сетевыми каналами):
 
