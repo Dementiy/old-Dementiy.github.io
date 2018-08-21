@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Лекция 02. Управляющие конструкции</title>
+  <meta name="description" content="Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2018/08/11/02-control-statements/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Лекция 02. Управляющие конструкции">
+  <meta name="twitter:description" content="Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения.">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Лекция 02. Управляющие конструкции</h1>
+    
+    <p class="post-meta"><time datetime="2018-08-11T00:00:00+03:00" itemprop="datePublished">Aug 11, 2018</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D0%B8/">лекции</a>
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения.</p>
+
+<script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<h3 id="условия">Условия</h3>
+
+<p>Для проверки условий и выполнения соотвествующих инструкций используется конструкция <code class="highlighter-rouge">if-elif-else</code> со следующим синтаксисом:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Отступы имеют значение</strong></p>
+  <p class="last">В Python, в отличие от других языков программирования, тело некоторого блока (условия, цикла, функции, класса) обозначается отступами.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">something1</span><span class="p">:</span>
+    <span class="n">do1</span><span class="p">()</span>
+<span class="k">elif</span> <span class="n">something2</span><span class="p">:</span>
+    <span class="n">do2</span><span class="p">()</span>
+<span class="k">elif</span> <span class="n">something3</span><span class="p">:</span>
+    <span class="n">do3</span><span class="p">()</span>
+<span class="c"># ...</span>
+<span class="k">elif</span> <span class="n">somethingN</span><span class="p">:</span>
+    <span class="n">doN</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">do_something_else</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Давайте рассмотрим пример тела (содержимого) простой функции, используемой в качестве функции активации в нейронных сетях - <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLU</a> (Rectified Linear Units), которая представляет собой функцию, которая возвращает положительное или нулевое значение аргумента:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="mf">0.4</span>    <span class="c"># 1</span>
+<span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span> <span class="c"># 2</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># 3</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span>  <span class="c"># 5</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>   <span class="c"># 6</span>
+</code></pre></div></div>
+
+<p>Условная конструкция получилась достаточно простой. Давайте посмотрим на список инструкций, которые будет выполнять интерпретатор (в одной из следующих лекций мы будем говорить о том откуда берутся эти инструкции):</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Да, да, весь код ваших программ <b>компилируется</b> в байт-код или другими словами в набор инструкций, которые и будут выполняться интерпретатором CPython. Краткое описание инструкций можно найти <a href="https://docs.python.org/3/library/dis.html#python-bytecode-instructions">тут</a>.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">dis</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"""..."""</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+  <span class="mi">2</span>           <span class="mi">4</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+              <span class="mi">8</span> <span class="n">COMPARE_OP</span>               <span class="mi">1</span> <span class="p">(</span><span class="o">&lt;=</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">18</span>
+
+  <span class="mi">3</span>          <span class="mi">12</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">4</span> <span class="p">(</span><span class="n">to</span> <span class="mi">22</span><span class="p">)</span>
+
+  <span class="mi">5</span>     <span class="o">&gt;&gt;</span>   <span class="mi">18</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+             <span class="mi">20</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+  <span class="mi">6</span>     <span class="o">&gt;&gt;</span>   <span class="mi">22</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+             <span class="mi">24</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+             <span class="mi">26</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">28</span> <span class="n">POP_TOP</span>
+             <span class="mi">30</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">32</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Первые две инструкции соответствуют связыванию имени <code class="highlighter-rouge">x</code> со значением <code class="highlighter-rouge">0.4</code>. Следующие четыре инструкции посвящены сравнению <code class="highlighter-rouge">x</code> с нулем. Если результат сравнения оказался ложью, то мы переходим (<code class="highlighter-rouge">POP_JUMP_IF_FALSE</code>) к выполнению инструкции под номером 18, в противном случае, переменная <code class="highlighter-rouge">x</code> связывается со значением <code class="highlighter-rouge">0</code> и мы переходим (<code class="highlighter-rouge">JUMP_FORWARD</code>) к выполнению инструкции под номером 22. Последние шесть инструкций предназначены для вывода содержимого <code class="highlighter-rouge">x</code>.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Тернарный оператор в Си: <code>x = x &lt;= 0 ? 0 : x</code>.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"x = 0 if x &lt;= 0 else x"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">COMPARE_OP</span>               <span class="mi">1</span> <span class="p">(</span><span class="o">&lt;=</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">12</span>
+              <span class="mi">8</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">2</span> <span class="p">(</span><span class="n">to</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">12</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">14</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<h3 id="примеры">Примеры</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">email</span> <span class="o">=</span> <span class="s">"Dementiy@yandex.ru"</span>
+<span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="s">"yandex.ru"</span><span class="p">,</span> <span class="s">"mail.ru"</span><span class="p">,</span> <span class="s">"gmail.com"</span><span class="p">]</span>
+
+<span class="k">if</span> <span class="s">"@"</span> <span class="ow">in</span> <span class="n">email</span> <span class="ow">and</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'@'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Email указан верно"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Email указан не верно"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mark</span> <span class="o">=</span> <span class="mi">71</span>
+
+<span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">91</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'A'</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">85</span><span class="p">:</span>
+        <span class="n">grade</span> <span class="o">=</span> <span class="s">'B'</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">75</span><span class="p">:</span>
+            <span class="n">grade</span> <span class="o">=</span> <span class="s">'C'</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">67</span><span class="p">:</span>
+                <span class="n">grade</span> <span class="o">=</span> <span class="s">'D'</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">:</span>
+                    <span class="n">grade</span> <span class="o">=</span> <span class="s">'E'</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">grade</span> <span class="o">=</span> <span class="s">'F'</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">grade</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mark</span> <span class="o">=</span> <span class="mi">71</span>
+
+<span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">91</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'A'</span>
+<span class="k">elif</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">85</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'B'</span>
+<span class="k">elif</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">75</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'C'</span>
+<span class="k">elif</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">67</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'D'</span>
+<span class="k">elif</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'E'</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="s">'F'</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">grade</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="циклы">Циклы</h3>
+
+<p>«Цикл со счётчиком» — цикл, в котором некоторая переменная изменяет своё значение от заданного начального значения до конечного значения с некоторым шагом, и для каждого значения этой переменной тело цикла выполняется один раз.</p>
+
+<p>Синтаксис:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+    <span class="n">expression</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</code></pre></div></div>
+
+<table>
+    <thead><tr><td><b>Шаблон</b></td><td><b>Пример</b></td><td><b>Результат</b></td></tr></thead>
+    <tr><td>range(end)</td><td>range(5)</td><td>[0, 1, 2, 3, 4]</td></tr>
+    <tr><td>range(start, end)</td><td>range(1, 5)</td><td>[1, 2, 3, 4]</td></tr>
+    <tr><td>range(start, end, step)</td><td>range(1, 10, 2)</td><td>[1, 3, 5, 7, 9]</td></tr>
+</table>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"for i in range(1, 10, 2): print(i)"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">SETUP_LOOP</span>              <span class="mi">28</span> <span class="p">(</span><span class="n">to</span> <span class="mi">30</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="nb">range</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+              <span class="mi">8</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">3</span>
+             <span class="mi">12</span> <span class="n">GET_ITER</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">14</span> <span class="n">FOR_ITER</span>                <span class="mi">12</span> <span class="p">(</span><span class="n">to</span> <span class="mi">28</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">STORE_NAME</span>               <span class="mi">1</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">LOAD_NAME</span>                <span class="mi">2</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+             <span class="mi">20</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+             <span class="mi">22</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">24</span> <span class="n">POP_TOP</span>
+             <span class="mi">26</span> <span class="n">JUMP_ABSOLUTE</span>           <span class="mi">14</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">28</span> <span class="n">POP_BLOCK</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">30</span> <span class="n">LOAD_CONST</span>               <span class="mi">3</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">32</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">random</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Scores: {scores}'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)):</span>
+<span class="o">...</span>    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score: {mean_score}'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Еще один вид циклов со счетчиками – «совместные циклы». Такие циклы задают выполнение некоторой операции для объектов из заданного множества, без явного указания порядка перечисления этих объектов. Такие циклы называются совместными (а также циклами по коллекции, циклами просмотра) и представляют собой формальную запись инструкции вида: «Выполнить операцию <code class="highlighter-rouge">X</code> для всех элементов, входящих во множество <code class="highlighter-rouge">M</code>».</p>
+
+<p>Синтаксис:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+    <span class="n">expression</span>
+</code></pre></div></div>
+
+<p>Где <code class="highlighter-rouge">iterable</code> – итерируемый объект (объект, который реализует протокол итератор). В роли такого объекта могут выступать строки (<code class="highlighter-rouge">str</code>), списки (<code class="highlighter-rouge">list</code>), кортежи (<code class="highlighter-rouge">tuple</code>), словари (<code class="highlighter-rouge">dict</code>), а также любой класс, объявленный с методом <code class="highlighter-rouge">__iter__()</code> (об этом в других лекциях).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">score</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score: {mean_score}'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Итерирование по списку с получением «индексов»:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s">'cool'</span><span class="p">,</span> <span class="s">'powerful'</span><span class="p">,</span> <span class="s">'readable'</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'{}: Python is {}!'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">word</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Цикл с предусловием — цикл, который выполняется, пока истинно некоторое условие, указанное перед его началом. Это условие проверяется до выполнения тела цикла, поэтому тело может быть не выполнено ни разу (если условие с самого начала ложно).</p>
+
+<p>Синтаксис:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="n">condition</span><span class="p">:</span>
+    <span class="n">loop_body</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">fact</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">while</span> <span class="n">n</span><span class="p">:</span>
+    <span class="n">fact</span> <span class="o">=</span> <span class="n">fact</span> <span class="o">*</span> <span class="n">n</span>
+    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">fact</span> <span class="c"># 1 * 2 * 3 * 4 * 5</span>
+<span class="mi">120</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"""..."""</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">fact</span><span class="p">)</span>
+
+  <span class="mi">2</span>           <span class="mi">4</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">STORE_NAME</span>               <span class="mi">1</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+  <span class="mi">3</span>           <span class="mi">8</span> <span class="n">SETUP_LOOP</span>              <span class="mi">24</span> <span class="p">(</span><span class="n">to</span> <span class="mi">34</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">10</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+             <span class="mi">12</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">32</span>
+
+  <span class="mi">4</span>          <span class="mi">14</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">fact</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">BINARY_MULTIPLY</span>
+             <span class="mi">20</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">fact</span><span class="p">)</span>
+
+  <span class="mi">5</span>          <span class="mi">22</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+             <span class="mi">24</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">26</span> <span class="n">INPLACE_SUBTRACT</span>
+             <span class="mi">28</span> <span class="n">STORE_NAME</span>               <span class="mi">1</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span>
+             <span class="mi">30</span> <span class="n">JUMP_ABSOLUTE</span>           <span class="mi">10</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">32</span> <span class="n">POP_BLOCK</span>
+
+  <span class="mi">6</span>     <span class="o">&gt;&gt;</span>   <span class="mi">34</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">fact</span><span class="p">)</span>
+             <span class="mi">36</span> <span class="n">POP_TOP</span>
+             <span class="mi">38</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">40</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<h3 id="досрочный-выход-из-цикла">Досрочный выход из цикла</h3>
+
+<p>Команда досрочного выхода применяется, когда необходимо прервать выполнение цикла, в котором условие выхода ещё не достигнуто. Такое бывает, например, когда при выполнении тела цикла обнаруживается ошибка, после которой дальнейшая работа цикла не имеет смысла. Её действие аналогично действию команды безусловного перехода (goto) на команду, непосредственно следующую за циклом, внутри которого эта команда находится. Но так как использовать оператор goto – все равно, что поклоняться темным силам, в Python есть более элегантные способы выхода из цикла, которые будут рассмотрены позже.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s">'x? '</span><span class="p">))</span>
+        <span class="k">break</span>
+    <span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'x может быть только целого типа'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="пропуск-итерации">Пропуск итерации</h3>
+
+<p>Данный оператор применяется, когда в текущей итерации цикла необходимо пропустить все команды до конца тела цикла. При этом сам цикл прерываться не должен, условия продолжения или выхода должны вычисляться обычным образом.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">scores</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Scores: {scores}'</span><span class="p">)</span>
+<span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">score</span>
+    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="n">n</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score is {mean_score} for {n} scores'</span><span class="p">)</span>
+</code></pre></div></div>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
