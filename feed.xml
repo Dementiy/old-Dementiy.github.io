@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2018-08-21T03:59:13+03:00</updated>
+  <updated>2018-08-21T04:11:01+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -1223,7 +1223,7 @@
 
 &lt;p&gt;Существует множество видов хеш-функций и для того, чтобы дать вам интуицию того, что из себя представляет хеш-функция, рассмотрим пример слабой хеш-функции и ее использования:&lt;/p&gt;
 
-&lt;iframe width=&quot;800&quot; height=&quot;500&quot; frameborder=&quot;0&quot; src=&quot;http://pythontutor.com/iframe-embed.html#code=def%20my_hash%28astring%29%3A%0A%20%20%20%20h%20%3D%200%0A%20%20%20%20for%20pos%20in%20range%28len%28astring%29%29%3A%0A%20%20%20%20%20%20%20%20h%20%2B%3D%20pos%20*%20ord%28astring%5Bpos%5D%29%0A%20%20%20%20return%20h%0A%20%20%20%20%0AL%20%3D%20%5BNone,%20None,%20None,%20None,%20None%5D%0A%0Aindex%20%3D%20my_hash%28%22cat%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22cat%22%0A%0Aindex%20%3D%20my_hash%28%22dog%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22dog%22&amp;amp;codeDivHeight=400&amp;amp;codeDivWidth=350&amp;amp;cumulative=false&amp;amp;curInstr=0&amp;amp;heapPrimitives=false&amp;amp;origin=opt-frontend.js&amp;amp;py=3&amp;amp;rawInputLstJSON=%5B%5D&amp;amp;textReferences=false&quot;&gt; &lt;/iframe&gt;
+&lt;iframe width=&quot;800&quot; height=&quot;500&quot; frameborder=&quot;0&quot; src=&quot;https://pythontutor.com/iframe-embed.html#code=def%20my_hash%28astring%29%3A%0A%20%20%20%20h%20%3D%200%0A%20%20%20%20for%20pos%20in%20range%28len%28astring%29%29%3A%0A%20%20%20%20%20%20%20%20h%20%2B%3D%20pos%20*%20ord%28astring%5Bpos%5D%29%0A%20%20%20%20return%20h%0A%20%20%20%20%0AL%20%3D%20%5BNone,%20None,%20None,%20None,%20None%5D%0A%0Aindex%20%3D%20my_hash%28%22cat%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22cat%22%0A%0Aindex%20%3D%20my_hash%28%22dog%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22dog%22&amp;amp;codeDivHeight=400&amp;amp;codeDivWidth=350&amp;amp;cumulative=false&amp;amp;curInstr=0&amp;amp;heapPrimitives=false&amp;amp;origin=opt-frontend.js&amp;amp;py=3&amp;amp;rawInputLstJSON=%5B%5D&amp;amp;textReferences=false&quot;&gt; &lt;/iframe&gt;
 
 &lt;p&gt;Фактически мы получили очень наивную реализацию &lt;a href=&quot;https://en.wikipedia.org/wiki/Hash_table&quot;&gt;хеш-таблицы&lt;/a&gt; (словаря).&lt;/p&gt;
 
