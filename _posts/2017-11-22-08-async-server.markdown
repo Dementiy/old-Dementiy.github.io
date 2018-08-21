@@ -640,7 +640,7 @@ if __name__ == "__main__":
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">В библиотеке Python, начиная с версии 3.4, есть модуль <a href="https://docs.python.org/3/library/selectors.html"><code>selectors</code></a>, который построен поверх модуля <code>select</code> и позволяет автоматически выбрать наиболее эффективную реализация мультиплексирования для целевой ОС.</p>
+  <p class="last">В библиотеке Python, начиная с версии 3.4, есть модуль <a href="https://docs.python.org/3/library/selectors.html"><code>selectors</code></a>, который построен поверх модуля <code>select</code> и позволяет автоматически выбрать наиболее эффективную реализация мультиплексирования для целевой ОС. Дополнительно про мультиплексирование можно почитать <a href="https://realpython.com/python-sockets/">тут</a>.</p>
 </div>
 
 ```py
