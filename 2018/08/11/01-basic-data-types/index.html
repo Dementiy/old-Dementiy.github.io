@@ -590,61 +590,86 @@
 
 <h3 id="строки">Строки</h3>
 
+<p>Строки в Python версии 3 представляют собой последовательность символов Юникод (code point’ов). Если вы никогда не слышали про Юникод и кодировки или плохо представляете, что это такое, то советую прочитать исчерпывающую <a href="http://kunststube.net/encoding/">статью</a> David C. Zentgraf из серии «Что каждый программист должен знать о…».</p>
+
+<p>Новую строку можно создать с помощью одинарных или двойных кавычек (можно использовать и тройные кавычки, но чаще они используются для документирования функций, классов, модулей):</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">first_name</span> <span class="o">=</span> <span class="s">'Dmitrii'</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">last_name</span> <span class="o">=</span> <span class="s">'Sorokin'</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">email</span> <span class="o">=</span> <span class="s">'Dementiy@yandex.ru'</span>
 </code></pre></div></div>
 
+<p>Для строк определена операция сложения (конкантенации):</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">full_name</span> <span class="o">=</span> <span class="n">first_name</span> <span class="o">+</span> <span class="s">' '</span> <span class="o">+</span> <span class="n">last_name</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">full_name</span>
+<span class="s">'Dmitrii Sorokin'</span>
 </code></pre></div></div>
+
+<p>Следует иметь ввиду, что в приведенном примере, будет создан промежуточный объект, состоящий из имени и пробела. Если возникает необходимость объединить большое число строк, то вместо последовательного сложения строк следует использовтаь метод <code class="highlighter-rouge">join()</code>, который работает следующим образом - осуществляется проход по всем строкам суммируя их длины, выделяется память под новый размер строки, осуществляется еще один проход по всем строкам копируя их содержимое в новый объект, таким образом, не создается промежуточных объектов:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">full_name</span> <span class="o">=</span> <span class="s">' '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span><span class="p">])</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">full_name</span>
+<span class="s">'Dmitrii Sorokin'</span>
 </code></pre></div></div>
 
-<p>Еще раз вспомним, что в Python все является объектом. Каждый объект предоставляет интерфейс (методы) взаимодействия с ним, а также хранит внутреннее состояние посредством переменных. Обращение к методам и переменным объекта (атрибутам) происходит через точку, например: <code class="highlighter-rouge">объект.метод(список аргументов)</code>. Чтобы посмотреть список доступных методов можно воспользоваться функцией <code class="highlighter-rouge">help</code> и передать в нее интересующий нас объект, например: <code class="highlighter-rouge">help(объект)</code>.</p>
+<p>Здесь мы первый раз сталкиваемся с вызовом метода у объекта. Давайте вспомним, что в Python все является объектом. Каждый объект предоставляет интерфейс (методы) взаимодействия с ним, а также хранит внутреннее состояние посредством переменных. Обращение к методам и переменным объекта (атрибутам) происходит через точку, как в примере выше с методом <code class="highlighter-rouge">join()</code>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span> <span class="c"># --&gt; full_name.__len__()</span>
-<span class="mi">15</span>
-</code></pre></div></div>
+<p>Строку можно разбить на список подстрок по заданному разделителю, который в свою очередь также является строкой:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">username</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'@'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'@'</span><span class="p">)</span>
+<span class="p">[</span><span class="s">'Dementiy'</span><span class="p">,</span> <span class="s">'yandex.ru'</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">username</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'@'</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">username</span>
 <span class="s">'Dementiy'</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">domain</span>
 <span class="s">'yandex.ru'</span>
 </code></pre></div></div>
 
+<p>Заканчивается ли строка данной подстрокой:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">email</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">'yandex.ru'</span><span class="p">)</span>
 <span class="bp">True</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">first_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="s">'D'</span>
+<p>У строк (как и у большинства контейнеров) можно получить длину (число элементов в контейнере):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span> <span class="c"># --&gt; full_name.__len__()</span>
+<span class="mi">15</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">first_name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<p>Можно обращаться к отдельным элементам строки, которые представляют собой строку из одного символа:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">first_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="s">'D'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">first_name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="s">'i'</span>
 </code></pre></div></div>
+
+<p>Строки являются неизменяемыми, то есть мы не можем изменить отдельный элемент строки:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">first_name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">'y'</span>
 <span class="o">...</span>
 <span class="nb">TypeError</span><span class="p">:</span> <span class="s">'str'</span> <span class="nb">object</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">item</span> <span class="n">assignment</span>
 </code></pre></div></div>
 
+<p>И наконец мы можем брать подмножество (срез) элементов строки:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">email</span><span class="p">[:</span><span class="n">email</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">'@'</span><span class="p">)]</span>
 <span class="s">'Dementiy'</span>
 </code></pre></div></div>
 
-<p>Замечание про срезы</p>
+<p>Синтаксис для создания срезов следующий: <code class="highlighter-rouge">sequence[start:stop:step]</code>, где:</p>
 <ul>
-  <li><code class="highlighter-rouge">sequence[start:stop:step]</code>, где:</li>
   <li><code class="highlighter-rouge">sequence</code> - объект, который реализует Sequence протокол;</li>
   <li><code class="highlighter-rouge">start</code> - левая граница среза, может быть опущена, тогда принимается равной <script type="math/tex">0</script>;</li>
   <li><code class="highlighter-rouge">stop</code> - правая граница среза минус <script type="math/tex">1</script>, таким образом, правая граница не включается; может быть опущена, тогда принимается равной <code class="highlighter-rouge">len(sequence)</code>;</li>
   <li><code class="highlighter-rouge">step</code> - шаг, с которым перемещаемся по <code class="highlighter-rouge">sequence</code>, если не указан, то считается равным <script type="math/tex">1</script>.</li>
 </ul>
+
+<p>Мы рассмотрели лишь небольшую часть операций, которые можно выполнять над строками. Полный список операций вы всегда можете найти в документации.</p>
+
+<h3 id="представление-строк">Представление строк</h3>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* ASCII-only strings created through PyUnicode_New use the PyASCIIObject
    structure. state.ascii and state.compact are set, and the data
