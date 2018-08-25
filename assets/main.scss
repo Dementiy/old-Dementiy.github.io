@@ -27,7 +27,7 @@ $grey-color-light: lighten($grey-color, 40%);
 $grey-color-dark:  darken($grey-color, 25%);
 
 // Width of the content area
-$content-width:    800px; // 1000px;
+$content-width:    900px; // 1000px;
 
 $on-palm:          600px;
 $on-laptop:        800px;
@@ -81,11 +81,11 @@ pre > code {
     // border-radius: 0;
 //}
 
-//.highlight .c {
-//    color: #998;
-//    font-style: italic;
-//    font-size: 16px;
-//}
+.highlight .c {
+    color: #998;
+    font-style: italic;
+    font-size: 14px;
+}
 
 /* --- Links --- */
 a {
