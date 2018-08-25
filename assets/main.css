@@ -1,12 +1,8 @@
-@import url("https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,500,500i,700,700i|PT+Serif:400,400i,700,700i|Roboto:400,400i,500,500i,700,700i&subset=cyrillic");
-@import url("https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200,300,400&subset=cyrillic");
-@import url("https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css");
-@import url("https://fonts.googleapis.com/css?family=Inconsolata:400,700&subset=latin-ext");
 /** Reset some basic elements */
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
-body { font: 400 18px/1.5 "Computer Modern Bright", "PT Serif", sans-serif; color: #111; background-color: #ffffff; -webkit-text-size-adjust: 100%; -webkit-font-feature-settings: "kern" 1; -moz-font-feature-settings: "kern" 1; -o-font-feature-settings: "kern" 1; font-feature-settings: "kern" 1; font-kerning: normal; }
+body { font: 400 16px/1.5 Bitter, "Apple SD Gothic Neo", AppleGothic, NanumBarunGothic, "Malgun Gothic", Dotum, sans-serif; color: #111; background-color: #fdfdfd; -webkit-text-size-adjust: 100%; -webkit-font-feature-settings: "kern" 1; -moz-font-feature-settings: "kern" 1; -o-font-feature-settings: "kern" 1; font-feature-settings: "kern" 1; font-kerning: normal; }
 
 table { width: 100%; margin: 0 0 20px 0; text-align: left; }
 
@@ -19,7 +15,7 @@ img { max-width: 100%; vertical-align: middle; }
 /** Figures */
 figure > img { display: block; }
 
-figcaption { font-size: 15.75px; }
+figcaption { font-size: 14px; }
 
 /** Lists */
 ul, ol { margin-left: 30px; }
@@ -43,7 +39,7 @@ blockquote > :last-child { margin-bottom: 0; }
 hr { height: 4px; margin: 15px 0; border: 0; background-color: #e8e8e8; }
 
 /** Code formatting */
-pre, code { font-family: "Inconsolata", Monaco, Menlo, Consolas, "Courier New", monospace; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
+pre, code { font-family: Monaco, Menlo, Consolas, "Courier New", DotumChe, monospace; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 0; background-color: whitesmoke; }
 
 code { padding: 1px 5px; }
 
@@ -86,7 +82,7 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 .post-archives .post-link { font-size: 24px; }
 .post-archives > li { margin-bottom: 30px; }
 
-.post-meta { font-size: 15.75px; color: #828282; }
+.post-meta { font-size: 14px; color: #828282; }
 
 .post-link, .post-link:visited { color: #111; }
 .post-link:hover { color: #2568ba; }
@@ -178,65 +174,3 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 .highlight .vg { color: #008080; }
 .highlight .vi { color: #008080; }
 .highlight .il { color: #099; }
-
-/* --- Post title --- */
-.post-meta { font-size: 18px; font-family: "Computer Modern Bright"; }
-
-/* --- Code formatting -- */
-pre, code { font-family: "Inconsolata", Monaco, Menlo, Consolas, "Courier New", monospace; font-size: 16px; border: 1px solid #e8e8e8; border-radius: 0; background-color: #f5f5f5; }
-
-pre > code { display: block; margin-left: 20px; }
-
-/* --- Links --- */
-a { color: #06e; text-decoration: none; }
-
-a:visited { color: #06e; }
-
-blockquote { font-family: "Computer Modern Concrete"; font-size: 18px; }
-
-h1, h2, h3, h4, h5, h6 { font-family: "Computer Modern Bright"; }
-
-h3 { padding-top: 30px; font-weight: 700; }
-
-h1 { font-weight: 700; }
-
-.page-content { padding-top: 60px; }
-
-p { margin: 1em 0; text-align: justify; }
-
-.site-footer p { text-align: center; }
-
-.site-header { font-size: 18px; }
-
-.site-title { font-size: 18px; }
-
-/* --- Admonitions --------------------------------------------------------- */
-.note { font-family: "Alegreya Sans"; font-size: 75%; line-height: 125%; float: left; width: 240px; padding: 0; margin-left: -270px; }
-
-.note code { font-size: 75%; }
-
-.note p { text-align: left; padding: 0; margin: 0; padding-top: 0.5em; }
-
-.note p.first { padding: 0; padding-bottom: .5em; font-weight: 400; border-bottom: 1px solid #000; }
-
-.legend { font-family: "Alegreya Sans"; font-size: 75%; line-height: 125%; padding: 0; float: right; width: 240px; margin-right: -270px; }
-
-.legend p { text-align: left; padding: 0; margin: 0; padding-top: 0.5em; }
-
-.legend p.first { padding: 0; padding-bottom: .5em; font-weight: 400; border-bottom: 1px solid #000; }
-
-.legend code { font-size: 75%; }
-
-@media all and (max-width: 1400px) { .note, .legend { box-sizing: border-box; width: 80%; margin: 10px auto; float: none; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; } }
-@media all and (max-width: 870px) { pre.code, pre.output { padding-left: 0.5em; }
-  body { font-size: 16px; } }
-@media all and (max-width: 500px) { body { font-size: 14px; } }
-table { border-collapse: collapse; border-spacing: 0; }
-
-tr:nth-child(even) { background-color: #f2f2f2; }
-
-tr:hover { background-color: #ddd; }
-
-th { border: 1px solid #000000; padding: 2px; padding-top: 6px; padding-bottom: 6px; padding-left: 4px; text-align: left; background-color: #ddd; }
-
-td { border: 1px solid #000000; padding: 2px; padding-left: 4px; }
