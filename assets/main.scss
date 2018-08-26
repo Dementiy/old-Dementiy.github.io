@@ -49,6 +49,12 @@ $on-laptop:        800px;
 // Import partials from the `whiteglass` theme.
 @import "whiteglass";
 
+/*
+body {
+	counter-reset: h3;
+}
+*/
+
 /* --- Post title --- */
 .post-meta {
     font-size: 18px;
@@ -106,6 +112,33 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h3 {
+    padding-top: 30px;
+    font-weight: 700;
+    border-bottom: 2px solid black;
+/*	
+	decoration: none;
+    color: black;
+    border-bottom: 2px solid black;
+    padding-left:  5%;
+    margin-left:  -5%;
+*/
+}
+
+/*
+h3::before {
+    content: counter(h3) "";
+    counter-increment: h3;
+    margin-right:10px;
+    color: white;
+    background-color: black;
+	padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+*/
+
+h4 {
     padding-top: 30px;
     font-weight: 700;
 }
