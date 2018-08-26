@@ -293,7 +293,7 @@
 <span class="mf">0.9999999999999999</span>
 </code></pre></div></div>
 
-<h3 id="длинная-арифметика-в-python">Длинная арифметика в Python</h3>
+<h4 id="длинная-арифметика-в-python">Длинная арифметика в Python</h4>
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
@@ -327,7 +327,7 @@
 
 <p>Все поля вам уже должны быть знакомы, <code class="highlighter-rouge">PyLongObject</code> добавляет лишь одно новое поле <code class="highlighter-rouge">ob_digit</code> - массив беззнаковых целых чисел по основанию <script type="math/tex">2^{30}</script>. Давайте разберемся с назначением этого поля.</p>
 
-<h3 id="представление-произвольно-больших-целых-чисел">Представление произвольно больших целых чисел</h3>
+<h4 id="представление-произвольно-больших-целых-чисел">Представление произвольно больших целых чисел</h4>
 
 <p>Как хранить произвольно большое целое число? Одним из решений является представление целого числа в виде массива отдельных цифр. Для наиболее эффективного использования памяти мы можем конвертировать наше число из десятичной системы счисления в систему счисления по основанию <script type="math/tex">2^{30}</script>, в таком случае каждый элемент представлен «цифрой» в диапазоне от <script type="math/tex">0</script> до <script type="math/tex">2^{30} - 1</script>. В зависимости от платформы Python использует или 32-битные беззнаковые массивы с 30-битными цифрами или 16-битные беззнаковые массивы с 15-битными цифрами. Такой подход представления больших целых чисел связан с <a href="https://github.com/python/cpython/blob/865e4b4f630e2ae91e61239258abb58b488f1d65/Include/longintrepr.h#L9">дополнительными ограничениями</a>, которые и не позволяют использовать все биты. Поле <code class="highlighter-rouge">ob_digit</code> структуры показанной выше, содержит такие массивы цифр.</p>
 
@@ -360,7 +360,7 @@
 
 <script type="math/tex; mode=display">(437976919 ∗ 2^{30 ∗ 0}) + (87719511 ∗ 2^{30 ∗ 1}) + (107 ∗ 2^{30 ∗ 2}) = 123456789101112131415</script>
 
-<h3 id="преобразования-длинного-целого-в-массив">Преобразования длинного целого в массив</h3>
+<h4 id="преобразования-длинного-целого-в-массив">Преобразования длинного целого в массив</h4>
 
 <p>Ниже приведен упрощенный вариант алгоритма представления произвольно больших чисел:</p>
 
@@ -416,7 +416,7 @@
 <span class="n">ob_size</span><span class="p">:</span> <span class="mi">3</span>
 </code></pre></div></div>
 
-<h3 id="оптимизации">Оптимизации</h3>
+<h4 id="оптимизации">Оптимизации</h4>
 
 <p>Небольшие целые числа в диапазоне от <code class="highlighter-rouge">-5</code> до <code class="highlighter-rouge">256</code> преаллоцируются в процессе инициализации интерпретатора. Так как целые числа являются неизменяемыми, то мы можем воспринимать их как <a href="https://en.wikipedia.org/wiki/Singleton_pattern">синглтоны</a>. Каждый раз, когда нам необходимо создать небольшое целое число (например, как результат некоторой арифметической операции), то вместо создания нового объекта, Python просто возвращает указатель на уже преаллоцированный объект. Это позволяет сократить количество потребляемой памяти и время затрачиваемое на вычисления при работе с небольшими целыми числами.</p>
 
@@ -447,7 +447,7 @@
 <span class="mi">24</span>
 </code></pre></div></div>
 
-<h3 id="выполнение-арифметических-операций">Выполнение арифметических операций</h3>
+<h4 id="выполнение-арифметических-операций">Выполнение арифметических операций</h4>
 
 <p>Базовые арифметические операции выполняются аналогично тому, как мы это делали когда-то в школе, с одним исключением: каждый элемент массива считается «цифрой».</p>
 
@@ -489,7 +489,7 @@
 <span class="bp">True</span>
 </code></pre></div></div>
 
-<h3 id="замечание-про-numpy-и-pandas">Замечание про Numpy и Pandas</h3>
+<h4 id="замечание-про-numpy-и-pandas">Замечание про Numpy и Pandas</h4>
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
@@ -520,7 +520,7 @@
 <span class="mf">9.2233720368547758e+18</span>
 </code></pre></div></div>
 
-<h3 id="числа-с-плавающей-точкой-и-стандарт-ieee-754">Числа с плавающей точкой и стандарт IEEE-754</h3>
+<h4 id="числа-с-плавающей-точкой-и-стандарт-ieee-754">Числа с плавающей точкой и стандарт IEEE-754</h4>
 
 <p>Вещественные числа в CPython представлены следующей структурой:</p>
 
@@ -665,7 +665,7 @@
 
 <p>Мы рассмотрели лишь небольшую часть операций, которые можно выполнять над строками. Полный список операций вы всегда можете найти в документации.</p>
 
-<h3 id="представление-строк">Представление строк</h3>
+<h4 id="представление-строк">Представление строк</h4>
 
 <p>Как уже было сказано, строки в Python являются Юникод строками. Для внтуреннего представления строк в Python, начиная с версии 3.3 (см. <a href="https://www.python.org/dev/peps/pep-0393/">PEP-393</a>), используются кодировки Latin-1 (1 байт на символ), UCS-2 (2 байта на символ) и UCS-4 (4 байта на символ). Упрощенно процесс определения кодировки следующий: когда необходимо создать строковый объект (тексты программ обычно в кодировке UTF-8), Python находит самый старший кодовый знак (code point) в строке и выбирает кодироку, в которой кодовый знак может быть представлен «как есть».</p>
 
@@ -688,7 +688,7 @@
                 <span class="p">(</span><span class="s">'wstr'</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_wchar_p</span><span class="p">)]</span>
 
 <span class="k">def</span> <span class="nf">get_string_kind</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">PyUnicodeObject</span><span class="o">.</span><span class="n">from_address</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">kind</span>
+    <span class="k">return</span> <span class="n">PyASCIIObject</span><span class="o">.</span><span class="n">from_address</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">string</span><span class="p">))</span><span class="o">.</span><span class="n">kind</span>
 </code></pre></div></div>
 
 <p>Создадим несколько строковых объектов:</p>
@@ -728,7 +728,7 @@
 
 <p>Почему для внутреннего представления строк не используется UTF-8? Кодировка UTF-8 подразумевает, что может использоваться варьируемое число байт (от одного до четырех) для кодирования одного символа. UTF-8 является оптимальной кодировкой с точки зрения хранения строк (то есть кодировка эффективна по памяти), но при обращении к отдельным элементам строки (при индексировании), необходимо пройтись по всем символам строки пока мы не дойдем до нужного символа. При фиксированном размере такой проблемы не возникает, для перехода к нужной позиции символа достаточно индекс умножить на размер кодового знака (1, 2 или 4 в зависимости от используемой кодировки). Тем не менее есть <a href="http://utf8everywhere.org/">мнение</a>, что индексация это не проблема.</p>
 
-<h3 id="интернирование-строк">Интернирование строк</h3>
+<h4 id="интернирование-строк">Интернирование строк</h4>
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
@@ -827,7 +827,7 @@
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="списки-как-динамические-массивы">Списки как динамические массивы</h3>
+<h4 id="списки-как-динамические-массивы">Списки как динамические массивы</h4>
 
 <p>Списки в Python являются обычными <a href="https://en.wikipedia.org/wiki/Dynamic_array">динамическими массивами</a> (вектор в C++) и обладают всеми их свойствами с точки зрения производительности: в частности, обращение к элементу по его индексу имеет сложность <script type="math/tex">O(1)</script>, а поиск элемента имеет сложность <script type="math/tex">O(N)</script>.</p>
 
@@ -856,10 +856,12 @@
 <p>Где:</p>
 <ul>
   <li><code class="highlighter-rouge">ob_item</code> - массив указателей на <code class="highlighter-rouge">PyObject</code>;</li>
-  <li><code class="highlighter-rouge">allocated</code> - емкость списка (размер буффера), то есть сколько элементов можно поместить в массив <code class="highlighter-rouge">ob_item</code> до его увеличения, в то время как <code class="highlighter-rouge">ob_size</code> - текущее количество элементов в массиве.</li>
+  <li><code class="highlighter-rouge">allocated</code> - емкость массива (размер буффера), то есть сколько элементов можно поместить в массив <code class="highlighter-rouge">ob_item</code> до его увеличения, в то время как <code class="highlighter-rouge">ob_size</code> - текущее количество элементов в массиве.</li>
 </ul>
 
 <p><img src="/assets/images/lectures/lecture01-03.jpg" alt="" /></p>
+
+<p>Если мы добавляем новый элемент в массив и при этом размер массива совпадает с размером буффера, то есть, <code class="highlighter-rouge">ob_size == allocated</code> (для рисунка <code class="highlighter-rouge">N == M</code>), то происходит увеличение размера буффера путем перераспределения памяти по следующему правилу:</p>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* This over-allocates proportional to the list size, making room
  * for additional growth.  The over-allocation is mild, but is
@@ -873,7 +875,7 @@
 <span class="n">new_allocated</span> <span class="o">=</span> <span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="n">newsize</span> <span class="o">+</span> <span class="p">(</span><span class="n">newsize</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">newsize</span> <span class="o">&lt;</span> <span class="mi">9</span> <span class="o">?</span> <span class="mi">3</span> <span class="o">:</span> <span class="mi">6</span><span class="p">);</span>
 </code></pre></div></div>
 
-<p>Давайте посмотрим на процесс перераспределения памяти в действии с помощью модуля ctypes.</p>
+<p>Давайте посмотрим на процесс перераспределения памяти в действии с помощью модуля ctypes:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ListStruct</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
     <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[(</span><span class="s">"ob_refcnt"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ssize_t</span><span class="p">),</span>
@@ -901,7 +903,7 @@
 <span class="n">ListStruct</span><span class="p">(</span><span class="n">ob_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allocated</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Как мы видим и размер и емкость списка изменились в соответствии с правилом роста.</p>
+<p>Как мы видим и размер и емкость списка изменились в соответствии с правилом роста. Добавим еще несколько элементов в список:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">L</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ls</span>
@@ -915,40 +917,31 @@
 
 <h3 id="кортежи">Кортежи</h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">point</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">point</span>
-</code></pre></div></div>
+<p>Кортежи чем-то похожи на списки, но в отличие от списков они <a href="https://github.com/python/cpython/blob/master/Include/tupleobject.h#L25">реализованы</a> не как динамические массивы, а как статические массивы, таким образом, их размер фиксирован. Еще одной важной особенностью кортежей является то, что это неизменяемая структура:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">point</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">point</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="o">...</span>
 <span class="nb">TypeError</span><span class="p">:</span> <span class="s">'tuple'</span> <span class="nb">object</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">item</span> <span class="n">assignment</span>
 </code></pre></div></div>
 
-<p>Кортежи vs списков:</p>
+<p>Итак, основная разница между кортежами и списками заключается в следующем:</p>
 <ul>
-  <li>С точки зрения внутреннего представления, кортежи также являются динамическими массивами.</li>
-  <li>Кортежи занимают меньше места в памяти, так как имеют фиксированную длину.</li>
-  <li>Кортежи неизменяемые (immutable) и могут быть выступать в качестве ключей словарей или элементов множеств.</li>
-  <li>Кортежи обычно представляют абстрактные объекты, обладающие некоторой структурой.</li>
+  <li>с точки зрения внутреннего представления кортежи являются статическими массивами;</li>
+  <li>кортежи занимают меньше места в памяти, так как имеют фиксированную длину;</li>
+  <li>кортежи неизменяемые (immutable) и могут быть выступать в качестве ключей словарей или элементов множеств;</li>
+  <li>кортежи обычно представляют абстрактные объекты, обладающие некоторой структурой.</li>
 </ul>
 
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-    <span class="n">PyObject_VAR_HEAD</span>
-    <span class="n">PyObject</span> <span class="o">*</span><span class="n">ob_item</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<p>Когда мы говорим, что кортежи неизменяемые, то имеем ввиду, что мы не можем заменить один элемент кортежа на другой, но сам объект изменить мы можем:</p>
 
-    <span class="cm">/* ob_item contains space for 'ob_size' elements.
-     * Items must normally not be NULL, except during construction when
-     * the tuple is not yet visible outside the function that builds it.
-     */</span>
-<span class="p">}</span> <span class="n">PyTupleObject</span><span class="p">;</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="mi">2</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 </code></pre></div></div>
-
-<p>Вопрос:</p>
-<ul>
-  <li>Размер в байтах([1,1,1,1,1]) = Размер в байтах((1,1,1,1,1))?</li>
-  <li>Размер в байтах([1,1,1,1,1]) &gt; Размер в байтах((1,1,1,1,1))?</li>
-  <li>Размер в байтах([1,1,1,1,1]) &lt; Размер в байтах((1,1,1,1,1))?</li>
-</ul>
 
 <h3 id="словари">Словари</h3>
 
@@ -1094,7 +1087,7 @@
  <span class="s">'wind'</span><span class="p">:</span> <span class="p">{</span><span class="s">'deg'</span><span class="p">:</span> <span class="mi">280</span><span class="p">,</span> <span class="s">'speed'</span><span class="p">:</span> <span class="mi">3</span><span class="p">}}</span>
 </code></pre></div></div>
 
-<h3 id="хеширование">Хеширование</h3>
+<h4 id="хеширование">Хеширование</h4>
 
 <p>Мы не будем рассматривать внутреннее представление словарей, так как они устроены значительно сложнее чем объекты, которые мы рассматривали ранее. Для интересующихся можно посмотреть выступления <a href="https://www.youtube.com/watch?v=p33CVV29OG8">Raymond Hettinger</a> и <a href="https://www.youtube.com/watch?v=66P5FMkWoVU">Brandon Rhodes</a> о работе словарей, или почитать исчерпывающую презентацию <a href="https://www.slideshare.net/delimitry/python-dict-66233023">Дмитрия Алимова</a> об эволюции словарей, начиная с Python 2.x.</p>
 
