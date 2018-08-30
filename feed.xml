@@ -5,7 +5,7 @@
   
   <link href="https://dementiy.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://dementiy.github.io/" rel="alternate" type="text/html" />
-  <updated>2018-08-26T04:18:18+03:00</updated>
+  <updated>2018-08-30T05:05:39+03:00</updated>
   <id>https://dementiy.github.io//</id>
 
   
@@ -370,7 +370,7 @@
 
 &lt;p&gt;В Python все является объектом: числа, последовательности, функции, классы, модули и т.д. Каждый объект обладает уникальным идентификатором, который никогда не изменяется после создания объекта (в CPython идентификатором объекта является его адрес в памяти, который можно получить с помощью встроенной функции &lt;code class=&quot;highlighter-rouge&quot;&gt;id()&lt;/code&gt;), типом, который определяет «чем является объект» (числом, строкой, списком и т.д.) и какие действия над ним можно выполнять, а также значением.&lt;/p&gt;
 
-&lt;p&gt;Каждый объект «наследуется» от Си-структуры &lt;a href=&quot;https://github.com/python/cpython/blob/master/Include/object.h#L106&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;PyObject&lt;/code&gt;&lt;/a&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;PyVarObject&lt;/code&gt; для объектов переменной (variable) длинны (строки, списки и т.д.):&lt;/p&gt;
+&lt;p&gt;Каждый объект «наследуется» от Си-структуры &lt;a href=&quot;https://github.com/python/cpython/blob/master/Include/object.h#L106&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;PyObject&lt;/code&gt;&lt;/a&gt; или &lt;code class=&quot;highlighter-rouge&quot;&gt;PyVarObject&lt;/code&gt; для объектов переменной (variable) длинны (списки, кортежи и т.д.):&lt;/p&gt;
 
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_object&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;_PyObject_HEAD_EXTRA&lt;/span&gt;
@@ -507,7 +507,7 @@
 
 &lt;p&gt;Если «раскрыть» макрос &lt;code class=&quot;highlighter-rouge&quot;&gt;PyObject_VAR_HEAD&lt;/code&gt;, то стурктура будет выглядеть следующим образом:&lt;/p&gt;
 
-&lt;div class=&quot;admonition legend&quot;&gt;
+&lt;div class=&quot;admonition note&quot;&gt;
   &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
   &lt;p class=&quot;last&quot;&gt;Вы должны были заметить, что &lt;code&gt;PyLongObject&lt;/code&gt; «наследуется» от &lt;code&gt;PyVarObject&lt;/code&gt;, то есть является объектом переменной длины, и, таким образом, включает поле &lt;code&gt;ob_size&lt;/code&gt;, которое в данном случае содержит размер массива &lt;code&gt;ob_digit&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
@@ -549,7 +549,7 @@
 
 &lt;p&gt;Давайте рассмотрим конкретный пример преобразования длинного целого в массив и обратно. Пусть у нас имеется следующее число: &lt;script type=&quot;math/tex&quot;&gt;123456789101112131415&lt;/script&gt;. Переведем его в систему счисления по основанию &lt;script type=&quot;math/tex&quot;&gt;2^{30}&lt;/script&gt;, путем последовательного деления и записи остатка от деления:&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;&lt;span style=&quot;color: red&quot;&gt;TODO: Вставить картинку с процессом деления и структурой PyLongObject&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/lectures/from10to230.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Конвертировать число обратно также достаточно просто:&lt;/p&gt;
 
@@ -804,7 +804,7 @@
 &lt;span class=&quot;s&quot;&gt;'Dmitrii Sorokin'&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Здесь мы первый раз сталкиваемся с вызовом метода у объекта. Давайте вспомним, что в Python все является объектом. Каждый объект предоставляет интерфейс (методы) взаимодействия с ним, а также хранит внутреннее состояние посредством переменных. Обращение к методам и переменным объекта (атрибутам) происходит через точку, как в примере выше с методом &lt;code class=&quot;highlighter-rouge&quot;&gt;join()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Здесь мы первый раз сталкиваемся с вызовом метода у объекта. Каждый объект предоставляет интерфейс (методы) взаимодействия с ним, а также хранит внутреннее состояние посредством переменных. Обращение к методам и переменным объекта (атрибутам) происходит через точку, как в примере выше с методом &lt;code class=&quot;highlighter-rouge&quot;&gt;join()&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Строку можно разбить на список подстрок по заданному разделителю, который в свою очередь также является строкой:&lt;/p&gt;
 
@@ -849,14 +849,6 @@
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'@'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
 &lt;span class=&quot;s&quot;&gt;'Dementiy'&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Синтаксис для создания срезов следующий: &lt;code class=&quot;highlighter-rouge&quot;&gt;sequence[start:stop:step]&lt;/code&gt;, где:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sequence&lt;/code&gt; - объект, который реализует Sequence протокол;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;start&lt;/code&gt; - левая граница среза, может быть опущена, тогда принимается равной &lt;script type=&quot;math/tex&quot;&gt;0&lt;/script&gt;;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;stop&lt;/code&gt; - правая граница среза минус &lt;script type=&quot;math/tex&quot;&gt;1&lt;/script&gt;, таким образом, правая граница не включается; может быть опущена, тогда принимается равной &lt;code class=&quot;highlighter-rouge&quot;&gt;len(sequence)&lt;/code&gt;;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;step&lt;/code&gt; - шаг, с которым перемещаемся по &lt;code class=&quot;highlighter-rouge&quot;&gt;sequence&lt;/code&gt;, если не указан, то считается равным &lt;script type=&quot;math/tex&quot;&gt;1&lt;/script&gt;.&lt;/li&gt;
-&lt;/ul&gt;
 
 &lt;p&gt;Мы рассмотрели лишь небольшую часть операций, которые можно выполнять над строками. Полный список операций вы всегда можете найти в документации.&lt;/p&gt;
 
@@ -1054,7 +1046,7 @@
   &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;allocated&lt;/code&gt; - емкость массива (размер буффера), то есть сколько элементов можно поместить в массив &lt;code class=&quot;highlighter-rouge&quot;&gt;ob_item&lt;/code&gt; до его увеличения, в то время как &lt;code class=&quot;highlighter-rouge&quot;&gt;ob_size&lt;/code&gt; - текущее количество элементов в массиве.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/lectures/lecture01-03.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/lectures/lec01-list-gen.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Если мы добавляем новый элемент в массив и при этом размер массива совпадает с размером буффера, то есть, &lt;code class=&quot;highlighter-rouge&quot;&gt;ob_size == allocated&lt;/code&gt; (для рисунка &lt;code class=&quot;highlighter-rouge&quot;&gt;N == M&lt;/code&gt;), то происходит увеличение размера буффера путем перераспределения памяти по следующему правилу:&lt;/p&gt;
 
@@ -1108,7 +1100,7 @@
 &lt;span class=&quot;n&quot;&gt;ListStruct&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ob_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;allocated&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/lectures/lecture01-04.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/lectures/lec01-list.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;кортежи&quot;&gt;Кортежи&lt;/h3&gt;
 
@@ -1286,13 +1278,18 @@
 
 &lt;p&gt;Мы не будем рассматривать внутреннее представление словарей, так как они устроены значительно сложнее чем объекты, которые мы рассматривали ранее. Для интересующихся можно посмотреть выступления &lt;a href=&quot;https://www.youtube.com/watch?v=p33CVV29OG8&quot;&gt;Raymond Hettinger&lt;/a&gt; и &lt;a href=&quot;https://www.youtube.com/watch?v=66P5FMkWoVU&quot;&gt;Brandon Rhodes&lt;/a&gt; о работе словарей, или почитать исчерпывающую презентацию &lt;a href=&quot;https://www.slideshare.net/delimitry/python-dict-66233023&quot;&gt;Дмитрия Алимова&lt;/a&gt; об эволюции словарей, начиная с Python 2.x.&lt;/p&gt;
 
-&lt;p&gt;Тем не менее следует знать, что ключами словарей могут быть только хешируемые объекты, то есть те объекты, для которых определена хеш-функция (обычно это числа, строки и кортежи).&lt;/p&gt;
+&lt;p&gt;Тем не менее следует знать, что ключами словарей могут быть только хешируемые объекты (читай &lt;em&gt;неизменяемые&lt;/em&gt;), то есть те объекты, для которых определена хеш-функция (обычно это числа, строки и кортежи).&lt;/p&gt;
 
-&lt;p&gt;Существует множество видов хеш-функций и для того, чтобы дать вам интуицию того, что из себя представляет хеш-функция, рассмотрим пример слабой хеш-функции и ее использования:&lt;/p&gt;
+&lt;p&gt;Хеш-функция это такая функция, которая задает правило отображания объектов в целые числа. Существует множество видов хеш-функций и они должны иметь обладать рядом свойств, например, «если два объекта равны, то их хеши должны быть одинаковыми» или «если объекты имеют одинаковый хеш, то вероятно это один и тот же объект». Для наглядности мы рассмотрим простой пример. Зададим хеш-функцию для строк, которая вычисляет хеш как сумму произведений позиции символа на его кодовый знак, и будем использовать эту функцию для определения индекса в списке куда следует поместить строку:&lt;/p&gt;
 
-&lt;iframe width=&quot;800&quot; height=&quot;500&quot; frameborder=&quot;0&quot; src=&quot;https://pythontutor.com/iframe-embed.html#code=def%20my_hash%28astring%29%3A%0A%20%20%20%20h%20%3D%200%0A%20%20%20%20for%20pos%20in%20range%28len%28astring%29%29%3A%0A%20%20%20%20%20%20%20%20h%20%2B%3D%20pos%20*%20ord%28astring%5Bpos%5D%29%0A%20%20%20%20return%20h%0A%20%20%20%20%0AL%20%3D%20%5BNone,%20None,%20None,%20None,%20None%5D%0A%0Aindex%20%3D%20my_hash%28%22cat%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22cat%22%0A%0Aindex%20%3D%20my_hash%28%22dog%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22dog%22&amp;amp;codeDivHeight=400&amp;amp;codeDivWidth=350&amp;amp;cumulative=false&amp;amp;curInstr=0&amp;amp;heapPrimitives=false&amp;amp;origin=opt-frontend.js&amp;amp;py=3&amp;amp;rawInputLstJSON=%5B%5D&amp;amp;textReferences=false&quot;&gt; &lt;/iframe&gt;
+&lt;div class=&quot;admonition note&quot;&gt;
+  &lt;p class=&quot;first admonition-title&quot;&gt;&lt;strong&gt;Замечание&lt;/strong&gt;&lt;/p&gt;
+  &lt;p class=&quot;last&quot;&gt;Чтобы не выполнять все промежуточные шаги, вы можете выделить строки 5,9,10,12,13,15,16,18,19 (они станут отмечены красным цветом).&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;p&gt;Фактически мы получили очень наивную реализацию &lt;a href=&quot;https://en.wikipedia.org/wiki/Hash_table&quot;&gt;хеш-таблицы&lt;/a&gt; (словаря).&lt;/p&gt;
+&lt;iframe width=&quot;1000&quot; height=&quot;600&quot; frameborder=&quot;0&quot; src=&quot;http://pythontutor.com/iframe-embed.html#code=def%20my_hash%28astring%29%3A%0A%20%20%20%20h%20%3D%200%0A%20%20%20%20for%20pos,%20ch%20in%20enumerate%28astring%29%3A%0A%20%20%20%20%20%20%20%20h%20%2B%3D%20pos%20*%20ord%28ch%29%0A%20%20%20%20return%20h%0A%0AL%20%3D%20%5BNone,%20None,%20None,%20None,%20None%5D%0A%0Aindex%20%3D%20my_hash%28'%D0%AF'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%AF'%0A%0Aindex%20%3D%20my_hash%28'%D0%BD%D0%B8%D0%BA%D0%BE%D0%B3%D0%B4%D0%B0'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%BD%D0%B8%D0%BA%D0%BE%D0%B3%D0%B4%D0%B0'%0A%0Aindex%20%3D%20my_hash%28'%D0%BD%D0%B5'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%BD%D0%B5'%0A%0Aindex%20%3D%20my_hash%28'%D0%BF%D0%BE%D0%B2%D1%82%D0%BE%D1%80%D1%8F%D1%8E%D1%81%D1%8C'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%BF%D0%BE%D0%B2%D1%82%D0%BE%D1%80%D1%8F%D1%8E%D1%81%D1%8C'&amp;amp;codeDivHeight=400&amp;amp;codeDivWidth=400&amp;amp;cumulative=false&amp;amp;curInstr=0&amp;amp;heapPrimitives=false&amp;amp;origin=opt-frontend.js&amp;amp;py=3&amp;amp;rawInputLstJSON=%5B%5D&amp;amp;textReferences=false&quot;&gt; &lt;/iframe&gt;
+
+&lt;p&gt;Фактически мы получили очень наивную реализацию &lt;a href=&quot;https://en.wikipedia.org/wiki/Hash_table&quot;&gt;хеш-таблицы&lt;/a&gt; (словаря). Вы могли заметить, что для последней строки «повторяюсь» мы получили такой же хеш как и для строки «не» - это называется коллизией.&lt;/p&gt;
 
 &lt;h3 id=&quot;множества&quot;&gt;Множества&lt;/h3&gt;
 
@@ -1317,7 +1314,9 @@
 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Мы вкратце рассмотрели основные типы данных и внутреннее представление некоторых из них. Вы не должны стараться запомнить или понять все что было описано в этой лекции с первого раза. Время от времени возвращайтесь к тем разделам, которые вам позакались непонятными.&lt;/p&gt;</content>
 
       
       

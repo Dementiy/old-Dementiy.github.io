@@ -175,7 +175,7 @@
 
 <p>В Python все является объектом: числа, последовательности, функции, классы, модули и т.д. Каждый объект обладает уникальным идентификатором, который никогда не изменяется после создания объекта (в CPython идентификатором объекта является его адрес в памяти, который можно получить с помощью встроенной функции <code class="highlighter-rouge">id()</code>), типом, который определяет «чем является объект» (числом, строкой, списком и т.д.) и какие действия над ним можно выполнять, а также значением.</p>
 
-<p>Каждый объект «наследуется» от Си-структуры <a href="https://github.com/python/cpython/blob/master/Include/object.h#L106"><code class="highlighter-rouge">PyObject</code></a> или <code class="highlighter-rouge">PyVarObject</code> для объектов переменной (variable) длинны (строки, списки и т.д.):</p>
+<p>Каждый объект «наследуется» от Си-структуры <a href="https://github.com/python/cpython/blob/master/Include/object.h#L106"><code class="highlighter-rouge">PyObject</code></a> или <code class="highlighter-rouge">PyVarObject</code> для объектов переменной (variable) длинны (списки, кортежи и т.д.):</p>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_object</span> <span class="p">{</span>
     <span class="n">_PyObject_HEAD_EXTRA</span>
@@ -312,7 +312,7 @@
 
 <p>Если «раскрыть» макрос <code class="highlighter-rouge">PyObject_VAR_HEAD</code>, то стурктура будет выглядеть следующим образом:</p>
 
-<div class="admonition legend">
+<div class="admonition note">
   <p class="first admonition-title"><strong>Замечание</strong></p>
   <p class="last">Вы должны были заметить, что <code>PyLongObject</code> «наследуется» от <code>PyVarObject</code>, то есть является объектом переменной длины, и, таким образом, включает поле <code>ob_size</code>, которое в данном случае содержит размер массива <code>ob_digit</code>.</p>
 </div>
@@ -354,7 +354,7 @@
 
 <p>Давайте рассмотрим конкретный пример преобразования длинного целого в массив и обратно. Пусть у нас имеется следующее число: <script type="math/tex">123456789101112131415</script>. Переведем его в систему счисления по основанию <script type="math/tex">2^{30}</script>, путем последовательного деления и записи остатка от деления:</p>
 
-<p><strong><span style="color: red">TODO: Вставить картинку с процессом деления и структурой PyLongObject</span></strong></p>
+<p><img src="/assets/images/lectures/from10to230.svg" alt="" /></p>
 
 <p>Конвертировать число обратно также достаточно просто:</p>
 
@@ -609,7 +609,7 @@
 <span class="s">'Dmitrii Sorokin'</span>
 </code></pre></div></div>
 
-<p>Здесь мы первый раз сталкиваемся с вызовом метода у объекта. Давайте вспомним, что в Python все является объектом. Каждый объект предоставляет интерфейс (методы) взаимодействия с ним, а также хранит внутреннее состояние посредством переменных. Обращение к методам и переменным объекта (атрибутам) происходит через точку, как в примере выше с методом <code class="highlighter-rouge">join()</code>.</p>
+<p>Здесь мы первый раз сталкиваемся с вызовом метода у объекта. Каждый объект предоставляет интерфейс (методы) взаимодействия с ним, а также хранит внутреннее состояние посредством переменных. Обращение к методам и переменным объекта (атрибутам) происходит через точку, как в примере выше с методом <code class="highlighter-rouge">join()</code>.</p>
 
 <p>Строку можно разбить на список подстрок по заданному разделителю, который в свою очередь также является строкой:</p>
 
@@ -654,14 +654,6 @@
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">email</span><span class="p">[:</span><span class="n">email</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">'@'</span><span class="p">)]</span>
 <span class="s">'Dementiy'</span>
 </code></pre></div></div>
-
-<p>Синтаксис для создания срезов следующий: <code class="highlighter-rouge">sequence[start:stop:step]</code>, где:</p>
-<ul>
-  <li><code class="highlighter-rouge">sequence</code> - объект, который реализует Sequence протокол;</li>
-  <li><code class="highlighter-rouge">start</code> - левая граница среза, может быть опущена, тогда принимается равной <script type="math/tex">0</script>;</li>
-  <li><code class="highlighter-rouge">stop</code> - правая граница среза минус <script type="math/tex">1</script>, таким образом, правая граница не включается; может быть опущена, тогда принимается равной <code class="highlighter-rouge">len(sequence)</code>;</li>
-  <li><code class="highlighter-rouge">step</code> - шаг, с которым перемещаемся по <code class="highlighter-rouge">sequence</code>, если не указан, то считается равным <script type="math/tex">1</script>.</li>
-</ul>
 
 <p>Мы рассмотрели лишь небольшую часть операций, которые можно выполнять над строками. Полный список операций вы всегда можете найти в документации.</p>
 
@@ -859,7 +851,7 @@
   <li><code class="highlighter-rouge">allocated</code> - емкость массива (размер буффера), то есть сколько элементов можно поместить в массив <code class="highlighter-rouge">ob_item</code> до его увеличения, в то время как <code class="highlighter-rouge">ob_size</code> - текущее количество элементов в массиве.</li>
 </ul>
 
-<p><img src="/assets/images/lectures/lecture01-03.jpg" alt="" /></p>
+<p><img src="/assets/images/lectures/lec01-list-gen.svg" alt="" /></p>
 
 <p>Если мы добавляем новый элемент в массив и при этом размер массива совпадает с размером буффера, то есть, <code class="highlighter-rouge">ob_size == allocated</code> (для рисунка <code class="highlighter-rouge">N == M</code>), то происходит увеличение размера буффера путем перераспределения памяти по следующему правилу:</p>
 
@@ -913,7 +905,7 @@
 <span class="n">ListStruct</span><span class="p">(</span><span class="n">ob_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">allocated</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/lectures/lecture01-04.jpg" alt="" /></p>
+<p><img src="/assets/images/lectures/lec01-list.svg" alt="" /></p>
 
 <h3 id="кортежи">Кортежи</h3>
 
@@ -1091,13 +1083,18 @@
 
 <p>Мы не будем рассматривать внутреннее представление словарей, так как они устроены значительно сложнее чем объекты, которые мы рассматривали ранее. Для интересующихся можно посмотреть выступления <a href="https://www.youtube.com/watch?v=p33CVV29OG8">Raymond Hettinger</a> и <a href="https://www.youtube.com/watch?v=66P5FMkWoVU">Brandon Rhodes</a> о работе словарей, или почитать исчерпывающую презентацию <a href="https://www.slideshare.net/delimitry/python-dict-66233023">Дмитрия Алимова</a> об эволюции словарей, начиная с Python 2.x.</p>
 
-<p>Тем не менее следует знать, что ключами словарей могут быть только хешируемые объекты, то есть те объекты, для которых определена хеш-функция (обычно это числа, строки и кортежи).</p>
+<p>Тем не менее следует знать, что ключами словарей могут быть только хешируемые объекты (читай <em>неизменяемые</em>), то есть те объекты, для которых определена хеш-функция (обычно это числа, строки и кортежи).</p>
 
-<p>Существует множество видов хеш-функций и для того, чтобы дать вам интуицию того, что из себя представляет хеш-функция, рассмотрим пример слабой хеш-функции и ее использования:</p>
+<p>Хеш-функция это такая функция, которая задает правило отображания объектов в целые числа. Существует множество видов хеш-функций и они должны иметь обладать рядом свойств, например, «если два объекта равны, то их хеши должны быть одинаковыми» или «если объекты имеют одинаковый хеш, то вероятно это один и тот же объект». Для наглядности мы рассмотрим простой пример. Зададим хеш-функцию для строк, которая вычисляет хеш как сумму произведений позиции символа на его кодовый знак, и будем использовать эту функцию для определения индекса в списке куда следует поместить строку:</p>
 
-<iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=def%20my_hash%28astring%29%3A%0A%20%20%20%20h%20%3D%200%0A%20%20%20%20for%20pos%20in%20range%28len%28astring%29%29%3A%0A%20%20%20%20%20%20%20%20h%20%2B%3D%20pos%20*%20ord%28astring%5Bpos%5D%29%0A%20%20%20%20return%20h%0A%20%20%20%20%0AL%20%3D%20%5BNone,%20None,%20None,%20None,%20None%5D%0A%0Aindex%20%3D%20my_hash%28%22cat%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22cat%22%0A%0Aindex%20%3D%20my_hash%28%22dog%22%29%20%25%20len%28L%29%20-%201%0AL%5Bindex%5D%20%3D%20%22dog%22&amp;codeDivHeight=400&amp;codeDivWidth=350&amp;cumulative=false&amp;curInstr=0&amp;heapPrimitives=false&amp;origin=opt-frontend.js&amp;py=3&amp;rawInputLstJSON=%5B%5D&amp;textReferences=false"> </iframe>
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Чтобы не выполнять все промежуточные шаги, вы можете выделить строки 5,9,10,12,13,15,16,18,19 (они станут отмечены красным цветом).</p>
+</div>
 
-<p>Фактически мы получили очень наивную реализацию <a href="https://en.wikipedia.org/wiki/Hash_table">хеш-таблицы</a> (словаря).</p>
+<iframe width="1000" height="600" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def%20my_hash%28astring%29%3A%0A%20%20%20%20h%20%3D%200%0A%20%20%20%20for%20pos,%20ch%20in%20enumerate%28astring%29%3A%0A%20%20%20%20%20%20%20%20h%20%2B%3D%20pos%20*%20ord%28ch%29%0A%20%20%20%20return%20h%0A%0AL%20%3D%20%5BNone,%20None,%20None,%20None,%20None%5D%0A%0Aindex%20%3D%20my_hash%28'%D0%AF'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%AF'%0A%0Aindex%20%3D%20my_hash%28'%D0%BD%D0%B8%D0%BA%D0%BE%D0%B3%D0%B4%D0%B0'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%BD%D0%B8%D0%BA%D0%BE%D0%B3%D0%B4%D0%B0'%0A%0Aindex%20%3D%20my_hash%28'%D0%BD%D0%B5'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%BD%D0%B5'%0A%0Aindex%20%3D%20my_hash%28'%D0%BF%D0%BE%D0%B2%D1%82%D0%BE%D1%80%D1%8F%D1%8E%D1%81%D1%8C'%29%20%25%20len%28L%29%0AL%5Bindex%5D%20%3D%20'%D0%BF%D0%BE%D0%B2%D1%82%D0%BE%D1%80%D1%8F%D1%8E%D1%81%D1%8C'&amp;codeDivHeight=400&amp;codeDivWidth=400&amp;cumulative=false&amp;curInstr=0&amp;heapPrimitives=false&amp;origin=opt-frontend.js&amp;py=3&amp;rawInputLstJSON=%5B%5D&amp;textReferences=false"> </iframe>
+
+<p>Фактически мы получили очень наивную реализацию <a href="https://en.wikipedia.org/wiki/Hash_table">хеш-таблицы</a> (словаря). Вы могли заметить, что для последней строки «повторяюсь» мы получили такой же хеш как и для строки «не» - это называется коллизией.</p>
 
 <h3 id="множества">Множества</h3>
 
@@ -1123,6 +1120,8 @@
 <span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span> <span class="o">-</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
 <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
 </code></pre></div></div>
+
+<p>Мы вкратце рассмотрели основные типы данных и внутреннее представление некоторых из них. Вы не должны стараться запомнить или понять все что было описано в этой лекции с первого раза. Время от времени возвращайтесь к тем разделам, которые вам позакались непонятными.</p>
 
   </div>
 
