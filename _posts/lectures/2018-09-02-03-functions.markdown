@@ -1,0 +1,94 @@
+---
+layout: post
+title: Лекция 03. Функции
+categories: python лекции
+---
+
+В этой лекции мы поговорим о функциях, аргументах, областях видимости, пространстве имен и о том как Python выполняет наши скрипты.
+
+### Пример: поиск минимального элемента
+
+```python
+def my_min(a, b):
+    return a if a < b else b
+```
+
+```python
+>>> dis.dis(my_min)
+  2           0 LOAD_FAST                0 (a)
+              3 LOAD_FAST                1 (b)
+              6 COMPARE_OP               0 (<)
+              9 POP_JUMP_IF_FALSE       16
+             12 LOAD_FAST                0 (a)
+             15 RETURN_VALUE
+        >>   16 LOAD_FAST                1 (b)
+             19 RETURN_VALUE
+```
+
+```python
+def my_min(a, b, c):
+    if a <= b and a <= c:
+        return a
+    elif b <= a and b <= c:
+        return b
+    else:
+        return c
+```
+
+```python
+def my_min(values):
+    result = float('inf')
+    for v in values:
+        if v < result:
+            result = v
+    return result
+```
+
+```python
+def my_min(*values):
+    result = float('inf')
+    for v in values:
+        if v < result:
+            result = v
+    return result
+```
+
+```python
+def my_min(x, *values):
+    result = x
+    for v in values:
+        if v < result:
+            result = v
+    return result
+```
+
+```python
+def my_min(x, *values, lower=float('-inf'), upper=float('inf')):
+    if lower > upper:
+        raise Exception('`lower` must be less or equal to `upper`')
+    
+    result = x if lower <= x <= upper else None
+    
+    for v in values:
+        if (lower <= v <= upper) and (result is None or v < result):
+            result = v
+    
+    return result
+```
+
+### LEGB
+
+```python
+```
+
+```python
+```
+
+```python
+```
+
+```python
+```
+
+### Как Python выполняет скрипты с высоты птичьего полета
+
