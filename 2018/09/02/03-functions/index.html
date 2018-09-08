@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Лекция 03. Функции</title>
+  <meta name="description" content="В этой лекции мы поговорим о функциях, аргументах, областях видимости, пространстве имен и о том как Python выполняет наши скрипты.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2018/09/02/03-functions/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Лекция 03. Функции">
+  <meta name="twitter:description" content="В этой лекции мы поговорим о функциях, аргументах, областях видимости, пространстве имен и о том как Python выполняет наши скрипты.">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Лекция 03. Функции</h1>
+    
+    <p class="post-meta"><time datetime="2018-09-02T00:00:00+03:00" itemprop="datePublished">Sep 2, 2018</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D0%B8/">лекции</a>
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>В этой лекции мы поговорим о функциях, аргументах, областях видимости, пространстве имен и о том как Python выполняет наши скрипты.</p>
+
+<h3 id="пример-поиск-минимального-элемента">Пример: поиск минимального элемента</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="k">else</span> <span class="n">b</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="n">my_min</span><span class="p">)</span>
+  <span class="mi">2</span>           <span class="mi">0</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+              <span class="mi">3</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+              <span class="mi">9</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">16</span>
+             <span class="mi">12</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+             <span class="mi">15</span> <span class="n">RETURN_VALUE</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">16</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+             <span class="mi">19</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">b</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">a</span>
+    <span class="k">elif</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">c</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">'-inf'</span><span class="p">),</span> <span class="n">upper</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">lower</span> <span class="o">&gt;</span> <span class="n">upper</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">Exception</span><span class="p">(</span><span class="s">'`lower` must be less or equal to `upper`'</span><span class="p">)</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">x</span> <span class="k">if</span> <span class="n">lower</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">upper</span> <span class="k">else</span> <span class="bp">None</span>
+    
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">lower</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="n">upper</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">result</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">v</span>
+    
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></div>
+
+<h3 id="legb">LEGB</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+
+<h3 id="как-python-выполняет-скрипты-с-высоты-птичьего-полета">Как Python выполняет скрипты с высоты птичьего полета</h3>
+
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

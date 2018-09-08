@@ -10,7 +10,7 @@
   
   
   <title>Лекция 02. Управляющие конструкции</title>
-  <meta name="description" content="Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения.">
+  <meta name="description" content="Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения. Также в этой лекции будет наше первое знакомство с виртуальной машиной Python.">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary">
   
   <meta name="twitter:title" content="Лекция 02. Управляющие конструкции">
-  <meta name="twitter:description" content="Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения.">
+  <meta name="twitter:description" content="Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения. Также в этой лекции будет наше первое знакомство с виртуальной машиной Python.">
   
   
 
@@ -166,7 +166,7 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения.</p>
+    <p>Во второй лекции мы рассмотрим основные управляющие конструкции языка, такие как условия, циклы и исключения. Также в этой лекции будет наше первое знакомство с виртуальной машиной Python.</p>
 
 <script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
@@ -193,7 +193,7 @@
     <span class="n">do_something_else</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>Давайте рассмотрим пример тела (содержимого) простой функции, используемой в качестве функции активации в нейронных сетях - <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLU</a> (Rectified Linear Units), которая представляет собой функцию, которая возвращает положительное или нулевое значение аргумента:</p>
+<p>Давайте рассмотрим пример тела (содержимого) простой функции, используемой в качестве функции активации в нейронных сетях - <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLU</a> (Rectified Linear Units), которая возвращает положительное или нулевое значение аргумента:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="mf">0.4</span>    <span class="c"># 1</span>
 <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span> <span class="c"># 2</span>
@@ -203,12 +203,9 @@
 <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>   <span class="c"># 6</span>
 </code></pre></div></div>
 
-<p>Условная конструкция получилась достаточно простой. Давайте посмотрим на список инструкций, которые будет выполнять интерпретатор (в одной из следующих лекций мы будем говорить о том откуда берутся эти инструкции):</p>
+<p>Условная конструкция получилась достаточно простой и очевидной, поэтому мы вкратце разберем то, как Python будет «интерпретировать» эти 6 строк кода.</p>
 
-<div class="admonition legend">
-  <p class="first admonition-title"><strong>Замечание</strong></p>
-  <p class="last">Да, да, весь код ваших программ <b>компилируется</b> в байт-код или другими словами в набор инструкций, которые и будут выполняться интерпретатором CPython. Краткое описание инструкций можно найти <a href="https://docs.python.org/3/library/dis.html#python-bytecode-instructions">тут</a>.</p>
-</div>
+<p>Интерпретация, в простом понимании, означает чтение файла с исходным кодом вашей программы и поэтапное ее выполнение. В Python этапу интерпретации предшествует этап компиляции, то есть, исходный код ваших программ компилируется в <a href="https://ru.wikipedia.org/wiki/%D0%91%D0%B0%D0%B9%D1%82-%D0%BA%D0%BE%D0%B4">байт-код</a> или другими словами в набор простых инструкций, чем-то напоминающих инструкции CPU, которые и будут выполняться (интерпретироваться) виртуальной машиной Python (в одной из следующих лекций мы будем говорить о том откуда берутся эти инструкции). Давайте посмотрим как выглядит байт-код для приведенного выше примера с помощью модуля <a href="https://docs.python.org/3/library/dis.html">dis</a> из стандартной библиотеки:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">dis</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"""..."""</span><span class="p">)</span>
@@ -235,40 +232,117 @@
              <span class="mi">32</span> <span class="n">RETURN_VALUE</span>
 </code></pre></div></div>
 
-<p>Первые две инструкции соответствуют связыванию имени <code class="highlighter-rouge">x</code> со значением <code class="highlighter-rouge">0.4</code>. Следующие четыре инструкции посвящены сравнению <code class="highlighter-rouge">x</code> с нулем. Если результат сравнения оказался ложью, то мы переходим (<code class="highlighter-rouge">POP_JUMP_IF_FALSE</code>) к выполнению инструкции под номером 18, в противном случае, переменная <code class="highlighter-rouge">x</code> связывается со значением <code class="highlighter-rouge">0</code> и мы переходим (<code class="highlighter-rouge">JUMP_FORWARD</code>) к выполнению инструкции под номером 22. Последние шесть инструкций предназначены для вывода содержимого <code class="highlighter-rouge">x</code>.</p>
+<p>Дизассемблированный вывод состоит из нескольких столбцов, краткое описание которых показано на следующем рисунке:</p>
+
+<p><img src="/assets/images/lectures/bytecode.svg" alt="" /></p>
+
+<p>Итак, 6 строк кода были скомпилированы в 17 инструкций (описание инструкций можно найти <a href="https://docs.python.org/3/library/dis.html#python-bytecode-instructions">тут</a>). Первые две инструкции соответствуют связыванию имени <code class="highlighter-rouge">x</code> со значением <code class="highlighter-rouge">0.4</code>. Следующие четыре инструкции посвящены сравнению <code class="highlighter-rouge">x</code> с нулем. Если результат сравнения оказался ложью, то мы переходим (<code class="highlighter-rouge">POP_JUMP_IF_FALSE</code>) к выполнению инструкции со смещением 18, в противном случае, переменная <code class="highlighter-rouge">x</code> связывается со значением <code class="highlighter-rouge">0</code> и мы переходим (<code class="highlighter-rouge">JUMP_FORWARD</code>) к выполнению инструкции со смещением 22. Последние шесть инструкций предназначены для вывода содержимого <code class="highlighter-rouge">x</code>.</p>
+
+<p>Виртуальная машина Python имеет стековую архитектуру, то есть все данные необходимые для выполнения инструкций помещаются (push) на стек или снимаются (pop) с него, такой стек называется стеком данных (data stack или evaluation stack). Для наглядности ниже проиллюстрировано состояние стека при выполнении нескольких первых инструкций:</p>
+
+<p><img src="/assets/images/lectures/stack.svg" alt="" /></p>
+
+<p>Как же выполняются интсрукции? Выполнение инструкций происходит в <a href="https://github.com/python/cpython/blob/master/Python/ceval.c#L926">бесконечном цикле</a> с условием в несколько тысяч строк кода, в качестве примера ниже представлен соответствующий Си-код для инструкции <a href="https://github.com/python/cpython/blob/master/Python/ceval.c#L2677"><code class="highlighter-rouge">COMPARE_OP</code></a>:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TARGET</span><span class="p">(</span><span class="n">COMPARE_OP</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">right</span> <span class="o">=</span> <span class="n">POP</span><span class="p">();</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">left</span> <span class="o">=</span> <span class="n">TOP</span><span class="p">();</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">res</span> <span class="o">=</span> <span class="n">cmp_outcome</span><span class="p">(</span><span class="n">oparg</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">);</span>
+    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">left</span><span class="p">);</span>
+    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">right</span><span class="p">);</span>
+    <span class="n">SET_TOP</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+        <span class="k">goto</span> <span class="n">error</span><span class="p">;</span>
+    <span class="n">PREDICT</span><span class="p">(</span><span class="n">POP_JUMP_IF_FALSE</span><span class="p">);</span>
+    <span class="n">PREDICT</span><span class="p">(</span><span class="n">POP_JUMP_IF_TRUE</span><span class="p">);</span>
+    <span class="n">DISPATCH</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Инструкция достаточно простая, если кратко, то выполняются следующие шаги:</p>
+
+<ul>
+  <li>с вершины стека снимаем значение и сохраняем его в переменной <code class="highlighter-rouge">right</code>;</li>
+  <li>в переменную <code class="highlighter-rouge">left</code> сохраняем значение, которое находится на вершине стека;</li>
+  <li>вызываем функцию сравнения для <code class="highlighter-rouge">left</code> и <code class="highlighter-rouge">right</code> и затем результат сохраняем в переменной <code class="highlighter-rouge">res</code>;</li>
+  <li>уменьшаем счетчик ссылок на <code class="highlighter-rouge">left</code> и <code class="highlighter-rouge">right</code>;</li>
+  <li>результат сравнения помещаем на вершину стека «затерев» старое значение;</li>
+  <li>проверяем, что не возникло ошибок при сравнении;</li>
+  <li>пытаемся «предсказать» следующую инструкцию и, если возможно, то переходим к ней;</li>
+  <li>переходим к следующей инструкции на выполнение не по предсказанию.</li>
+</ul>
+
+<p>Итак, это наше первое знакомство с виртуальной машиной Python и байт-кодом, на протяжении следующих лекций мы будем постепенно детализировать наше понимание работы виртуальной машины Python, тем не менее мы уже можем пожинать плоды первого знакомства, например, мы можем отвечать на вопросы почему одна форма записи некоторого выражения работает быстрее чем другая (попрбуйте сравнить два способа создания словаря <a href="https://medium.com/@jodylecompte/dict-vs-in-python-whats-the-big-deal-anyway-73e251df8398"><code class="highlighter-rouge">dict()</code> и <code class="highlighter-rouge">{}</code></a>).</p>
+
+<h4 id="продолжая-говорить-об-условиях">Продолжая говорить об условиях</h4>
+
+<p>В Python есть условные выражения, которые соответствуют тернарному оператору в других языках программирования:</p>
 
 <div class="admonition legend">
   <p class="first admonition-title"><strong>Замечание</strong></p>
   <p class="last">Тернарный оператор в Си: <code>x = x &lt;= 0 ? 0 : x</code>.</p>
 </div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"x = 0 if x &lt;= 0 else x"</span><span class="p">)</span>
-  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
-              <span class="mi">2</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-              <span class="mi">4</span> <span class="n">COMPARE_OP</span>               <span class="mi">1</span> <span class="p">(</span><span class="o">&lt;=</span><span class="p">)</span>
-              <span class="mi">6</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">12</span>
-              <span class="mi">8</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-             <span class="mi">10</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">2</span> <span class="p">(</span><span class="n">to</span> <span class="mi">14</span><span class="p">)</span>
-        <span class="o">&gt;&gt;</span>   <span class="mi">12</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="o">&gt;&gt;</span>   <span class="mi">14</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
-             <span class="mi">16</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
-             <span class="mi">18</span> <span class="n">RETURN_VALUE</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"x = 0.4; x = 0 if x &lt;= 0 else x; print(x)"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+              <span class="mi">8</span> <span class="n">COMPARE_OP</span>               <span class="mi">1</span> <span class="p">(</span><span class="o">&lt;=</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">16</span>
+             <span class="mi">12</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">2</span> <span class="p">(</span><span class="n">to</span> <span class="mi">18</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">16</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">18</span> <span class="n">STORE_NAME</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+             <span class="mi">20</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+             <span class="mi">22</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+             <span class="mi">24</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">26</span> <span class="n">POP_TOP</span>
+             <span class="mi">28</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">30</span> <span class="n">RETURN_VALUE</span>
 </code></pre></div></div>
 
-<h3 id="примеры">Примеры</h3>
+<p>Как и в других языках программирования в условиях мы можем использовать несколько логических выражений объединив их с помощью операторов <code class="highlighter-rouge">and</code> и <code class="highlighter-rouge">or</code> (также можно использовать логическое отрицание с помощью оператора <code class="highlighter-rouge">not</code>):</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">email</span> <span class="o">=</span> <span class="s">"Dementiy@yandex.ru"</span>
 <span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="s">"yandex.ru"</span><span class="p">,</span> <span class="s">"mail.ru"</span><span class="p">,</span> <span class="s">"gmail.com"</span><span class="p">]</span>
-
 <span class="k">if</span> <span class="s">"@"</span> <span class="ow">in</span> <span class="n">email</span> <span class="ow">and</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'@'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s">"Email указан верно"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s">"Email указан не верно"</span><span class="p">)</span>
 </code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"""..."""</span><span class="p">)</span>
+<span class="o">..</span>
+  <span class="mi">3</span>          <span class="mi">14</span> <span class="n">LOAD_CONST</span>               <span class="mi">4</span> <span class="p">(</span><span class="s">'@'</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">email</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">COMPARE_OP</span>               <span class="mi">6</span> <span class="p">(</span><span class="ow">in</span><span class="p">)</span>
+             <span class="mi">20</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">50</span>
+             <span class="mi">22</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">email</span><span class="p">)</span>
+             <span class="mi">24</span> <span class="n">LOAD_ATTR</span>                <span class="mi">2</span> <span class="p">(</span><span class="n">split</span><span class="p">)</span>
+             <span class="mi">26</span> <span class="n">LOAD_CONST</span>               <span class="mi">4</span> <span class="p">(</span><span class="s">'@'</span><span class="p">)</span>
+             <span class="mi">28</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">30</span> <span class="n">LOAD_CONST</span>               <span class="mi">9</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">32</span> <span class="n">BINARY_SUBSCR</span>
+             <span class="mi">34</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">domains</span><span class="p">)</span>
+             <span class="mi">36</span> <span class="n">COMPARE_OP</span>               <span class="mi">6</span> <span class="p">(</span><span class="ow">in</span><span class="p">)</span>
+             <span class="mi">38</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">50</span>
+<span class="o">...</span>
+  <span class="mi">6</span>     <span class="o">&gt;&gt;</span>   <span class="mi">50</span> <span class="n">LOAD_NAME</span>                <span class="mi">3</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+             <span class="mi">52</span> <span class="n">LOAD_CONST</span>               <span class="mi">7</span> <span class="p">(</span><span class="s">'Email указан не верно'</span><span class="p">)</span>
+             <span class="mi">54</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">56</span> <span class="n">POP_TOP</span>
+<span class="o">...</span>
+</code></pre></div></div>
+
+<p>Обратите внимание на то, как происходит «объединение» условных выражений в байт-коде с помощью оператора <code class="highlighter-rouge">and</code>: если символ «собаки» не присутствует в строке с адресом электронной почты, то мы переходим к инструкции по смещению 50 и оставшаяся часть логического выражение не проверяется. Попробуйте заменить логический оператор <code class="highlighter-rouge">and</code> на <code class="highlighter-rouge">or</code> и посмотреть как изменится байт-код.</p>
+
+<p>Мы можем вкладывать условные конструкции одна в другую, указывая вложенность отступами:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mark</span> <span class="o">=</span> <span class="mi">71</span>
 
@@ -292,6 +366,8 @@
 <span class="k">print</span><span class="p">(</span><span class="n">grade</span><span class="p">)</span>
 </code></pre></div></div>
 
+<p>А можем использовать более короткую форму записи с помощью <code class="highlighter-rouge">elif</code>:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mark</span> <span class="o">=</span> <span class="mi">71</span>
 
 <span class="k">if</span> <span class="n">mark</span> <span class="o">&gt;=</span> <span class="mi">91</span><span class="p">:</span>
@@ -310,19 +386,25 @@
 <span class="k">print</span><span class="p">(</span><span class="n">grade</span><span class="p">)</span>
 </code></pre></div></div>
 
+<p>Если вы сравните байт-код для приведенных примеров, то он окажется полностью идентичным. Поэтому разница между двумя формами записи <code class="highlighter-rouge">if-else-if</code> и <code class="highlighter-rouge">if-elif</code> только стилистическая.</p>
+
 <h3 id="циклы">Циклы</h3>
 
 <p>«Цикл со счётчиком» — цикл, в котором некоторая переменная изменяет своё значение от заданного начального значения до конечного значения с некоторым шагом, и для каждого значения этой переменной тело цикла выполняется один раз.</p>
 
-<p>Синтаксис:</p>
+<p>Общая форма записи циклов со счётчиком следующая:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
     <span class="n">expression</span>
 </code></pre></div></div>
 
+<p>Например:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
     <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 </code></pre></div></div>
+
+<p>Ниже представлены различные варианты использования функции <code class="highlighter-rouge">range</code>:</p>
 
 <table>
     <thead><tr><td><b>Шаблон</b></td><td><b>Пример</b></td><td><b>Результат</b></td></tr></thead>
@@ -330,6 +412,8 @@
     <tr><td>range(start, end)</td><td>range(1, 5)</td><td>[1, 2, 3, 4]</td></tr>
     <tr><td>range(start, end, step)</td><td>range(1, 10, 2)</td><td>[1, 3, 5, 7, 9]</td></tr>
 </table>
+
+<p>Давайте посмотрим на список инструкций, которые будут выполнены для цикла приведенного выше:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"for i in range(1, 10, 2): print(i)"</span><span class="p">)</span>
   <span class="mi">1</span>           <span class="mi">0</span> <span class="n">SETUP_LOOP</span>              <span class="mi">28</span> <span class="p">(</span><span class="n">to</span> <span class="mi">30</span><span class="p">)</span>
@@ -351,20 +435,29 @@
              <span class="mi">32</span> <span class="n">RETURN_VALUE</span>
 </code></pre></div></div>
 
+<p>Мы пока не будем говорить про инструкции <code class="highlighter-rouge">SETUP_LOOP</code> и <code class="highlighter-rouge">POP_BLOCK</code>. Инструкция <code class="highlighter-rouge">GET_ITER</code> <a href="https://github.com/python/cpython/blob/master/Python/ceval.c#L2859">получает</a> итератор для объекта, который находится на вершине стека (в нашем примере это <code class="highlighter-rouge">range(1,10,2)</code>). <code class="highlighter-rouge">FOR_ITER</code>	<a href="https://github.com/python/cpython/blob/master/Python/ceval.c#L2902">получает</a> следующее значение из итератора (в нашем примере это 1,3,5,7,9) и помещает его на вершину стека. Инструкция <code class="highlighter-rouge">STORE_NAME</code> снимает значение с вершины стека и связывает его с именем <code class="highlighter-rouge">i</code>. Затем выполняется тело цикла (печать переменной <code class="highlighter-rouge">i</code>) и все повторяется снова до тех пор пока итератор не будет исчерпан:</p>
+
+<p><img src="/assets/images/lectures/foriter.svg" alt="" /></p>
+
+<p>Рассмотрим чуть более живой пример использования цикла со счетчиком, например, посчитаем средний балл по некоторой дисциплине для группы студентов из 10 человек:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">random</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Scores: {scores}'</span><span class="p">)</span>
+<span class="n">Scores</span><span class="p">:</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">82</span><span class="p">]</span>
+
 <span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)):</span>
 <span class="o">...</span>    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score: {mean_score}'</span><span class="p">)</span>
+<span class="n">Mean</span> <span class="n">score</span><span class="p">:</span> <span class="mf">41.8</span>
 </code></pre></div></div>
 
 <p>Еще один вид циклов со счетчиками – «совместные циклы». Такие циклы задают выполнение некоторой операции для объектов из заданного множества, без явного указания порядка перечисления этих объектов. Такие циклы называются совместными (а также циклами по коллекции, циклами просмотра) и представляют собой формальную запись инструкции вида: «Выполнить операцию <code class="highlighter-rouge">X</code> для всех элементов, входящих во множество <code class="highlighter-rouge">M</code>».</p>
 
-<p>Синтаксис:</p>
+<p>Общая форма записи таких циклов следующая:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
     <span class="n">expression</span>
@@ -372,32 +465,38 @@
 
 <p>Где <code class="highlighter-rouge">iterable</code> – итерируемый объект (объект, который реализует протокол итератор). В роли такого объекта могут выступать строки (<code class="highlighter-rouge">str</code>), списки (<code class="highlighter-rouge">list</code>), кортежи (<code class="highlighter-rouge">tuple</code>), словари (<code class="highlighter-rouge">dict</code>), а также любой класс, объявленный с методом <code class="highlighter-rouge">__iter__()</code> (об этом в других лекциях).</p>
 
+<p>Если переписать предыдущий пример с использованием совместного цикла, то получим:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Замечание</strong></p>
+  <p class="last">Если при итерировании нам одновременно необходимо получать «индексы» элементов, то можно воспользоваться функцией <code>enumerate()</code>.</p>
+</div>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
-    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">score</span>
+<span class="o">...</span>    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">score</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score: {mean_score}'</span><span class="p">)</span>
+<span class="n">Mean</span> <span class="n">score</span><span class="p">:</span> <span class="mf">41.8</span>
 </code></pre></div></div>
 
-<p>Итерирование по списку с получением «индексов»:</p>
+<p>Разделение на циклы со счетчкиом и совместные циклы является условным. С точки зрения байт-кода они эквивалентны: мы получаем итератор у итерируемого объекта и на каждой итерации у итератора запрашиваем следующий элемент. Более подробно про итераторы мы будем говорить в одной из следующих лекций.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s">'cool'</span><span class="p">,</span> <span class="s">'powerful'</span><span class="p">,</span> <span class="s">'readable'</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'{}: Python is {}!'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">word</span><span class="p">))</span>
-</code></pre></div></div>
+<p>Последний вид циклов это цикл с предусловием — цикл, который выполняется, пока истинно некоторое условие, указанное перед его началом. Это условие проверяется до выполнения тела цикла, поэтому тело может быть не выполнено ни разу (если условие с самого начала ложно).</p>
 
-<p>Цикл с предусловием — цикл, который выполняется, пока истинно некоторое условие, указанное перед его началом. Это условие проверяется до выполнения тела цикла, поэтому тело может быть не выполнено ни разу (если условие с самого начала ложно).</p>
-
-<p>Синтаксис:</p>
+<p>Общая форма записи циклов с предусловием следующая:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="n">condition</span><span class="p">:</span>
     <span class="n">loop_body</span>
 </code></pre></div></div>
 
+<p>Рассмотрим пример вычисления факториала числа n:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">fact</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">while</span> <span class="n">n</span><span class="p">:</span>
-    <span class="n">fact</span> <span class="o">=</span> <span class="n">fact</span> <span class="o">*</span> <span class="n">n</span>
-    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="o">...</span>    <span class="n">fact</span> <span class="o">=</span> <span class="n">fact</span> <span class="o">*</span> <span class="n">n</span>
+<span class="o">...</span>    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">fact</span> <span class="c"># 1 * 2 * 3 * 4 * 5</span>
 <span class="mi">120</span>
 </code></pre></div></div>
@@ -431,38 +530,110 @@
              <span class="mi">40</span> <span class="n">RETURN_VALUE</span>
 </code></pre></div></div>
 
-<h3 id="досрочный-выход-из-цикла">Досрочный выход из цикла</h3>
+<h4 id="досрочный-выход-из-цикла">Досрочный выход из цикла</h4>
 
-<p>Команда досрочного выхода применяется, когда необходимо прервать выполнение цикла, в котором условие выхода ещё не достигнуто. Такое бывает, например, когда при выполнении тела цикла обнаруживается ошибка, после которой дальнейшая работа цикла не имеет смысла. Её действие аналогично действию команды безусловного перехода (goto) на команду, непосредственно следующую за циклом, внутри которого эта команда находится. Но так как использовать оператор goto – все равно, что поклоняться темным силам, в Python есть более элегантные способы выхода из цикла, которые будут рассмотрены позже.</p>
+<p>Команда досрочного выхода применяется, когда необходимо прервать выполнение цикла, в котором условие выхода ещё не достигнуто. Такое бывает, например, когда при выполнении тела цикла обнаруживается ошибка, после которой дальнейшая работа цикла не имеет смысла. Её действие аналогично действию команды безусловного перехода (goto) на команду, непосредственно следующую за циклом, внутри которого эта команда находится. Но так как использовать оператор goto – все равно, что поклоняться темным силам, в Python есть более элегантные способы выхода из цикла:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s">'x? '</span><span class="p">))</span>
-        <span class="k">break</span>
-    <span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'x может быть только целого типа'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">guess</span> <span class="o">=</span> <span class="n">n</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1E-9</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<span class="o">...</span>    <span class="n">last</span> <span class="o">=</span> <span class="n">guess</span>
+<span class="o">...</span>    <span class="n">guess</span> <span class="o">=</span> <span class="p">(</span><span class="n">guess</span> <span class="o">+</span> <span class="n">n</span> <span class="o">/</span> <span class="n">guess</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="o">...</span>    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">guess</span> <span class="o">-</span> <span class="n">last</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
+<span class="o">...</span>        <span class="k">break</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">guess</span><span class="p">)</span>
+<span class="mf">3.0</span>
 </code></pre></div></div>
 
-<h3 id="пропуск-итерации">Пропуск итерации</h3>
+<p>Давайте посмотрим на байт-код:</p>
 
-<p>Данный оператор применяется, когда в текущей итерации цикла необходимо пропустить все команды до конца тела цикла. При этом сам цикл прерываться не должен, условия продолжения или выхода должны вычисляться обычным образом.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+  <span class="mi">4</span>          <span class="mi">12</span> <span class="n">SETUP_LOOP</span>              <span class="mi">42</span> <span class="p">(</span><span class="n">to</span> <span class="mi">56</span><span class="p">)</span>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
-<span class="n">scores</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Scores: {scores}'</span><span class="p">)</span>
-<span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="mi">5</span>     <span class="o">&gt;&gt;</span>   <span class="mi">14</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">guess</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">STORE_NAME</span>               <span class="mi">3</span> <span class="p">(</span><span class="n">last</span><span class="p">)</span>
+<span class="o">...</span>
+  <span class="mi">7</span>          <span class="mi">34</span> <span class="n">LOAD_NAME</span>                <span class="mi">4</span> <span class="p">(</span><span class="nb">abs</span><span class="p">)</span>
+             <span class="mi">36</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">guess</span><span class="p">)</span>
+             <span class="mi">38</span> <span class="n">LOAD_NAME</span>                <span class="mi">3</span> <span class="p">(</span><span class="n">last</span><span class="p">)</span>
+             <span class="mi">40</span> <span class="n">BINARY_SUBTRACT</span>
+             <span class="mi">42</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">44</span> <span class="n">LOAD_NAME</span>                <span class="mi">2</span> <span class="p">(</span><span class="n">epsilon</span><span class="p">)</span>
+             <span class="mi">46</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+             <span class="mi">48</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">14</span>
 
-<span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">continue</span>
-    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">score</span>
-    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="mi">8</span>          <span class="mi">50</span> <span class="n">BREAK_LOOP</span>
+             <span class="mi">52</span> <span class="n">JUMP_ABSOLUTE</span>           <span class="mi">14</span>
+             <span class="mi">54</span> <span class="n">POP_BLOCK</span>
 
-<span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="n">n</span>
+  <span class="mi">9</span>     <span class="o">&gt;&gt;</span>   <span class="mi">56</span> <span class="n">LOAD_NAME</span>                <span class="mi">5</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+             <span class="mi">58</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">guess</span><span class="p">)</span>
+             <span class="mi">60</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">62</span> <span class="n">POP_TOP</span>
+             <span class="mi">64</span> <span class="n">LOAD_CONST</span>               <span class="mi">3</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">66</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
 
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score is {mean_score} for {n} scores'</span><span class="p">)</span>
+<p>Настало время поговорить об инструкцях <code class="highlighter-rouge">SETUP_LOOP</code> и <code class="highlighter-rouge">POP_BLOCK</code>. Кроме стека данных, о котором мы говорили ранее, есть еще стек блоков (block stack) ограниченного размера, который используется для «открутки» стека данных на момент входа в <code class="highlighter-rouge">for</code>, <code class="highlighter-rouge">while</code> или <code class="highlighter-rouge">try</code>. Таким образом, инструкция <code class="highlighter-rouge">SETUP_LOOP</code> помещает в стек блоков адрес первой(?) инструкции после цикла, а также текующий размер стека, а <code class="highlighter-rouge">POP_BLOCK</code> осуществляет непосредственно саму «открутку» стека.</p>
+
+<blockquote>
+  <p>This is used by Python to keep track of certain types of control structures: loops, try/except blocks, and with blocks all cause entries to be pushed onto the block stack, and the block stack gets popped whenever you exit one of those structures. This helps Python know which blocks are active at any given moment so that, for example, a continue or break statement can affect the correct block.</p>
+</blockquote>
+
+<p>Обратите внимание, что инструкции со смещениями 52 и 54 никогда не будут выполнены, так как цикл является бесконечным. Выход из цикла осуществляется с помощью оператора <code class="highlighter-rouge">break</code> и соотвествующей инструкции <code class="highlighter-rouge">BREAK_LOOP</code>, которая выполняется при условии, что мы достигли необходимой точности при вычислении квадратного корня. Инструкция <code class="highlighter-rouge">BREAK_LOOP</code>, аналогично инструкции <code class="highlighter-rouge">POP_BLOCK</code>, осуществляет «открутку» стека и переход к первой инструкции следующей за телом цикла.</p>
+
+<p>Мы не будем уделять особое внимание стеку блоков, так как в Python с версии 3.8 все <a href="https://docs.python.org/3.8/whatsnew/3.8.html#cpython-bytecode-changes">немного изменится</a>.</p>
+
+<h4 id="пропуск-итерации">Пропуск итерации</h4>
+
+<p>Данный оператор применяется, когда в текущей итерации цикла необходимо пропустить все команды до конца тела цикла. При этом сам цикл прерываться не должен, условия продолжения или выхода должны вычисляться обычным образом. Рассмотрим простой пример, допустим мы хотим посчитать средний балл, но в данных могут присутствовать пропуски, которые мы не должны учитывать:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Scores: {scores}'</span><span class="p">)</span>
+<span class="n">Scores</span><span class="p">:</span> <span class="p">[</span><span class="mi">78</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+<span class="o">...</span>    <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+<span class="o">...</span>        <span class="k">continue</span>
+<span class="o">...</span>    <span class="n">mean_score</span> <span class="o">+=</span> <span class="n">score</span>
+<span class="o">...</span>    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mean_score</span> <span class="o">=</span> <span class="n">mean_score</span> <span class="o">/</span> <span class="n">n</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'Mean score is {mean_score} for {n} scores'</span><span class="p">)</span>
+<span class="n">Mean</span> <span class="n">score</span> <span class="ow">is</span> <span class="mf">43.6</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">scores</span>
+</code></pre></div></div>
+
+<h3 id="исключения">Исключения</h3>
+
+<p>Если запустить этот код:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span>
+<span class="o">...</span>
+<span class="nb">ZeroDivisionError</span><span class="p">:</span> <span class="n">division</span> <span class="n">by</span> <span class="n">zero</span>
+</code></pre></div></div>
+
+<p>то мы получим ошибку <code class="highlighter-rouge">ZeroDivisionError</code> (ошибка деления на ноль). Более корректно называть это исключением.</p>
+
+<p>Существует (как минимум) два различимых вида ошибок:</p>
+
+<ul>
+  <li>синтаксические ошибки (syntax errors)</li>
+  <li>и исключения (exceptions).</li>
+</ul>
+
+<p>Синтаксические ошибки, появляются во время разбора кода интерпретатором. С точки зрения синтаксиса в коде выше ошибки нет, интерпретатор «видит» деление одного целого числа на другое. Однако в процессе выполнения возникает исключение. Интерпретатор разобрал код, но провести операцию не смог. Таким образом, ошибки, обнаруженные при исполнении, называются исключениями (exceptions).</p>
+
+<p>Исключения бывают разных типов и тип исключения выводится в сообщении об ошибке, например <code class="highlighter-rouge">ZeroDivisionError</code>, <code class="highlighter-rouge">IndexError</code>, <code class="highlighter-rouge">KeyError</code>, <code class="highlighter-rouge">ValueError</code> и т.д. Для работы с исключениями используется конструкция <code class="highlighter-rouge">try...except</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">try</span><span class="p">:</span>
+<span class="o">...</span>    <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span>
+<span class="o">...</span> <span class="k">except</span> <span class="nb">ZeroDivisionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="o">...</span>    <span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+<span class="n">division</span> <span class="n">by</span> <span class="n">zero</span>
 </code></pre></div></div>
 
   </div>
