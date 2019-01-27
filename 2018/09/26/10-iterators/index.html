@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Лекция 10. Итераторы и итерируемые объекты</title>
+  <meta name="description" content="В этой лекции, основанной на серии тетрадок Jordan Moldow, мы рассмотрим такие понятия как итераторы и итерируемые объекты, которые станут первым шагом к знакомству с модулем asyncio и конкурентным (асинхронным) программированием в принципе.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2018/09/26/10-iterators/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Лекция 10. Итераторы и итерируемые объекты">
+  <meta name="twitter:description" content="В этой лекции, основанной на серии тетрадок Jordan Moldow, мы рассмотрим такие понятия как итераторы и итерируемые объекты, которые станут первым шагом к знакомству с модулем asyncio и конкурентным...">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Лекция 10. Итераторы и итерируемые объекты</h1>
+    
+    <p class="post-meta"><time datetime="2018-09-26T00:00:00+03:00" itemprop="datePublished">Sep 26, 2018</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D0%B8/">лекции</a>,
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+      <a href="/categories/%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4/">перевод</a>
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>В этой лекции, основанной на серии <a href="https://github.com/jmoldow/jmoldow-python3-async-tutorial">тетрадок</a> Jordan Moldow, мы рассмотрим такие понятия как итераторы и итерируемые объекты, которые станут первым шагом к знакомству с модулем <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> и конкурентным (асинхронным) программированием в принципе.</p>
+
+<h3 id="итераторы">Итераторы</h3>
+
+<p><a href="https://refactoring.guru/ru/design-patterns/iterator">Итератор</a> — это поведенческий паттерн проектирования, который даёт возможность последовательно обходить элементы составных объектов, не раскрывая их внутреннего представления.</p>
+
+<p>В Python <a href="https://docs.python.org/3.7/library/collections.abc.html#collections.abc.Iterator">Iterator</a> является экземпляром любого класса, который реализует магические методы <code class="highlighter-rouge">__iter__()</code> и <code class="highlighter-rouge">__next__()</code> (<code class="highlighter-rouge">next()</code> в Python 2.x).</p>
+
+<p><code class="highlighter-rouge">iter(iterator)</code> или, что тоже самое <code class="highlighter-rouge">iterator.__iter__()</code>, должен всегда возвращать <code class="highlighter-rouge">iterator</code>, указывая тем самым, что объект является итератором по отношению к себе.</p>
+
+<p><code class="highlighter-rouge">next(iterator)</code> эквивалентен вызову <code class="highlighter-rouge">iterator.__next__()</code>, а <code class="highlighter-rouge">value = next(iterator, default)</code> эквивалентен записи вида:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">iterator</span><span class="o">.</span><span class="n">__next__</span><span class="p">()</span>
+<span class="k">except</span> <span class="nb">StopIteration</span><span class="p">:</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">default</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">__next__()</code> это метод, который «вычисляет» и возвращает следующий элемент итератора. Когда итератор исчерпан, то есть, нет больше элементов, которые он может вернуть, порождается исключение <code class="highlighter-rouge">StopIteration</code>. Таким образом, <code class="highlighter-rouge">__next__()</code> изменяет внутреннее состояние итератора и по умолчанию (и соглашению) итераторы исчерпываются после одного полного прохода по ним.</p>
+
+<p>Давайте рассмотрим пример простого итератора:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">collections.abc</span>
+
+<span class="k">class</span> <span class="nc">RangeIterator</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterator</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="nb">TypeError</span><span class="p">(</span><span class="s">'stop must be an int'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stop</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">'stop must be &gt;= 0'</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="n">stop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_item</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">stop</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">StopIteration</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s">"&lt;{self.__class__.__name__}({self.stop!r}): next_item={self.next_item!r}&gt;"</span>
+    
+    <span class="c"># __iter__ is already defined in `collections.Iterator` as</span>
+    <span class="c">#</span>
+    <span class="c"># def __iter__(self):</span>
+    <span class="c">#     return self</span>
+    
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_item</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">StopIteration</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="nb">StopIteration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_item</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_item</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_item</span> <span class="o">=</span> <span class="nb">StopIteration</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">item</span>
+</code></pre></div></div>
+
+<p>Примеры использования:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">range_iterator</span> <span class="o">=</span> <span class="n">RangeIterator</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">range_iterator</span>
+<span class="o">&lt;</span><span class="n">RangeIterator</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">next_item</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">iter</span><span class="p">(</span><span class="n">range_iterator</span><span class="p">),</span> <span class="nb">iter</span><span class="p">(</span><span class="n">range_iterator</span><span class="p">)</span> <span class="ow">is</span> <span class="n">range_iterator</span>
+<span class="p">(</span><span class="o">&lt;</span><span class="n">RangeIterator</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">next_item</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">range_iterator</span><span class="p">),</span> <span class="n">range_iterator</span>
+<span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">RangeIterator</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">next_item</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">range_iterator</span><span class="p">),</span> <span class="n">range_iterator</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">RangeIterator</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">next_item</span><span class="o">=</span><span class="nb">StopIteration</span><span class="p">()</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">traceback</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">try</span><span class="p">:</span>
+<span class="o">...</span>     <span class="nb">next</span><span class="p">(</span><span class="n">range_iterator</span><span class="p">)</span>
+<span class="o">...</span> <span class="k">except</span> <span class="nb">TypeError</span><span class="p">:</span>
+<span class="o">...</span>     <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="nb">StopIteration</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">range_iterator</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="mi">2</span>
+</code></pre></div></div>
+
+<h3 id="итерирумые-объекты-iterables">Итерирумые объекты (Iterables)</h3>
+
+<p>В Python <a href="https://docs.python.org/3.6/library/collections.abc.html#collections.abc.Iterable">Iterable</a> является экземляром любого класса, у которого определен магический метод <code class="highlighter-rouge">__iter__()</code>. <code class="highlighter-rouge">Iterator</code> является подклассом <code class="highlighter-rouge">Iterable</code>.</p>
+
+<p><code class="highlighter-rouge">iter(iterable)</code> тоже что и <code class="highlighter-rouge">iterable.__iter__()</code> и всегда должен возвращать итератор для итерируемого объекта. По этому итератору затем можно итерироваться, чтобы получить элементы итерируемого объекта в заданном итератором порядке.</p>
+
+<p>Итерируемые объекты (влючая все итераторы) позволяют осуществить только один полный проход по ним, но они могут быть переиспользованы. Для повторного прохода по элементам необходимо вызвать магический метод <code class="highlighter-rouge">__iter__()</code> (у итерируемого объекта), который вернет новый итератор.</p>
+
+<p>Далее приведен простой пример итерируемого объекта:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">collections.abc</span>
+
+<span class="k">class</span> <span class="nc">RangeIterable</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="n">stop</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s">"{self.__class__.__name__}({self.stop!r})"</span>
+    
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RangeIterator</span><span class="p">(</span><span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Примеры использования:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">range_iterable</span> <span class="o">=</span> <span class="n">RangeIterable</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">range_iterable</span>
+<span class="n">RangeIterable</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">traceback</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">try</span><span class="p">:</span>
+<span class="o">...</span>     <span class="nb">next</span><span class="p">(</span><span class="n">range_iterable</span><span class="p">)</span>
+<span class="o">...</span> <span class="k">except</span> <span class="nb">TypeError</span><span class="p">:</span>
+<span class="o">...</span>     <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+<span class="o">...</span>
+<span class="nb">TypeError</span><span class="p">:</span> <span class="s">'RangeIterable'</span> <span class="nb">object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">an</span> <span class="n">iterator</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">iter</span><span class="p">(</span><span class="n">range_iterable</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">RangeIterator</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">next_item</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">iter</span><span class="p">(</span><span class="n">range_iterable</span><span class="p">)</span> <span class="ow">is</span> <span class="n">range_iterable</span>
+<span class="bp">False</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">iter</span><span class="p">(</span><span class="n">range_iterable</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">iter</span><span class="p">(</span><span class="n">range_iterable</span><span class="p">)</span>
+<span class="bp">False</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">range_iterable</span><span class="p">))</span>
+<span class="mi">0</span>
+</code></pre></div></div>
+
+<h3 id="итерирование-с-помощью-цикла-for">Итерирование с помощью цикла for</h3>
+
+<p>Python позволяет «вручную» итерироваться по итераторам и итерируемым объектам с помощью <code class="highlighter-rouge">iter()</code> и <code class="highlighter-rouge">next()</code>. Однако, Python имеет встроенную поддержку для автоматического итерирования с использованием цикла <code class="highlighter-rouge">for</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+    <span class="c"># Выполнить какое-то действие над `item`, например вывести</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Если мы проигнорируем семантику с использованием <code class="highlighter-rouge">continue</code>, <code class="highlighter-rouge">break</code> и <code class="highlighter-rouge">else</code>, то цикл <code class="highlighter-rouge">for</code> в общем виде может быть записан как:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">TARGET</span> <span class="ow">in</span> <span class="n">ITER</span><span class="p">:</span>
+    <span class="n">BLOCK</span>
+</code></pre></div></div>
+
+<p>Что является синтаксическим сахаром для чего-то вроде:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">iterable</span> <span class="o">=</span> <span class="p">(</span><span class="n">ITER</span><span class="p">)</span>
+<span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+<span class="n">running</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="k">while</span> <span class="n">running</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">TARGET</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">StopIteration</span><span class="p">:</span>
+        <span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">BLOCK</span>
+</code></pre></div></div>
+
+<p>Заметим, что цикл <code class="highlighter-rouge">for</code> имеет специальную обработку для <code class="highlighter-rouge">StopIteration</code>. Цикл <code class="highlighter-rouge">for</code> осведомлен о <a href="https://docs.python.org/3/library/stdtypes.html#iterator-types">протоколе итератор</a> (iterator protocol) и знает как поймать исключение <code class="highlighter-rouge">StopIteration</code> и интерпретирует его как конец итерирования:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">RangeIterable</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+</code></pre></div></div>
+
+<p>или:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">manual_simplified_for_loop</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="n">running</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">while</span> <span class="n">running</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="nb">StopIteration</span><span class="p">:</span>
+            <span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">function</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">manual_simplified_for_loop</span><span class="p">(</span><span class="n">RangeIterable</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="k">print</span><span class="p">)</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+</code></pre></div></div>
+
+<p>Давайте посмотрим на список инструкций, которые будут выполнены для первого примера:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">dis</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"for item in RangeIterable(2): print(item)"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">SETUP_LOOP</span>              <span class="mi">24</span> <span class="p">(</span><span class="n">to</span> <span class="mi">26</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">RangeIterable</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+              <span class="mi">8</span> <span class="n">GET_ITER</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">10</span> <span class="n">FOR_ITER</span>                <span class="mi">12</span> <span class="p">(</span><span class="n">to</span> <span class="mi">24</span><span class="p">)</span>
+             <span class="mi">12</span> <span class="n">STORE_NAME</span>               <span class="mi">1</span> <span class="p">(</span><span class="n">item</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">LOAD_NAME</span>                <span class="mi">2</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">item</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">20</span> <span class="n">POP_TOP</span>
+             <span class="mi">22</span> <span class="n">JUMP_ABSOLUTE</span>           <span class="mi">10</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">24</span> <span class="n">POP_BLOCK</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">26</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">28</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Инструкция <a href="https://github.com/python/cpython/blob/3.7/Python/ceval.c#L2763"><code class="highlighter-rouge">GET_ITER</code></a> получает итератор для объекта, который находится на вершине стека (в нашем примере это <code class="highlighter-rouge">RangeIterable(2)</code>). <a href="https://github.com/python/cpython/blob/3.7/Python/ceval.c#L2806"><code class="highlighter-rouge">FOR_ITER</code></a>, получает следующее значение из итератора (в нашем примере это 0 и 1) и помещает его на вершину стека. Затем выполняется тело цикла (печать переменной <code class="highlighter-rouge">item</code>) и все повторяется снова до тех пор пока итератор не будет исчерпан.</p>
+
+<p>И последнее, что следует иметь ввиду, большое число как встроенных функций, так и функций стандартной библиотеки, принимают в качестве аргументов итерируемые объекты и затем итерируются по ним или «вручную» или с использованием цикла <code class="highlighter-rouge">for</code>, например:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="n">RangeIterable</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">RangeIterable</span><span class="p">(</span><span class="mi">5</span><span class="p">)))</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="что-почитать">Что почитать?</h3>
+
+<ul>
+  <li><a href="https://www.python.org/dev/peps/pep-0234/">PEP 234 – Iterators</a></li>
+  <li><a href="https://www.python.org/dev/peps/pep-3114/">PEP 3114 – Renaming iterator.next() to iterator.__next__()</a></li>
+  <li><a href="https://github.com/python/cpython/blob/3.7/Python/ceval.c#L2763">Реализация</a> опкодов <code class="highlighter-rouge">GET_ITER</code> и <code class="highlighter-rouge">FOR_ITER</code></li>
+  <li><a href="https://github.com/python/cpython/blob/3.7/Objects/abstract.c#L2512">Реализация</a> <code class="highlighter-rouge">PyObject_GetIter</code>, <code class="highlighter-rouge">PyIter_Check</code> и <code class="highlighter-rouge">PyIter_Next</code> в Python C API</li>
+  <li>Модуль <a href="https://docs.python.org/3/library/itertools.html">itertools</a></li>
+</ul>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+<div id="disqus_thread"></div>
+<script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://dementiy.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

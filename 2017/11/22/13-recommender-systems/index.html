@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Рекомендательная система кинофильмов и аниме</title>
+  <meta name="description" content="">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://dementiy.github.io/2017/11/22/13-recommender-systems/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Ein Blog für freie Geister" href="https://dementiy.github.io/feed.xml">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Рекомендательная система кинофильмов и аниме">
+  <meta name="twitter:description" content="">
+  
+  
+
+  <script type="text/javascript">
+  WebFontConfig = {
+    google: { families: [ 'Bitter:400,700,400italic:latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+</script>
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-111461883-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Ein Blog für freie Geister</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/practice/">Py&Go Practice</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/Dementiy/">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Рекомендательная система кинофильмов и аниме</h1>
+    
+    <p class="post-meta"><time datetime="2017-11-22T00:00:00+03:00" itemprop="datePublished">Nov 22, 2017</time> • 
+  
+  
+    
+      <a href="/categories/python/">python</a>,
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+  
+  
+    
+  
+    
+      <a href="/categories/datascience/">datascience</a>
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p><img src="http://www.bibliotecaviva.cl/wp-content/uploads/2017/06/animanga_.jpg" width="600" /></p>
+
+<h2 id="1-пререквизиты-к-работе">1. Пререквизиты к работе</h2>
+
+<p><strong>TODO</strong>: Ссылки на статьи Николенко</p>
+
+<h2 id="2-наборы-данных">2. Наборы данных</h2>
+
+<p>Наборы данных состоят из 73,516 оценок пользователей и 12,294 записей об аниме:</p>
+
+<p><code class="highlighter-rouge">Anime.csv</code>:</p>
+<ul>
+  <li><code class="highlighter-rouge">anime_id</code> — уникальный идентификатор аниме на <a href="https://myanimelist.net/">MyAnimeList</a>.</li>
+  <li><code class="highlighter-rouge">name</code> — полное название аниме.</li>
+  <li><code class="highlighter-rouge">genre</code> — список жанров разделенных через запятую.</li>
+  <li><code class="highlighter-rouge">type</code> — movie, TV, OVA и т.д.</li>
+  <li><code class="highlighter-rouge">episodes</code> — как много эпизодов в аниме (1 для фильмов).</li>
+  <li><code class="highlighter-rouge">rating</code> — средний рейтинг аниме.</li>
+  <li><code class="highlighter-rouge">members</code> — количество участников, которые находятся в группе этого аниме.</li>
+</ul>
+
+<p><code class="highlighter-rouge">Rating.csv</code>:</p>
+<ul>
+  <li><code class="highlighter-rouge">user_id</code> - идентификатор пользователя, сгенерированный случайным образом.</li>
+  <li><code class="highlighter-rouge">anime_id</code> - идентификатор аниме.</li>
+  <li><code class="highlighter-rouge">rating</code> - оценка пользователя (-1, если пользователь просмотрел аниме, но не выставил оценку).</li>
+</ul>
+
+<h2 id="3-контентная-фильтрация-content-based">3. Контентная фильтрация (content-based)</h2>
+
+<h3 id="31-загружаем-набор-данных">3.1 Загружаем набор данных</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</code></pre></div></div>
+
+<p>В репозитории уже есть наборы данных в папке <code class="highlighter-rouge">data</code>, но вы всегда можете получить их с Kaggle.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'data/anime.csv'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Посмотрим на пять первых строк:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anime_id</th>
+      <th>name</th>
+      <th>genre</th>
+      <th>type</th>
+      <th>episodes</th>
+      <th>rating</th>
+      <th>members</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>32281</td>
+      <td>Kimi no Na wa.</td>
+      <td>Drama, Romance, School, Supernatural</td>
+      <td>Movie</td>
+      <td>1</td>
+      <td>9.37</td>
+      <td>200630</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5114</td>
+      <td>Fullmetal Alchemist: Brotherhood</td>
+      <td>Action, Adventure, Drama, Fantasy, Magic, Mili...</td>
+      <td>TV</td>
+      <td>64</td>
+      <td>9.26</td>
+      <td>793665</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>28977</td>
+      <td>Gintama°</td>
+      <td>Action, Comedy, Historical, Parody, Samurai, S...</td>
+      <td>TV</td>
+      <td>51</td>
+      <td>9.25</td>
+      <td>114262</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>9253</td>
+      <td>Steins;Gate</td>
+      <td>Sci-Fi, Thriller</td>
+      <td>TV</td>
+      <td>24</td>
+      <td>9.17</td>
+      <td>673572</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>9969</td>
+      <td>Gintama&amp;#039;</td>
+      <td>Action, Comedy, Historical, Parody, Samurai, S...</td>
+      <td>TV</td>
+      <td>51</td>
+      <td>9.16</td>
+      <td>151266</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(12294, 7)
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 12294 entries, 0 to 12293
+Data columns (total 7 columns):
+anime_id    12294 non-null int64
+name        12294 non-null object
+genre       12232 non-null object
+type        12269 non-null object
+episodes    12294 non-null object
+rating      12064 non-null float64
+members     12294 non-null int64
+dtypes: float64(1), int64(2), object(4)
+memory usage: 672.4+ KB
+</code></pre></div></div>
+
+<p>Видим, что количество эпизодов имеет тип <code class="highlighter-rouge">object</code>, мы к этому вернемся в разделе подготовка данных, а пока посмотрим на количество пропусков:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>anime_id      0
+name          0
+genre        62
+type         25
+episodes      0
+rating      230
+members       0
+dtype: int64
+</code></pre></div></div>
+
+<p>В данных есть пропуски, некоторые мы можем заполнить, например, жанр. Для этого можно обратиться к API сайта <a href="https://myanimelist.net/">https://myanimelist.net/</a>.</p>
+
+<h3 id="32-подготовка-данных-и-борьба-с-пропусками">3.2 Подготовка данных и борьба с пропусками</h3>
+
+<h4 id="321-пропуски-в-типе">3.2.1 Пропуски в типе</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">'type'</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anime_id</th>
+      <th>name</th>
+      <th>genre</th>
+      <th>type</th>
+      <th>episodes</th>
+      <th>rating</th>
+      <th>members</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>10898</th>
+      <td>30484</td>
+      <td>Steins;Gate 0</td>
+      <td>Sci-Fi, Thriller</td>
+      <td>NaN</td>
+      <td>Unknown</td>
+      <td>NaN</td>
+      <td>60999</td>
+    </tr>
+    <tr>
+      <th>10900</th>
+      <td>34437</td>
+      <td>Code Geass: Fukkatsu no Lelouch</td>
+      <td>Action, Drama, Mecha, Military, Sci-Fi, Super ...</td>
+      <td>NaN</td>
+      <td>Unknown</td>
+      <td>NaN</td>
+      <td>22748</td>
+    </tr>
+    <tr>
+      <th>10906</th>
+      <td>33352</td>
+      <td>Violet Evergarden</td>
+      <td>Drama, Fantasy</td>
+      <td>NaN</td>
+      <td>Unknown</td>
+      <td>NaN</td>
+      <td>20564</td>
+    </tr>
+    <tr>
+      <th>10907</th>
+      <td>33248</td>
+      <td>K: Seven Stories</td>
+      <td>Action, Drama, Super Power, Supernatural</td>
+      <td>NaN</td>
+      <td>Unknown</td>
+      <td>NaN</td>
+      <td>22133</td>
+    </tr>
+    <tr>
+      <th>10918</th>
+      <td>33845</td>
+      <td>Free! (Shinsaku)</td>
+      <td>School, Sports</td>
+      <td>NaN</td>
+      <td>Unknown</td>
+      <td>NaN</td>
+      <td>8666</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>У всех аниме, у которых не указан тип, также не указаны признаки число эпизодов и рейтинг. Поэтому мы удалим эти строки из набора данных:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="o">~</span><span class="n">anime</span><span class="p">[</span><span class="s">'type'</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
+</code></pre></div></div>
+
+<h4 id="322-пропуски-в-жанрах-неудачная-попытка">3.2.2 Пропуски в жанрах (неудачная попытка)</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">'genre'</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anime_id</th>
+      <th>name</th>
+      <th>genre</th>
+      <th>type</th>
+      <th>episodes</th>
+      <th>rating</th>
+      <th>members</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2844</th>
+      <td>33242</td>
+      <td>IS: Infinite Stratos 2 - Infinite Wedding</td>
+      <td>NaN</td>
+      <td>Special</td>
+      <td>1</td>
+      <td>7.15</td>
+      <td>6604</td>
+    </tr>
+    <tr>
+      <th>3541</th>
+      <td>33589</td>
+      <td>ViVid Strike!</td>
+      <td>NaN</td>
+      <td>TV</td>
+      <td>12</td>
+      <td>6.96</td>
+      <td>12345</td>
+    </tr>
+    <tr>
+      <th>6040</th>
+      <td>29765</td>
+      <td>Metropolis (2009)</td>
+      <td>NaN</td>
+      <td>Movie</td>
+      <td>1</td>
+      <td>6.27</td>
+      <td>313</td>
+    </tr>
+    <tr>
+      <th>6646</th>
+      <td>32695</td>
+      <td>Match Shoujo</td>
+      <td>NaN</td>
+      <td>ONA</td>
+      <td>1</td>
+      <td>6.02</td>
+      <td>242</td>
+    </tr>
+    <tr>
+      <th>7018</th>
+      <td>33187</td>
+      <td>Katsudou Shashin</td>
+      <td>NaN</td>
+      <td>Movie</td>
+      <td>1</td>
+      <td>5.79</td>
+      <td>607</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#import requests</span>
+<span class="c">#from requests.auth import HTTPBasicAuth</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#response = requests.get("https://myanimelist.net/api/anime/search.xml?q=Steins+Gate", auth=HTTPBasicAuth("dementiy", "h2ocktlsyfgtcrt"))</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#response.text</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># bf.data(fromstring(response.text))['anime']['entry']</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#response = requests.post("https://myanimelist.net/api/account/verify_credentials.xml",</span>
+<span class="c">#                         auth=HTTPBasicAuth("dementiy", "h2ocktlsyfgtcrt"))</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#from xmljson import badgerfish as bf</span>
+<span class="c">#from xml.etree.ElementTree import fromstring</span>
+<span class="c">#from json import dumps</span>
+</code></pre></div></div>
+
+<h4 id="323-пропуски-в-эпизодах">3.2.3 Пропуски в эпизодах</h4>
+
+<p>У некоторых аниме неизвестно количество эпизодов даже если они имеют приблизительно равный рейтинг. Например, такие популярные аниме как «Naruto Shippuden» или «Attack on Titan Season 2» продолжали трансилироваться на японском телевидение на момент сбора данных, таким образом, количество эпизодов для этих аниме рассматривалось как «Unknown».</p>
+
+<p>Часть пропусков мы заполним вручную. Те аниме, которые относятся к жанрам «Hentai», «OVA« (Original Video Animation) и «Movies» мы будем рассматривать как состоящие из 1 эпизода. Оставшиеся пропуски мы заполним медианными значениями по типу.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'Unknown'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anime_id</th>
+      <th>name</th>
+      <th>genre</th>
+      <th>type</th>
+      <th>episodes</th>
+      <th>rating</th>
+      <th>members</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>74</th>
+      <td>21</td>
+      <td>One Piece</td>
+      <td>Action, Adventure, Comedy, Drama, Fantasy, Sho...</td>
+      <td>TV</td>
+      <td>Unknown</td>
+      <td>8.58</td>
+      <td>504862</td>
+    </tr>
+    <tr>
+      <th>252</th>
+      <td>235</td>
+      <td>Detective Conan</td>
+      <td>Adventure, Comedy, Mystery, Police, Shounen</td>
+      <td>TV</td>
+      <td>Unknown</td>
+      <td>8.25</td>
+      <td>114702</td>
+    </tr>
+    <tr>
+      <th>615</th>
+      <td>1735</td>
+      <td>Naruto: Shippuuden</td>
+      <td>Action, Comedy, Martial Arts, Shounen, Super P...</td>
+      <td>TV</td>
+      <td>Unknown</td>
+      <td>7.94</td>
+      <td>533578</td>
+    </tr>
+    <tr>
+      <th>991</th>
+      <td>966</td>
+      <td>Crayon Shin-chan</td>
+      <td>Comedy, Ecchi, Kids, School, Shounen, Slice of...</td>
+      <td>TV</td>
+      <td>Unknown</td>
+      <td>7.73</td>
+      <td>26267</td>
+    </tr>
+    <tr>
+      <th>1021</th>
+      <td>33157</td>
+      <td>Tanaka-kun wa Itsumo Kedaruge Specials</td>
+      <td>Comedy, School, Slice of Life</td>
+      <td>Special</td>
+      <td>Unknown</td>
+      <td>7.72</td>
+      <td>5400</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Заменим все <code class="highlighter-rouge">Unknown</code> на <code class="highlighter-rouge">nan</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'Unknown'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">'float64'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">anime</span><span class="p">[</span><span class="s">"genre"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"Hentai"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">anime</span><span class="p">[</span><span class="s">"episodes"</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()),</span> <span class="s">"episodes"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">anime</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">anime</span><span class="p">[</span><span class="s">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"OVA"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">anime</span><span class="p">[</span><span class="s">"episodes"</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()),</span> <span class="s">"episodes"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">anime</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">anime</span><span class="p">[</span><span class="s">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"Movie"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">anime</span><span class="p">[</span><span class="s">"episodes"</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()),</span> <span class="s">"episodes"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anime_id</th>
+      <th>name</th>
+      <th>genre</th>
+      <th>type</th>
+      <th>episodes</th>
+      <th>rating</th>
+      <th>members</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>74</th>
+      <td>21</td>
+      <td>One Piece</td>
+      <td>Action, Adventure, Comedy, Drama, Fantasy, Sho...</td>
+      <td>TV</td>
+      <td>NaN</td>
+      <td>8.58</td>
+      <td>504862</td>
+    </tr>
+    <tr>
+      <th>252</th>
+      <td>235</td>
+      <td>Detective Conan</td>
+      <td>Adventure, Comedy, Mystery, Police, Shounen</td>
+      <td>TV</td>
+      <td>NaN</td>
+      <td>8.25</td>
+      <td>114702</td>
+    </tr>
+    <tr>
+      <th>615</th>
+      <td>1735</td>
+      <td>Naruto: Shippuuden</td>
+      <td>Action, Comedy, Martial Arts, Shounen, Super P...</td>
+      <td>TV</td>
+      <td>NaN</td>
+      <td>7.94</td>
+      <td>533578</td>
+    </tr>
+    <tr>
+      <th>991</th>
+      <td>966</td>
+      <td>Crayon Shin-chan</td>
+      <td>Comedy, Ecchi, Kids, School, Shounen, Slice of...</td>
+      <td>TV</td>
+      <td>NaN</td>
+      <td>7.73</td>
+      <td>26267</td>
+    </tr>
+    <tr>
+      <th>1021</th>
+      <td>33157</td>
+      <td>Tanaka-kun wa Itsumo Kedaruge Specials</td>
+      <td>Comedy, School, Slice of Life</td>
+      <td>Special</td>
+      <td>NaN</td>
+      <td>7.72</td>
+      <td>5400</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">known_animes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"Naruto: Shippuuden"</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s">"One Piece"</span><span class="p">:</span> <span class="mi">784</span><span class="p">,</span>
+    <span class="s">"Detective Conan"</span><span class="p">:</span> <span class="mi">854</span><span class="p">,</span>
+    <span class="s">"Dragon Ball Super"</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+    <span class="s">"Crayon Shin chan"</span><span class="p">:</span> <span class="mi">942</span><span class="p">,</span>
+    <span class="s">"Yu Gi Oh Arc V"</span><span class="p">:</span> <span class="mi">148</span><span class="p">,</span>
+    <span class="s">"Shingeki no Kyojin Season 2"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="s">"Boku no Hero Academia 2nd Season"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="s">"Little Witch Academia TV"</span><span class="p">:</span> <span class="mi">25</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">known_animes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>    
+    <span class="n">anime</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span> <span class="o">==</span> <span class="n">k</span><span class="p">,</span> <span class="s">"episodes"</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+</code></pre></div></div>
+
+<p>Оставшиеся пропуски заполним медианными значениями по каждой группе:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+    <span class="n">anime</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'type'</span><span class="p">)[</span><span class="s">'episodes'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s">'median'</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">'anime_id'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">33157</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anime_id</th>
+      <th>name</th>
+      <th>genre</th>
+      <th>type</th>
+      <th>episodes</th>
+      <th>rating</th>
+      <th>members</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1021</th>
+      <td>33157</td>
+      <td>Tanaka-kun wa Itsumo Kedaruge Specials</td>
+      <td>Comedy, School, Slice of Life</td>
+      <td>Special</td>
+      <td>1.0</td>
+      <td>7.72</td>
+      <td>5400</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">'episodes'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">'int'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="324-кодирование-типа">3.2.4 Кодирование типа</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">anime</span><span class="p">[[</span><span class="s">"type"</span><span class="p">]])</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>type_Movie</th>
+      <th>type_Music</th>
+      <th>type_ONA</th>
+      <th>type_OVA</th>
+      <th>type_Special</th>
+      <th>type_TV</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4 id="325-rating-members-and-genre">3.2.5 Rating, Members and Genre</h4>
+
+<p>For members feature, I Just converted the strings to float.Episode numbers, members and rating are different from categorical variables and very different in values. Rating ranges from 0-10 in the dataset while the episode number can be even 800+ episodes long when it comes to long running popular animes such as One Piece, Naruto etc. So I ended up using sklearn.preprocessing.MinMaxScaler as it scales the values from 0-1.Many animes have unknown ratings. These were filled with the median of the ratings.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime</span><span class="p">[</span><span class="s">"rating"</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p><img src="recommender-systems_files/recommender-systems_47_0.png" alt="png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#plt.figure(figsize=(10, 8))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">anime</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">'type'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">'rating'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/seaborn/categorical.py:454: FutureWarning: remove_na is deprecated and is a private function. Do not use.
+  box_data = remove_na(group_data)
+</code></pre></div></div>
+
+<p><img src="recommender-systems_files/recommender-systems_48_1.png" alt="png" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#anime["rating"] = anime["rating"].astype(float)</span>
+<span class="c">#anime["rating"].fillna(anime["rating"].median(), inplace = True)</span>
+<span class="n">anime</span><span class="p">[</span><span class="s">'rating'</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">'rating'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+    <span class="n">anime</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'type'</span><span class="p">)[</span><span class="s">'rating'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s">'median'</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">anime</span><span class="p">[</span><span class="s">"members"</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">"members"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Scaling</span>
+<span class="n">anime_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
+    <span class="n">anime</span><span class="p">[</span><span class="s">"genre"</span><span class="p">]</span><span class="o">.</span><span class="nb">str</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s">", "</span><span class="p">),</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">anime</span><span class="p">[[</span><span class="s">"type"</span><span class="p">]]),</span>
+    <span class="n">anime</span><span class="p">[[</span><span class="s">"rating"</span><span class="p">]],</span>
+    <span class="n">anime</span><span class="p">[[</span><span class="s">"members"</span><span class="p">]],</span>
+    <span class="n">anime</span><span class="p">[</span><span class="s">"episodes"</span><span class="p">]</span>
+<span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">anime</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">anime</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span><span class="o">.</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">'[^A-Za-z0-9]+'</span><span class="p">,</span> <span class="s">" "</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+<span class="n">anime_features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Action</th>
+      <th>Adventure</th>
+      <th>Cars</th>
+      <th>Comedy</th>
+      <th>Dementia</th>
+      <th>Demons</th>
+      <th>Drama</th>
+      <th>Ecchi</th>
+      <th>Fantasy</th>
+      <th>Game</th>
+      <th>...</th>
+      <th>Yuri</th>
+      <th>type_Movie</th>
+      <th>type_Music</th>
+      <th>type_ONA</th>
+      <th>type_OVA</th>
+      <th>type_Special</th>
+      <th>type_TV</th>
+      <th>rating</th>
+      <th>members</th>
+      <th>episodes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9.37</td>
+      <td>200630</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>9.26</td>
+      <td>793665</td>
+      <td>64</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>9.25</td>
+      <td>114262</td>
+      <td>51</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>9.17</td>
+      <td>673572</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>9.16</td>
+      <td>151266</td>
+      <td>51</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 52 columns</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">anime_features</span><span class="o">.</span><span class="n">columns</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Index(['Action', 'Adventure', 'Cars', 'Comedy', 'Dementia', 'Demons', 'Drama',
+       'Ecchi', 'Fantasy', 'Game', 'Harem', 'Hentai', 'Historical', 'Horror',
+       'Josei', 'Kids', 'Magic', 'Martial Arts', 'Mecha', 'Military', 'Music',
+       'Mystery', 'Parody', 'Police', 'Psychological', 'Romance', 'Samurai',
+       'School', 'Sci-Fi', 'Seinen', 'Shoujo', 'Shoujo Ai', 'Shounen',
+       'Shounen Ai', 'Slice of Life', 'Space', 'Sports', 'Super Power',
+       'Supernatural', 'Thriller', 'Vampire', 'Yaoi', 'Yuri', 'type_Movie',
+       'type_Music', 'type_ONA', 'type_OVA', 'type_Special', 'type_TV',
+       'rating', 'members', 'episodes'],
+      dtype='object')
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">min_max_scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+<span class="n">anime_features</span> <span class="o">=</span> <span class="n">min_max_scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">anime_features</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">np</span><span class="o">.</span><span class="nb">round</span><span class="p">(</span><span class="n">anime_features</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[ 0.  ,  0.  ,  0.  , ...,  0.92,  0.2 ,  0.  ],
+       [ 1.  ,  1.  ,  0.  , ...,  0.91,  0.78,  0.03],
+       [ 1.  ,  0.  ,  0.  , ...,  0.91,  0.11,  0.03],
+       ..., 
+       [ 0.  ,  0.  ,  0.  , ...,  0.39,  0.  ,  0.  ],
+       [ 0.  ,  0.  ,  0.  , ...,  0.4 ,  0.  ,  0.  ],
+       [ 0.  ,  0.  ,  0.  , ...,  0.45,  0.  ,  0.  ]])
+</code></pre></div></div>
+
+<h4 id="метод-к-ближайших-соседей-k-nearest-neighbor-knn">Метод К-ближайших соседей (K nearest Neighbor, KNN)</h4>
+
+<p>Для поиска похожих аниме мы будем использовать очень простой алгоритм машинного обучения - метод K-ближайших соседей, суть которого заключается в поиске k наиболее похожих объектов на данный при заданной метрике схожести, которой может быть <code class="highlighter-rouge">euclidean</code> (Евклидово расстояние), <code class="highlighter-rouge">jaccard similarity</code> (коэффициент Жаккара) , <code class="highlighter-rouge">minkowsky</code> (метрика Минковского) или произвольная метрика.</p>
+
+<p>KNN используется как в задачах классификации, так и в задачах регрессии. При решении задач классификации для прогнозирования метки класса мы сначала ищем ближайших объектов</p>
+
+<p>KNN is used for both classification and regression problems. In classification problems to predict the label of a instance we first find k closest instances to the given one based on the distance metric and based on the majority voting scheme or weighted majority voting(neighbors which are closer are weighted higher) we predict the labels.</p>
+
+<p>KNN Classification, Image Credit : Introduction to KNN, AnalyticsVidya
+In an unsupervised setting such as this context we can simply find the neighbors and use them to recommend similar items. In rough words, to suggest similar animes I first find k-similar anime’s and recommend them to user. In this case I’ve retrieved top 5 most similar anime’s to a given query. For example, if I query “Naruto” to the recommender system, it will return me top 5 anime’s similar to Naruto.</p>
+
+<p>I’ve used genre, type, episodes, rating and members as features and did not use the name feature by choice. I could have handled the text feature with tf-idf or other tactics like bag of words, but using the names actually would have made the recommendation ‘too easy’. It’s easy to show similar anime’s like Naruto if we show Naruto 2nd season and all the Naruto movies, I wanted to see how far a simple approach without using text features will go.</p>
+
+<h4 id="fit-nearest-neighbor-to-data">Fit Nearest Neighbor To Data</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nbrs</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s">'ball_tree'</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">anime_features</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">nbrs</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">anime_features</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="query-examples-and-helper-functions">Query examples and helper functions</h4>
+
+<p>Many anime names have not been documented properly and in many cases the names are in Japanese instead of English and the spelling is often different. For that reason I’ve also created another helper function get_id_from_partial_name to find out ids of the animes from part of names.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_index_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">anime</span><span class="p">[</span><span class="n">anime</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span><span class="o">==</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">all_anime_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">anime</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_id_from_partial_name</span><span class="p">(</span><span class="n">partial</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">all_anime_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">partial</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">all_anime_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">""" print_similar_query can search for similar animes both by id and by name. """</span>
+
+<span class="k">def</span> <span class="nf">print_similar_animes</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">id</span><span class="p">:</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">anime</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="s">"name"</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+        <span class="n">found_id</span> <span class="o">=</span> <span class="n">get_index_from_name</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">found_id</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">anime</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="nb">id</span><span class="p">][</span><span class="s">"name"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h4 id="query-examples">Query Examples</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_similar_animes</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s">"Naruto"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Naruto Shippuuden
+Katekyo Hitman Reborn 
+Bleach
+Dragon Ball Z
+Boku no Hero Academia
+
+
+/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/ipykernel/__main__.py:10: DeprecationWarning: 
+.ix is deprecated. Please use
+.loc for label based indexing or
+.iloc for positional indexing
+
+See the documentation here:
+http://pandas.pydata.org/pandas-docs/stable/indexing.html#ix-indexer-is-deprecated
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_similar_animes</span><span class="p">(</span><span class="s">"Evangelion"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---------------------------------------------------------------------------
+
+IndexError                                Traceback (most recent call last)
+
+&lt;ipython-input-440-2a397c10b122&gt; in &lt;module&gt;()
+----&gt; 1 print_similar_animes("Evangelion")
+
+
+&lt;ipython-input-438-5d437245a55d&gt; in print_similar_animes(query, id)
+      6             print(anime.ix[id]["name"])
+      7     if query:
+----&gt; 8         found_id = get_index_from_name(query)
+      9         for id in indices[found_id][1:]:
+     10             print(anime.ix[id]["name"])
+
+
+&lt;ipython-input-435-f64d6779b872&gt; in get_index_from_name(name)
+      1 def get_index_from_name(name):
+----&gt; 2     return anime[anime["name"]==name].index.tolist()[0]
+
+
+IndexError: list index out of range
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_similar_animes</span><span class="p">(</span><span class="s">"Fairy Tail"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Fairy Tail 2014 
+Magi The Labyrinth of Magic
+Magi The Kingdom of Magic
+Densetsu no Yuusha no Densetsu
+Magi Sinbad no Bouken TV 
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_similar_animes</span><span class="p">(</span><span class="s">"Black Lagoon"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Black Lagoon The Second Barrage
+Canaan
+Gangsta 
+Jormungand
+Dimension W
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">anime</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"Macross"</span><span class="p">)]</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>['Macross Do You Remember Love ',
+ 'Macross',
+ 'Macross F Movie 2 Sayonara no Tsubasa',
+ 'Macross F',
+ 'Macross F Movie 1 Itsuwari no Utahime',
+ 'Macross F Close Encounter Deculture Edition',
+ 'Macross Plus',
+ 'Macross Plus Movie Edition',
+ 'Macross Zero',
+ 'Macross F Music Clip Shuu Nyankuri',
+ 'Macross ',
+ 'Macross 7',
+ 'Macross 7 Encore',
+ 'Macross 7 Movie Ginga ga Ore wo Yondeiru ',
+ 'Macross Flash Back 2012',
+ 'Macross 7 Plus',
+ 'Macross Dynamite 7',
+ 'Macross F Choujikuu Gekijou',
+ 'Macross 25th Anniversary All That VF Macross F Version',
+ 'Macross 25th Anniversary All That VF Macross Zero Version',
+ 'Macross II Lovers Again',
+ 'Macross FB7 Ore no Uta wo Kike ',
+ 'Macross Fufonfia',
+ 'Macross XX',
+ 'Macross Fufonfia Specials']
+</code></pre></div></div>
+
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      
+
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy;  - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://dementiy.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

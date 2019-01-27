@@ -130,6 +130,8 @@
   
     
   
+    
+  
 
   
   
@@ -161,6 +163,8 @@
       <a href="/categories/%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D0%B8/">лекции</a>
     
   
+    
+  
 
 </p>
   </header>
@@ -170,22 +174,91 @@
 
 <h3 id="пример-поиск-минимального-элемента">Пример: поиск минимального элемента</h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<p>Давайте начнем с простого примера, напишем функцию возвращающую минимум от двух аргументов:</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>Докстроки</strong></p>
+  <p class="last">В тройных кавычках записывается строка документации (docstring), в которой описывается назначение функции (класса, модуля), список аргументов, возвращаемое значение, примеры использования функции и т.д. Примеры обычно записываются в виде документированных тестов (doctest), которые можно запустить с помощью модуля <code>doctest</code>. Есть различные соглашения по оформелнию строк документации, но единого правила нет. Существует несколько проектов предназначенных для автоматической генерации документации на основе докстрок, например, <a href="http://www.sphinx-doc.org/en/master/">Sphinx</a>.</p>
+</div>
+
+<div class="admonition note">
+  <p class="first admonition-title"><strong>Аннотации функций</strong></p>
+  <p class="last">Аннотации типов (или подсказки типов) в основном предназначены для сообщения о том, какими типами обладают аргументы в функциях и методах. Есть несколько популярных «тайпчекеров», среди которых наиболее популярны <a href="http://mypy-lang.org/">mypy</a> и <a href="https://pyre-check.org/">pyre</a>. За информацией по аннотированию функций можно обратиться к <a href="https://www.python.org/dev/peps/pep-0484/">PEP-484</a>.</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="s">""" Function to get minimum of two arguments
+
+    Returns:
+    --------
+    The smallest argument.
+
+    Examples:
+    ---------
+    &gt;&gt;&gt; my_min(0, 1)
+    0
+    """</span>
     <span class="k">return</span> <span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="k">else</span> <span class="n">b</span>
 </code></pre></div></div>
 
+<p>Список инструкций, которые будут выполнены при вызове функции, также достаточно простой, на стек помещаются два значения, выполняется операция сравнения и, в зависимости от результата, возвращается значение <code class="highlighter-rouge">a</code> или <code class="highlighter-rouge">b</code>:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="n">my_min</span><span class="p">)</span>
-  <span class="mi">2</span>           <span class="mi">0</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
-              <span class="mi">3</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
-              <span class="mi">6</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
-              <span class="mi">9</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">16</span>
-             <span class="mi">12</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
-             <span class="mi">15</span> <span class="n">RETURN_VALUE</span>
-        <span class="o">&gt;&gt;</span>   <span class="mi">16</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
-             <span class="mi">19</span> <span class="n">RETURN_VALUE</span>
+ <span class="mi">13</span>           <span class="mi">0</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">12</span>
+              <span class="mi">8</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">RETURN_VALUE</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">12</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">RETURN_VALUE</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<p>При вызове функции мы можем передать наши аргументы как позиционные, в таком случае важен порядок следования аргументов (хотя не для нашей функции <code class="highlighter-rouge">my_min</code>):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">my_min</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">my_min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"my_min(1, 2)"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">my_min</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">2</span>
+              <span class="mi">8</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Также мы можем передать аргументы как именованные, в этом случае не имеет значения в каком порядке мы их указываем:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">my_min</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">my_min</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"my_min(b=1, a=2)"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">my_min</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">((</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">))</span>
+              <span class="mi">8</span> <span class="n">CALL_FUNCTION_KW</span>         <span class="mi">2</span>
+             <span class="mi">10</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>И, наконец, мы можем использовать смешанный вариант передачи аргументов:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">my_min</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"my_min(2, b=1)"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">my_min</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">((</span><span class="s">'b'</span><span class="p">,))</span>
+              <span class="mi">8</span> <span class="n">CALL_FUNCTION_KW</span>         <span class="mi">2</span>
+             <span class="mi">10</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Вне зависимости от того как мы осуществляем вызов функции, все аргументы являются обязательными для передачи в функцию. Давайте немного усложним пример добавив еще один аргумент, таким образом, мы будем искать минимальное среди трех аргументов:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">b</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">a</span>
     <span class="k">elif</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">:</span>
@@ -194,7 +267,11 @@
         <span class="k">return</span> <span class="n">c</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+<p>Мы можем обощить нашу функцию на список значений:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">:</span>
@@ -202,7 +279,9 @@
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">):</span>
+<p>или на произвольное число позиционных аргументов с помощью оператора <code class="highlighter-rouge">*</code> (для переменного числа именованных аргументов используется <code class="highlighter-rouge">**</code>):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">:</span>
@@ -210,7 +289,9 @@
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">):</span>
+<p>Сейчас мы можем вызвать функцию <code class="highlighter-rouge">my_min</code> без аргументов (в таком случае результатом работы функции будет «плюс» бесконечность), если же мы хотим, чтобы в нее был передан хотя бы один обязательный аргумент, то мы должны это явно указать:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">x</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">:</span>
@@ -218,7 +299,38 @@
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">'-inf'</span><span class="p">),</span> <span class="n">upper</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)):</span>
+<p>Давайте еще немного усложним нашу функцию, добавив нижнюю и верхнюю границы, которые задают диапазон для поиска минимального:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">'-inf'</span><span class="p">),</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="s">""" Function to get the smallest number.
+
+    Parameters:
+    -----------
+    x: float
+        Required numeric value.
+    values: float, optional
+        Variable length argument list of numeric values.
+    lower: float, optional
+        Lower bound. The default lower bound is negative infinity.
+    upper: float, optional
+        Upper bound. The default upper bound is positive infinity.
+
+    Returns:
+    --------
+    The smallest value.
+
+    Examples:
+    ---------
+    &gt;&gt;&gt; my_min(-1, 0, 1, 2, 3)
+    -1
+    &gt;&gt;&gt; my_min(-1, 0, 1, 2, 3, lower=0)
+    0
+    &gt;&gt;&gt; my_min(-1, 0, 1, 2, 3, lower=4, upper=5)
+    &gt;&gt;&gt; my_min(-1, 0, 1, 2, 3, lower=3, upper=-1)
+    Traceback (most recent call last):
+    ...
+    Exception: `lower` must be less or equal to `upper`
+    """</span>
     <span class="k">if</span> <span class="n">lower</span> <span class="o">&gt;</span> <span class="n">upper</span><span class="p">:</span>
         <span class="k">raise</span> <span class="nb">Exception</span><span class="p">(</span><span class="s">'`lower` must be less or equal to `upper`'</span><span class="p">)</span>
     
@@ -231,18 +343,300 @@
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></div>
 
+<p>Обратите внимание, что если у аргументов <code class="highlighter-rouge">lower</code> и <code class="highlighter-rouge">upper</code> не указать значения по умолчанию, то в Python 3, эти аргументы будут обязательными для передачи в функцию:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+<span class="o">...</span>    <span class="c"># ...</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">my_min</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="nb">TypeError</span><span class="p">:</span> <span class="n">my_min</span><span class="p">()</span> <span class="n">missing</span> <span class="mi">2</span> <span class="n">required</span> <span class="n">keyword</span><span class="o">-</span><span class="n">only</span> <span class="n">arguments</span><span class="p">:</span> <span class="s">'lower'</span> <span class="ow">and</span> <span class="s">'upper'</span>
+</code></pre></div></div>
+
+<p>Мы можем обязать пользователя передавать только именованные аргументы, указав <code class="highlighter-rouge">*</code> перед списком аргументов (пример взят из статьи <a href="https://treyhunner.com/2018/04/keyword-arguments-in-python/">Trey Hunner’а</a>):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span><span class="p">,</span> <span class="n">shuffle</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="k">def</span> <span class="nf">random_password</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="s">"""
+    &gt;&gt;&gt; random_password(upper=1, lower=1, digits=1, length=8)
+    'ooM2yCFc'
+    &gt;&gt;&gt; random_password(upper=1, lower=1, digits=1, length=8)
+    'HeCr68ct'
+    &gt;&gt;&gt; random_password(1, 1, 1, 8)
+    Traceback (most recent call last):
+    ...
+    TypeError: random_password() takes 0 positional arguments but 4 were given
+    """</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="o">*</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">upper</span><span class="p">)),</span>
+        <span class="o">*</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lower</span><span class="p">)),</span>
+        <span class="o">*</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">digits</span><span class="p">)),</span>
+        <span class="o">*</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="o">-</span><span class="n">upper</span><span class="o">-</span><span class="n">lower</span><span class="o">-</span><span class="n">digits</span><span class="p">)),</span>
+    <span class="p">]</span>
+    <span class="n">shuffle</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span>
+</code></pre></div></div>
+
 <h3 id="legb">LEGB</h3>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<p>Настало время поговорить об областях видимости и пространстве имен. Но прежде вспомним, что в Python переменных в том смысле, в каком они есть в таких языках программирования как C/C++/Java/и т.д., нет, но есть символьные имена, которые связаны с объектами (у которых уже есть тип, точнее ссылка на соответствующую структуру). Таким образом, запись вида <code class="highlighter-rouge">a = 1</code> означает связывание имени (name binding) <code class="highlighter-rouge">a</code> с объектом <code class="highlighter-rouge">1</code> (<code class="highlighter-rouge">PyLongObject</code>).</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<p>Рассмотрим следующий простой пример:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">some_variable</span>
+<span class="c"># ...</span>
+<span class="nb">NameError</span><span class="p">:</span> <span class="n">name</span> <span class="s">'some_variable'</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">defined</span>
+</code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<p>Мы получили ошибку <code class="highlighter-rouge">NameError</code>, но откуда интерпретатор знает, что такого имени не существует? Чтобы ответить на этот вопрос мы должны познакомиться с еще двумя <a href="https://softwareengineering.stackexchange.com/questions/273302/what-is-the-relationship-between-scope-and-namespaces-in-python">понятиями</a>: пространство имен и области видимости:</p>
+
+<blockquote>
+  <p>A <strong>namespace</strong> is a dictionary, mapping names (as strings) to values. When you do an assignment, like <code class="highlighter-rouge">a = 1</code>, you’re mutating a namespace. When you make a reference, like <code class="highlighter-rouge">print(a)</code>, Python looks through a list of namespaces to try and find one with the name as a key.</p>
+</blockquote>
+
+<blockquote>
+  <p>A <strong>scope</strong> defines which namespaces will be looked in and in what order. The scope of any reference always starts in the local namespace, and moves outwards until it reaches the module’s global namespace, before moving on to the builtins (the namespace that references Python’s predefined functions and constants, like <code class="highlighter-rouge">range</code> and <code class="highlighter-rouge">getattr</code>), which is the end of the line.</p>
+</blockquote>
+
+<p>Итак, о пространстве имен можно думать как словаре, в котором ключами являются имена «переменных», а значениям связанные с именами объекты. В свою очередь область видимости опеределяет какие пространства имен мы должны просмотреть в поиске указанного имени. Перебор областей видимости происходит в следующем порядке: локальная (L - Local) область видимости, объемлющая (E - Enclosed), глоабльная (G - Global) и встроенная (B - Built-in).</p>
+
+<p>Вернемся к примеру с нашей переменной <code class="highlighter-rouge">some_variable</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"some_variable"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">some_variable</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Опкод <a href="https://github.com/python/cpython/blob/master/Python/ceval.c"><code class="highlighter-rouge">LOAD_NAME</code></a> отвечает за помещение значения <code class="highlighter-rouge">some_variable</code> на стек и при выполнении этой инструкции происходит обход областей видимости в указанном выше пордяке, и, если имя не было найдено, то будет порождено исключение <code class="highlighter-rouge">NameError</code>. Упрощенно этот процесс можно представить следующим <a href="https://tech.blog.aknin.name/2010/06/05/pythons-innards-naming/">образом</a>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">LOAD_NAME</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">current_stack_frame</span><span class="o">.</span><span class="nb">locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">KeyError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">current_stack_frame</span><span class="o">.</span><span class="nb">globals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="nb">KeyError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">current_stack_frame</span><span class="o">.</span><span class="n">builtins</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="nb">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="nb">NameError</span><span class="p">(</span><span class="n">f</span><span class="s">"name {name} is not defined"</span><span class="p">)</span>
+    <span class="n">PUSH</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">STORE_NAME</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">POP</span><span class="p">()</span>
+    <span class="n">current_stack_frame</span><span class="o">.</span><span class="nb">locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</code></pre></div></div>
+
+<p>Кроме пары опкодов <code class="highlighter-rouge">LOAD_NAME/STORE_NAME</code> есть и другие опкоды <code class="highlighter-rouge">LOAD_*/STORE_*</code>, которые взаимодействуют с областью видимости. Давайте рассмотрим следующий пример очень простой функции:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+<span class="o">...</span>     <span class="n">local_var</span> <span class="o">=</span> <span class="s">'local variable'</span>
+<span class="o">...</span>     <span class="k">print</span><span class="p">(</span><span class="n">local_var</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+  <span class="mi">2</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="s">'local variable'</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">STORE_FAST</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">local_var</span><span class="p">)</span>
+
+  <span class="mi">3</span>           <span class="mi">4</span> <span class="n">LOAD_GLOBAL</span>              <span class="mi">0</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">local_var</span><span class="p">)</span>
+              <span class="mi">8</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+             <span class="mi">10</span> <span class="n">POP_TOP</span>
+             <span class="mi">12</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">14</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Опкод <code class="highlighter-rouge">LOAD_CONST</code> отношения к области видимости не имеет, потому что константы не являются переменными. Тем не менее, мы можем задаться вопросом «Где эти константы искать?». Для этого нам придется ввести еще одно понятие - <a href="https://docs.python.org/3/reference/executionmodel.html">code object</a>:</p>
+
+<blockquote>
+  <p>A Python program is constructed from code blocks. A block is a piece of Python program text that is executed as a unit. The following are blocks: a module, a function body, and a class definition. Each command typed interactively is a block. A script file (a file given as standard input to the interpreter or specified as a command line argument to the interpreter) is a code block. A script command (a command specified on the interpreter command line with the ‘-c’ option) is a code block. The string argument passed to the built-in functions eval() and exec() is a code block.</p>
+
+  <p>A code block is executed in an execution frame. A frame contains some administrative information (used for debugging) and determines where and how execution continues after the code block’s execution has completed.</p>
+</blockquote>
+
+<p>Code object в первую очередь содержит исполняемый байт-код, а также набор атрибутов среди которых: число аргументов, список констант, список имен локальных перменных и т.д.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">__code__</span><span class="o">.</span><span class="n">co_consts</span>
+<span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">'local variable'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+<span class="p">(</span><span class="s">'local_var'</span><span class="p">,)</span>
+</code></pre></div></div>
+
+<p>Продолжая рассматривать пример мы обнаружим, что используется еще пара опкодов <code class="highlighter-rouge">LOAD_FAST/STORE_FAST</code>, которые используются в том случае, когда компилятор может вывести, что некоторые имена используются исключительно в локальной области видимости. Следует заметить, что в таком случае для хранения значений локальных переменных используется массив фиксированного размера (вместо словарей), что приводит к более быстрому поиску значения для соответствующего имени.</p>
+
+<p>Теперь рассмотрим пример с использованием глобальных имен:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">global_var</span> <span class="o">=</span> <span class="s">'global variable'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+<span class="o">...</span>     <span class="k">print</span><span class="p">(</span><span class="n">global_var</span><span class="p">)</span>
+<span class="o">...</span> 
+<span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+  <span class="mi">2</span>           <span class="mi">0</span> <span class="n">LOAD_GLOBAL</span>              <span class="mi">0</span> <span class="p">(</span><span class="k">print</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_GLOBAL</span>              <span class="mi">1</span> <span class="p">(</span><span class="n">global_var</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">CALL_FUNCTION</span>            <span class="mi">1</span>
+              <span class="mi">6</span> <span class="n">POP_TOP</span>
+              <span class="mi">8</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Инструкции <code class="highlighter-rouge">*_GLOBAL</code> генерируются в том случае, когда компилятор может вывести, что некоторое имя используется внутри функции, но никогда не связывается с каким-либо объектом, как в нашем примере с переменной <code class="highlighter-rouge">global_var</code> и функцией <code class="highlighter-rouge">print</code>. Таким образом, <code class="highlighter-rouge">LOAD_GLOBAL</code> позволяет избежать поиска имени в локальном пространстве имен, а осуществляет поиск только в глобальном (<code class="highlighter-rouge">global_var</code>) и встроенном (<code class="highlighter-rouge">print</code>) пространствах имен (если имя не было найдено, то будет порождено исключение <code class="highlighter-rouge">NameError</code>).</p>
+
+<p>Последняя пара опкодов, о которых мы поговорим, это <code class="highlighter-rouge">LOAD_DEREF</code> и <code class="highlighter-rouge">STORE_DEREF</code>. Python позволяет нам создавать вложенные функции. Давайте рассмотрим следующий простой пример:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+<span class="o">...</span>     <span class="n">some_variable</span> <span class="o">=</span> <span class="s">'some_variable'</span>
+<span class="o">...</span>     <span class="k">def</span> <span class="nf">h</span><span class="p">():</span>
+<span class="o">...</span>         <span class="k">return</span> <span class="n">some_variable</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">h</span>
+<span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">g</span><span class="p">()</span>
+<span class="n">some_variable</span>
+</code></pre></div></div>
+
+<p>Может возникнуть вполне закономерный вопрос: «Как функция <code class="highlighter-rouge">h</code> может использовать значение перменной <code class="highlighter-rouge">some_variable</code>, если пространства имен, в которой эта переменная была создана, уже не существует?». Давайте посмотрим на список инструкций:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+  <span class="mi">2</span>           <span class="mi">0</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="s">'some_variable'</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">STORE_DEREF</span>              <span class="mi">0</span> <span class="p">(</span><span class="n">some_variable</span><span class="p">)</span>
+
+  <span class="mi">3</span>           <span class="mi">4</span> <span class="n">LOAD_CLOSURE</span>             <span class="mi">0</span> <span class="p">(</span><span class="n">some_variable</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">BUILD_TUPLE</span>              <span class="mi">1</span>
+              <span class="mi">8</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">code</span> <span class="nb">object</span> <span class="n">h</span> <span class="n">at</span> <span class="mh">0x10bd47d20</span> <span class="o">...&gt;</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">LOAD_CONST</span>               <span class="mi">3</span> <span class="p">(</span><span class="s">'f.&lt;locals&gt;.h'</span><span class="p">)</span>
+             <span class="mi">12</span> <span class="n">MAKE_FUNCTION</span>            <span class="mi">8</span>
+             <span class="mi">14</span> <span class="n">STORE_FAST</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+  <span class="mi">5</span>          <span class="mi">16</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">h</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">RETURN_VALUE</span>
+
+<span class="n">Disassembly</span> <span class="n">of</span> <span class="o">&lt;</span><span class="n">code</span> <span class="nb">object</span> <span class="n">h</span> <span class="n">at</span> <span class="mh">0x10bd47d20</span> <span class="o">...&gt;</span><span class="p">:</span>
+  <span class="mi">4</span>           <span class="mi">0</span> <span class="n">LOAD_DEREF</span>               <span class="mi">0</span> <span class="p">(</span><span class="n">some_variable</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Заметим, что переменная <code class="highlighter-rouge">some_variable</code> по отношению к функции <code class="highlighter-rouge">f</code> хоть и является локальной, но обрабатывается с помощью опкодов <code class="highlighter-rouge">LOAD_DEREF/STORE_DEREF</code>, а не <code class="highlighter-rouge">LOAD_FAST/STORE_FAST</code> как мы могли бы ожидать. Если на этапе компиляции становится ясно, что переменная используется во вложенных областях видимости, то для работы с ней не будут использованы обычные опкоды, вместо этого будет создан специальный объект <a href="https://docs.python.org/3/c-api/cell.html#cell-objects"><code class="highlighter-rouge">cell</code></a>, который является контейнером для ссылки на другой объект (в нашем примере <code class="highlighter-rouge">some_variable</code>) и не зависит от сущестования стека объемлющей функции.</p>
+
+<div class="admonition legend">
+  <p class="first admonition-title"><strong>global и nonlocal</strong></p>
+  <p class="last">Для создания или изменения глобальных переменных в локальной области видимости используется ключевое слово <a href="https://docs.python.org/3/reference/simple_stmts.html#global"><code>global</code></a>; аналогично для объемлющей облатси видимости существует ключевое слово <a href="https://www.python.org/dev/peps/pep-3104/"><code>nonlocal</code></a>.</p>
+</div>
+
+<p>Если в функции присутствуют переменные, которые были определены в объемлющей области видимости, то такую функцию называют замыканием (closure):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">g</span><span class="o">.</span><span class="n">__closure__</span>
+<span class="p">(</span><span class="o">&lt;</span><span class="n">cell</span> <span class="n">at</span> <span class="mh">0x10c329f48</span><span class="p">:</span> <span class="nb">str</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x10c34e470</span><span class="o">&gt;</span><span class="p">,)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">g</span><span class="o">.</span><span class="n">__closure__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cell_contents</span>
+<span class="s">'some_variable'</span>
+</code></pre></div></div>
 
 <h3 id="как-python-выполняет-скрипты-с-высоты-птичьего-полета">Как Python выполняет скрипты с высоты птичьего полета</h3>
 
+<p>Предположим, что у нас есть скрипт с нашей функцией <code class="highlighter-rouge">my_min</code> в файле <code class="highlighter-rouge">my_math.py</code>. Что произойдет, когда мы выполним команду <code class="highlighter-rouge">$ python statistics.py</code>?</p>
+
+<p>Сначала будет построено абстрактное синтаксическое дерево (AST - Abstract Syntax Tree). Если в нашем коде были допущены синтаксические ошибки, то на этапе построения дерева они будут обнаружены. Давайте посмотрим как такое дерево может выглядеть для нашего скрипта:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">ast</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ast</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"m = a if a &lt; b else b"</span><span class="p">))</span>
+<span class="s">"Module(</span><span class="err">
+</span><span class="s">    body=[</span><span class="err">
+</span><span class="s">        Assign(</span><span class="err">
+</span><span class="s">            targets=[Name(id='m', ctx=Store())],</span><span class="err">
+</span><span class="s">            value=IfExp(</span><span class="err">
+</span><span class="s">                test=Compare(</span><span class="err">
+</span><span class="s">                    left=Name(id='a', ctx=Load()),</span><span class="err">
+</span><span class="s">                    ops=[Lt()],</span><span class="err">
+</span><span class="s">                    comparators=[Name(id='b', ctx=Load())]</span><span class="err">
+</span><span class="s">                ),</span><span class="err">
+</span><span class="s">                body=Name(id='a', ctx=Load()),</span><span class="err">
+</span><span class="s">                orelse=Name(id='b', ctx=Load())</span><span class="err">
+</span><span class="s">            )</span><span class="err">
+</span><span class="s">        )</span><span class="err">
+</span><span class="s">    ]</span><span class="err">
+</span><span class="s">)"</span>
+</code></pre></div></div>
+
+<p>Если синтаксических ошибок обнаружено не было, то построенное дерево компилурется в байт-код, то есть в список инструкций, которые и будут выполняться интерпретатором Python:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">dis</span><span class="o">.</span><span class="n">dis</span><span class="p">(</span><span class="s">"m = a if a &lt; b else b"</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+              <span class="mi">2</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+              <span class="mi">4</span> <span class="n">COMPARE_OP</span>               <span class="mi">0</span> <span class="p">(</span><span class="o">&lt;</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">12</span>
+              <span class="mi">8</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+             <span class="mi">10</span> <span class="n">JUMP_FORWARD</span>             <span class="mi">2</span> <span class="p">(</span><span class="n">to</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">12</span> <span class="n">LOAD_NAME</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="o">&gt;&gt;</span>   <span class="mi">14</span> <span class="n">STORE_NAME</span>               <span class="mi">2</span> <span class="p">(</span><span class="n">m</span><span class="p">)</span>
+             <span class="mi">16</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+             <span class="mi">18</span> <span class="n">RETURN_VALUE</span>
+</code></pre></div></div>
+
+<p>Выполнение инструкций происходит в бесконечном цикле:</p>
+
+<p><a href="https://github.com/python/cpython/blob/master/Python/ceval.c#L916"><code class="highlighter-rouge">Python/ceval.c</code></a></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">main_loop:</span>
+    <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+        <span class="c1">// ...
+</span>        
+        <span class="k">switch</span> <span class="p">(</span><span class="n">opcode</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="cm">/* BEWARE!
+           It is essential that any operation that fails must goto error
+           and that all operation that succeed call [FAST_]DISPATCH() ! */</span>
+
+        <span class="n">TARGET</span><span class="p">(</span><span class="n">NOP</span><span class="p">)</span>
+            <span class="n">FAST_DISPATCH</span><span class="p">();</span>
+
+        <span class="n">TARGET</span><span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">PyObject</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">GETLOCAL</span><span class="p">(</span><span class="n">oparg</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">format_exc_check_arg</span><span class="p">(</span><span class="n">PyExc_UnboundLocalError</span><span class="p">,</span>
+                                     <span class="n">UNBOUNDLOCAL_ERROR_MSG</span><span class="p">,</span>
+                                     <span class="n">PyTuple_GetItem</span><span class="p">(</span><span class="n">co</span><span class="o">-&gt;</span><span class="n">co_varnames</span><span class="p">,</span> <span class="n">oparg</span><span class="p">));</span>
+                <span class="k">goto</span> <span class="n">error</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">Py_INCREF</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+            <span class="n">PUSH</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+            <span class="n">FAST_DISPATCH</span><span class="p">();</span>
+        <span class="p">}</span>
+                         
+        <span class="c1">// ...
+</span></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">code</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">op</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"env : {env}</span><span class="se">\n</span><span class="s">stack: {stack}</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s">"LOAD_CONST"</span><span class="p">:</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">"STORE_NAME"</span><span class="p">:</span>
+            <span class="n">env</span><span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">"LOAD_NAME"</span><span class="p">:</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">"BINARY_ADD"</span><span class="p">:</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span> <span class="o">+</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">False</span><span class="p">,</span> <span class="n">f</span><span class="s">"unknown op: {op[0]}"</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"env : {env}</span><span class="se">\n</span><span class="s">stack: {stack}</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+
+
+<span class="nb">eval</span><span class="p">(</span><span class="s">"""
+LOAD_CONST  30
+STORE_NAME  x
+LOAD_CONST  62
+STORE_NAME  y
+LOAD_NAME   x
+LOAD_NAME   y
+BINARY_ADD
+STORE_NAME  z
+"""</span><span class="p">)</span>
+</code></pre></div></div>
 
   </div>
 
